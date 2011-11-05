@@ -3,14 +3,10 @@ README
 -------------------------------------------------------------------
 
 Questions:
--The code will be written in some IDE, any recommendations
+-The code will be written in some IDE, any recommendations?
 -When we do write the code, say in bloodshed, is the file in the folder
  going to be ourcode.cpp in our RTOS folder, and then we push and pull 
  this specific folder?
 
 Updates:
--I recommend putting what everyone has done as an update like we did for the 
- sdd, such as..
-
-(Milan -Nov 5th) Changed README file
 
