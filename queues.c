@@ -7,31 +7,26 @@
  *
  */
 
-// Error Codes
-#include INVALID_PCB_POINTER -105;
-
+/* Include Files and Libraries */
 #include "rtx.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-void initialize_queue(queue*Q)
-{
-  Q->head = NULL;	//queue start with zero elements
+void initialize_queue(queue *Q){
+  	Q->head = NULL;	//queue start with zero elements
 	Q->tail = NULL;
 }
 
-int empty_queue(queue *Q)
-{
+int empty_queue(queue *Q){
 	if (Q->head == NULL)
 		return 1;	//queue is empty
 	else
 		return 0;  //false queue is not empty
 }
 
-int enqueue(queue *Q, pcb *new_pcb)
-{
+int enqueue(queue *Q, pcb *new_pcb){
 	if(new_pcb == NULL)
-		return -105;
+		return INVALID_PCB_POINTER;
 		
 	if(empty_queue(Q)){		//if queue is currently empty head and tail point to same element
 		Q->head == new_pcb;
@@ -47,16 +42,14 @@ int enqueue(queue *Q, pcb *new_pcb)
 }
 
 //this will take first element out of the queue and return pointer to said element
-*pcb dequeu(queue *Q) 
-{
-	pcb * front= Q->head;
+*pcb dequeue(queue *Q){
+	pcb *front= Q->head;
 	Q->head = Q->head->next;
 	return front;
 }
 
 //this dequeue remove a specified process from the queue, pid of process which is to be removed is passed to this function
-*pcb dequeu_selected_pcb(queue *Q, int desired_pcb)
-{
+*pcb dequeue_selected_pcb(queue *Q, int desired_pcb){
 	pcb * current = Q->head;
 	pcb *previous;
 	int found=0;
@@ -78,10 +71,10 @@ int enqueue(queue *Q, pcb *new_pcb)
 				if(previous->next == NULL)		//if tail was pointing at the desired pcb tail now needs to point to the previous pcb
 					Q->tail== previous;	
 				found == 1;						//exits the loop
-				}
 			}
-		
 		}
 		
-		return current;
+	}
+		
+	return current;
 }
