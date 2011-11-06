@@ -63,10 +63,10 @@ Comments: Global variables and struct definitions for Initialization
 
 // Global Message Trace
 typedef struct msg_trace{
-  char sender_PID;
-	char receiver_PID;
-    char time_stamp;
-    char m_type;
+     char sender_PID;
+     char receiver_PID;
+     char time_stamp;
+     char m_type;
 }msg_trace;
 
 // PCB Struct
@@ -82,9 +82,9 @@ typedef struct pcb{
 
 // Queue Struct
 typedef struct queue{
-	pcb *head;
-	pcb *tail;
-	char n_elements;
+     pcb *head;
+     pcb *tail;
+     char n_elements;
 }queue;
 
 // Message Envelope Struct
