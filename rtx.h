@@ -51,6 +51,7 @@ Comments: Global variables and struct definitions for Initialization
 #define BLOCKED_ON_RECEIVE 3
 #define INTERRUPTED 4
 #define SLEEP 5
+#define NO_BLK_RCV 6 //state needed for partial implimentation, not used for actual project
 
 // Error Codes
 #define DESTINATION_PID_ERROR -100
@@ -76,7 +77,7 @@ typedef struct pcb{
      char pid;            
      char state;            
      char priority;            
-     queue *inbox;        
+     queue *inbox; //        
      jmp_buf jbdata;
 }pcb;
 
@@ -98,3 +99,18 @@ typedef struct Msg_Env{
      char flag;                    
      char message[MESSAGE_SIZE];            
 }Msg_Env;
+
+//not sure where to put
+pcb *current_process; //global variables
+
+Msg_Env *all_envelopes;
+
+Msg_Env *free_envelopes;
+
+queue all_pcbs_queue;
+queue blocked_on_resource_queue;
+queue blocked_on_receiv_queuee;
+queue interrupted_queue;
+queue sleep_queue;
+
+
