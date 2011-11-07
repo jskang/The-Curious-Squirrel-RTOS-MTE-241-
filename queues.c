@@ -78,3 +78,14 @@ int enqueue(queue *Q, pcb *new_pcb){
 		
 	return current;
 }
+
+//this will return the pointer of a pcb specified by the id passed in (looks through the all_pcb_queue
+*pcb pcb_pointer(int desired_pcb){
+	pcb *current->all_pcb_queue->head;
+	
+	while(current->pid != desired_pcb)		//loops till desired pcb is found
+		current=current->next;
+	
+	return current;
+	
+}
