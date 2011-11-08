@@ -59,6 +59,7 @@ Comments: Global variables and struct definitions for Initialization
 #define INVALID_PRIORITY_ERROR -102
 #define INVALID_PID_ERROR -103
 #define INVALID_PARMETER_REQ_DELAY_ERROR -104
+#define INVALID_PCB_POINTER -105
 
 typedef struct pcb pcb;
 typedef struct queue queue;
