@@ -14,7 +14,8 @@ Comments: Global variables and struct definitions for Initialization
 #include <fcntl.h>
 
 /* Decalare global constants*/
-
+#ifndef Globals
+#define Globals
 // Message Types
 #define M_TYPE_EMPTY 0
 #define M_TYPE_DEFAULT 1
@@ -122,4 +123,4 @@ queue *blocked_on_receiv_queuee;
 queue *interrupted_queue;
 queue *sleep_queue;
 
-
+#endif
