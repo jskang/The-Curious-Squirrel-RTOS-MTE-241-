@@ -11,7 +11,7 @@
 #include "rtx.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "queues.h"
 /*all queues use these functions*/
 void initialize_queue(queue *Q){
   	Q->head = NULL;	//queue start with zero elements
@@ -26,7 +26,7 @@ int empty_queue(queue *Q){
 }
 
 
-/*here are pcb specific queue functions */
+//here are pcb specific queue functions *//*
 int enqueue(queue *Q, pcb *new_pcb){
 	if(new_pcb == NULL)
 		return INVALID_PCB_POINTER;
