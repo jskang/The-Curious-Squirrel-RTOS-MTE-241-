@@ -19,18 +19,18 @@ int request_message_env()
 int send_message(int dest_process_id, MsgEnv *msg_envelope)
 {
 	if (msg_envelope == Null)
-		return -101;									//INVALID_MESSAGE_PTR_ERROR
+		return INVALID_MESSAGE_PTR_ERROR;									
 	if (dest_process_id < 0 || dest_process_id >9 )
-		return -103;									//INVALID_PID_ERROR
+		return INVALID_PID_ERROR;
 	
-	msg_envelope->sender_id = msg_envelope->owner_id;   //owner id becomes sender id
-	msg_envelope->owned_id=dest_process_id;				//destination process is now the owner
-	pcb *receiver= pcb_pointer(dest_process_id);		//gets the pointer to the receiving pcb
-	enqueue(receiver->inbox, msg_envelope)				//adds envelope to the pcbs inbox
+	msg_envelope->sender_id = msg_envelope->owner_id;		//owner id becomes sender id
+	msg_envelope->owned_id=dest_process_id;					//destination process is now the owner
+	pcb *receiver= pcb_pointer(dest_process_id);			//gets the pointer to the receiving pcb
+	msg_enqueue(receiver->inbox, msg_envelope)				//adds envelope to the pcbs inbox
 	
-	if (receiver->state == 3){							//checks if process is blocked on receive
-		receiver->state = 0;							//set state to ready 
-		enqueue(ready_process_queue, receiver);			//adds process to ready process queue
+	if (receiver->state == BLOCKED_ON_RECEIVE){								
+		receiver->state = READY;								
+		rpq_enqueue(receiver);				//adds process to ready process queue
 	}
 	
 	//Add SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
@@ -44,13 +44,12 @@ MsgEnv* receive_message()
 		switch_process();								
 	}*/
 	if(current_process ->inbox == NULL){					//this code is only for initial implemantation
-		current_process->state = 6;							//sets state to NO_BLK_RCV 
+		current_process->state = NO_BLK_RCV;							
 		return NULL;
 	}
 		
-	MsgEnv *message_envelope = current_process->inbox;		//will this point to the first message?
-	inbox->next = message_envelope->next;					//inbox now points to the next enelope,
-	//could it be better to have this as a function?
+	
+	message_envelope = msg_dequeue(current_process->inbox);
 	//Add SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
 	
 	return message_envelope;
@@ -60,36 +59,55 @@ MsgEnv* receive_message()
 int get_console_chars(MsgEnv * message_envelope )
 {
 	if(message_envelope = NULL)
-		return return -101;								//INVALID_MESSAGE_PTR_ERROR
+		return return INVALID_MESSAGE_PTR_ERROR;								
 	
-	send_message(7,message_envelope)					// sends message to kbd(7) 
+	send_message(PID_I_PROCESS_KBD,message_envelope)					// sends message to kbd(7) 
 	return 1;
 }
 	
 int send_console_chars(MsgEnv * message_envelope )
 {
 	if(message_envelope = NULL)
-		return return -101;								//INVALID_MESSAGE_PTR_ERROR
+		return INVALID_MESSAGE_PTR_ERROR;								//INVALID_MESSAGE_PTR_ERROR
 	/*if(message_envelope->flag == 3
 	   return  INVALID_MESSAGE_TYPE*/
-	send_message(6,message_envelope)					// sends message to crt(6) 
+	send_message(PID_I_PROCESS_CRT ,message_envelope)					// sends message to crt(6) 
 	return 1;
 }
 
-int release_msg_env ( MsgEnv * message_envelope )
+int deallocate_msg_env ( MsgEnv * message_envelope )
 {
 	if(!empty_queue(blocked_on_resource_queue))
 	{
-		pcb *free_pcb= dequeue(blocked_on_resource_queue);		//gets first pcb from blocked_on_resource_queue
-		free_pcb->state = 0										//sets state to this process to ready
+		pcb *free_pcb= dequeue(blocked_message_queue);		//gets first pcb from blocked_on_resource_queue
+		free_pcb->state = READY;									//sets state to this process to ready
 		rpq_enqueue (free_pcb);
+		
 	}
+	//dequeue envelope from inbox of pcb?
+	msg_enqueue(free_envelopes,message_envelope);
+	return 1;
+	
 	
 }
 	
 
-int request_process_status( MsgEnv * memory_block )
+int request_process_status( MsgEnv * memory_envelope )
 {
+	if (message_envelope == NULL)
+		return INVALID_MESSAGE_PTR_ERROR;
+	pcb *current = all_pcbs->head;
+	i=0;	
+	do{																	//may switch this to a for loop
+		message_envelope-> message[i]=current->pid;
+		message_envelope-> message[i+1]=current->state;
+		message_envelope-> message[i+2]=current->priority;
+		current=current->next;
+		i=i+3
+	}while(current !=NULL);
+	
+	message_envelope->flag=M_TYPE_REQ_PROCESS_STATUS ;
+	send_message(PID_I_PROCESS_CRT, message_envelope);
 	
 }
 	
@@ -100,7 +118,15 @@ int terminate( )
 	
 int change_priority(int new_priority, int target_process_id)
 {
+	if (target_process_id>9 || target_process_id<0)
+		return INVALID_PID_ERROR;
+	if (new_priority <0 || new_priority>2)								//2 as 3 is reserved for null process
+		return INVALID_PRIORITY_ERROR;
 	
+	
+	pcb *process = pcb_point(target_process_id);
+	process->priority = new_priority;
+	return 1;
 }
 	
 int request_delay(int time_delay,int wakeup_code,MsgEnv *message_envelope)
