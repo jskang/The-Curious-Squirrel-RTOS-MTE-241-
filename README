@@ -7,7 +7,12 @@ Questions:
 -When we do write the code, say in bloodshed, is the file in the folder
  going to be ourcode.cpp in our RTOS folder, and then we push and pull 
  this specific folder?
+	It's our code .c not cpp if you pull you'll see bunch of files
+	and you could edit that files but don't compile and just
+	push and pull those files rather than folders
+-Don't ask questions on README this is not what it should be used for
 
+one more test
 Updates:
 
 Nov 6 - Header and C files created. - Bhavik
