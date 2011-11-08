@@ -4,6 +4,8 @@ Author: Bhavik Vyas, JinSung Kang
 Revision: 1.1
 Comments: Global variables and struct definitions for Initialization
 *************************************************************************************************************/
+#ifndef _GLOBAL_VARIABLE_
+#define _GLOBAL_VARIABLE_
 
 // Include libraries
 #include <stdio.h>
@@ -14,8 +16,6 @@ Comments: Global variables and struct definitions for Initialization
 #include <fcntl.h>
 
 /* Decalare global constants*/
-#ifndef Globals
-#define Globals
 // Message Types
 #define M_TYPE_EMPTY 0
 #define M_TYPE_DEFAULT 1
