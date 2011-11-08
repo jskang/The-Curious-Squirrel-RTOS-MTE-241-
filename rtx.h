@@ -60,9 +60,13 @@ Comments: Global variables and struct definitions for Initialization
 #define INVALID_PID_ERROR -103
 #define INVALID_PARMETER_REQ_DELAY_ERROR -104
 
-/* Struct Definitions */
+typedef struct pcb pcb;
+typedef struct queue queue;
+typedef struct Msg_Env Msg_Env;
+typedef struct msg_trace msg_trace;
 
-// Global Message Trace
+
+/* Struct Definitions */
 typedef struct msg_trace{
      char sender_PID;
      char receiver_PID;
@@ -72,45 +76,51 @@ typedef struct msg_trace{
 
 // PCB Struct
 typedef struct pcb{
-     struct pcb *next;            
-     struct pcb *pcb_all;            
-     char pid;            
+     pcb *next;            
+     pcb *pcb_all;            
+     char pid;
      char state;            
      char priority;            
-     queue *inbox; //        
+     queue *inbox;        
      jmp_buf jbdata;
 }pcb;
 
-// Queue Struct
+//queue struct definition
 typedef struct queue{
      pcb *head;
      pcb *tail;
      char n_elements;
 }queue;
 
+
 // Message Envelope Struct
-typedef struct Msg_Env{
-     struct Msg_Env *env_all;              
-     struct Msg_Env *next;               
+typedef struct msg_env{
+     Msg_Env *env_all;              
+     Msg_Env *next;               
      unsigned int owner_id;         
      unsigned int sender_id;         
      int time_stamp;                
      char message_type;            
      char flag;                    
      char message[MESSAGE_SIZE];            
-}Msg_Env;
+}msg_env;
+
+// Global Message Trace
+
 
 //not sure where to put
 pcb *current_process; //global variables
+
+msg_trace *hello;
 
 Msg_Env *all_envelopes;
 
 Msg_Env *free_envelopes;
 
-queue all_pcbs_queue;
-queue blocked_on_resource_queue;
-queue blocked_on_receiv_queuee;
-queue interrupted_queue;
-queue sleep_queue;
+queue *all_pcbs_queue;
+queue *blocked_on_resource_queue;
+queue *blocked_on_receiv_queuee;
+queue *interrupted_queue;
+queue *sleep_queue;
 
 
