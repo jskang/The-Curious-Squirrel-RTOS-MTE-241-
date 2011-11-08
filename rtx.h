@@ -1,7 +1,7 @@
 /*************************************************************************************************************
 Filename: rtx.h
-Author: Bhavik Vyas
-Revision: 1.0
+Author: Bhavik Vyas, JinSung Kang
+Revision: 1.1
 Comments: Global variables and struct definitions for Initialization
 *************************************************************************************************************/
 
@@ -107,8 +107,6 @@ typedef struct msg_env{
 
 // Global Message Trace
 
-
-//not sure where to put
 pcb *current_process; //global variables
 
 msg_trace *hello;
