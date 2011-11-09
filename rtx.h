@@ -4,6 +4,8 @@ Author: Bhavik Vyas, JinSung Kang
 Revision: 1.1
 Comments: Global variables and struct definitions for Initialization
 *************************************************************************************************************/
+#ifndef _GLOBAL_VARIABLE_
+#define _GLOBAL_VARIABLE_
 
 // Include libraries
 #include <stdio.h>
@@ -14,7 +16,6 @@ Comments: Global variables and struct definitions for Initialization
 #include <fcntl.h>
 
 /* Decalare global constants*/
-
 // Message Types
 #define M_TYPE_EMPTY 0
 #define M_TYPE_DEFAULT 1
@@ -59,11 +60,14 @@ Comments: Global variables and struct definitions for Initialization
 #define INVALID_PRIORITY_ERROR -102
 #define INVALID_PID_ERROR -103
 #define INVALID_PARMETER_REQ_DELAY_ERROR -104
+#define INVALID_PCB_POINTER -105
+#define INVALID_MSG_POINTER -106
+#define INVALID_MESSAGE_DELETE -107
 
-typedef struct pcb pcb;
-typedef struct queue queue;
-typedef struct Msg_Env Msg_Env;
-typedef struct msg_trace msg_trace;
+//typedef struct pcb pcb;
+//typedef struct queue queue;
+//typedef struct Msg_Env Msg_Env;
+//typedef struct msg_trace msg_trace;
 
 
 /* Struct Definitions */
@@ -76,37 +80,45 @@ typedef struct msg_trace{
 
 // PCB Struct
 typedef struct pcb{
-     pcb *next;            
-     pcb *pcb_all;            
+	 struct pcb *next;            
+     struct pcb *pcb_all;            
      char pid;
      char state;            
      char priority;            
-     queue *inbox;        
+     struct msg_queue *inbox;        
      jmp_buf jbdata;
 }pcb;
 
-//queue struct definition
-typedef struct queue{
+//pcb queue struct definition
+typedef struct pcb_queue{
      pcb *head;
      pcb *tail;
      char n_elements;
-}queue;
+}pcb_queue;
 
 
 // Message Envelope Struct
-typedef struct msg_env{
-     Msg_Env *env_all;              
-     Msg_Env *next;               
+typedef struct Msg_Env{
+     struct Msg_Env *env_all;              
+     struct Msg_Env *next;               
      unsigned int owner_id;         
      unsigned int sender_id;         
      int time_stamp;                
      char message_type;            
      char flag;                    
      char message[MESSAGE_SIZE];            
-}msg_env;
+}Msg_Env;
+
+//msg queue struct definition
+typedef struct msg_queue{
+	Msg_Env *head;
+	Msg_Env *tail;
+	char n_elements;
+}msg_queue;
+
 
 // Global Message Trace
-
+/*
 pcb *current_process; //global variables
 
 msg_trace *hello;
@@ -120,5 +132,5 @@ queue *blocked_on_resource_queue;
 queue *blocked_on_receiv_queuee;
 queue *interrupted_queue;
 queue *sleep_queue;
-
-
+*/
+#endif
