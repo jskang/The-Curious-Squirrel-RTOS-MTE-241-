@@ -12,8 +12,20 @@ Questions:
 	push and pull those files rather than folders
 -Don't ask questions on README this is not what it should be used for
 
-one more test
+
 Updates:
+- Partial Implementation has started.
+
+Task Breakdown for Partial Implementation: 
+- RTX Header (rtx.h) - Bhavik --------------------------------------------> Done
+- KBD/CRT Header (kbcrt.h) - Bhavik --------------------------------------> In progress - Implementation
+- RTX C (init.c) - Jin ---------------------------------------------------> In progress - Debugging
+- Queue Implementation - Markus ------------------------------------------> In progress - Debugging
+- KBD/CRT handlers (init.c) - Jin ----------------------------------------> In progress - Implementation
+- Primitives - Markus ----------------------------------------------------> In progress - Debugging
+- Process P - ------------------------------------------------------------> Not yet started.
+- KBD iprocess - Milan ---------------------------------------------------> Done
+- CRT iprocess - Milan ---------------------------------------------------> In progress
 
 Nov 6 - Header and C files created. - Bhavik
 
