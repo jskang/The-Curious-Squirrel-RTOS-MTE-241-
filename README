@@ -18,15 +18,15 @@ Updates:
 
 Task Breakdown for Partial Implementation: 
 - RTX Header (rtx.h) - Bhavik --------------------------------------------> Done
-- KBD/CRT Header (kbcrt.h) - Bhavik --------------------------------------> In progress - Implementation
+- KBD/CRT Header (kbcrt.h) - Bhavik --------------------------------------> In progress - Debugging
 - RTX C (init.c) - Jin ---------------------------------------------------> In progress - Debugging
 - Queue Implementation - Markus ------------------------------------------> In progress - Debugging
-- KBD/CRT handlers (init.c) - Jin ----------------------------------------> In progress - Implementation
+- KBD/CRT handlers (init.c) - Jin ----------------------------------------> In progress - Debugging
 - Primitives - Markus ----------------------------------------------------> In progress - Debugging
 - Process P - ------------------------------------------------------------> Not yet started.
 - KBD iprocess - Milan ---------------------------------------------------> Done
-- CRT iprocess - Milan ---------------------------------------------------> In progress
-- MakeFile - Jin ---------------------------------------------------------> In progress
+- CRT iprocess - Milan ---------------------------------------------------> In progress - Implementation
+- MakeFile - Jin ---------------------------------------------------------> In progress - Implementation
 
 
 DISCLAIMER
