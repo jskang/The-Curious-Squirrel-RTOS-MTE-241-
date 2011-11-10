@@ -11,25 +11,34 @@
 #include "rtx.h"
 
 
-void initialize_queue(queue *Q);
+void initialize_queue(pcb_queue *Q);
 
-int empty_queue(queue *Q);
+int empty_pcb_queue(pcb_queue *Q);
 
-int enqueue(queue *Q, pcb *new_pcb);
+int enqueue_all(pcb_queue *Q, pcb *new_pcb);		//used to add pcbs to the queue which contains all pcbs
 
-*pcb dequeue(queue *Q);
+int enqueue(pcb_queue *Q, pcb *new_pcb);
 
-*pcb dequeue_selected_pcb(queue *Q, int desired_pcb);
+pcb *dequeue(pcb_queue *Q);
 
-*pcb pcb_pointer(int desired_pcb);
+pcb *dequeue_selected_pcb(pcb_queue *Q, char desired_pcb);
 
-int msg_enqueue(queue *Q, Msg_Env *chain_mail);
+pcb *pcb_pointer(pcb_queue *Q, char indesired_pcb);
 
-*Msg_Env msg_dequeue(queue *Q);
+void initialize_msg_queue(msg_queue *Q);
 
-*Msg_Env dequeue_selected_envelope(queue *Q, int desired_pcb);
+int empty_msg_queue(msg_queue *Q);
+
+int msg_enqueue_all (msg_queue *Q, Msg_Env *chain_mail);  //used to add Msg_Envs to the queue which contains all Msg_Env
+
+int msg_enqueue(msg_queue *Q, Msg_Env *chain_mail);
+
+Msg_Env *msg_dequeue(msg_queue *Q);
+
+int delete_all_msg_queue (msg_queue *Q);
+
+Msg_Env *dequeue_selected_envelope(msg_queue *Q, int desired_pcb);
 
 int rpq_enqueue (pcb *ready_pcb);
 
-*pcb rpq_dequeue ();
-#endif
+pcb *rpq_dequeue ();
