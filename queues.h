@@ -42,3 +42,10 @@ Msg_Env *dequeue_selected_envelope(msg_queue *Q, int desired_pcb);
 int rpq_enqueue (pcb *ready_pcb);
 
 pcb *rpq_dequeue ();
+
+int initialize_rpq_queue(pcb_queue *Q[]);
+
+int test_rpq_enqueue (pcb_queue *Q[],pcb *ready_pcb);
+
+pcb* test_rpq_dequeue (pcb_queue *Q[]);
+

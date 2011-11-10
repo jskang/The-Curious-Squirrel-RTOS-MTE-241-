@@ -63,7 +63,8 @@ Comments: Global variables and struct definitions for Initialization
 #define INVALID_PCB_POINTER -105
 #define INVALID_MSG_POINTER -106
 #define INVALID_MESSAGE_DELETE -107
-
+#define INVALID_PCB_STATE_ERROR -108
+#define INVALID_QUEUE_ERROR -109
 //typedef struct pcb pcb;
 //typedef struct queue queue;
 //typedef struct Msg_Env Msg_Env;
