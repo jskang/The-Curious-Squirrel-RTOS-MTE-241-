@@ -65,7 +65,7 @@ void cleanup(){
 	}
 }
 
-void die (init signal){
+void die (int signal){
 	cleanup();
 	printf("\n\n Signal Received");
 	exit(0);
@@ -74,8 +74,17 @@ void die (init signal){
 void kbd_handler (int signum){
 	inputbuf command;
 	if (in_mem_p_kbd->indata[0] !='\0'){
-		strcpy(command.indata,in_mem_p_kbd->indata);
-		printf("Keybaord inpus was %s\n",command->indata);
+		strcpy(command.indata, in_mem_p_kbd->indata);
+		printf("Keybaord inpus was %s\n",command.indata);
+		in_mem_p_kbd->ok_flag=0;
+	}
+}
+
+void crt_handler (int signum){
+	inputbuf command;
+	if (in_mem_p_kbd->indata[0] != '\0'){
+		strcpy(command.indata, in_mem_p_kbd->indata);
+		printf("CRT input was %s\n", command.indata);
 		in_mem_p_kbd->ok_flag=0;
 	}
 }
@@ -90,15 +99,15 @@ int main (){
 	sigset(SIGQUIT,die);
 	sigset(SIGABRT,die);
 	sigset(SIGTERM,die);
-	sigest(SIGSEGV,die);
+	sigset(SIGSEGV,die);
 	
 	//kbd handler signal
 	sigset(SIGUSR1,kbd_handler);
 	sigset(SIGUSR2,crt_handler);
 	
 	//create a file for shared memory
-	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREATE | O_EXCL, (mode_t) 0755);
-	crt_fid = open(sfilename_crt, O_RDWR | O_CREATE | O_EXCL, (mode_t) 0755);
+	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
+	crt_fid = open(sfilename_crt, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
 
 	if (kbd_fid < 0){
 		printf("Bad Open of mmap file <%s>\n",sfilename_kbd);
@@ -149,27 +158,27 @@ int main (){
 	crt_pid = fork();
 
 	if (crt_pid == 0){
-		excl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
+		execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
 		fprintf(stderr, "Can't exec crt, errno %d\n",errno);
-		cleanrup();
+		cleanup();
 		exit(1);
 	}
 
-	kbd_mmap_ptr = mmap((caddr_t) 0, buffsize, PROT_READ | PROT_WRITE, MAP_SHARED,kbd_fid,(off_t) 0);
-	crt_mmap_ptr = mmap((caddr_t) 0, buffsize, RROT_READ | PROT_WRITE, MAP_SHARED,crt_fid,(off_t) 0);
+	kbd_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,kbd_fid,(off_t) 0);
+	crt_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,crt_fid,(off_t) 0);
 	
-	if (kbd_mmap_ptr == MAP_FAILED){
+	if (kbd_mmap == MAP_FAILED){
 		printf("Parent's memory map has failed, about to quit!\n");
 		die(0);
 	}
 	
-	if (kbd_mmap_ptr == MAP_FAILED){
+	if (kbd_mmap == MAP_FAILED){
 		printf("Parent's memory map has failed, about to quit!\n");
 		die(0);
 	}
 	
-	in_mem_p_kbd = (inputbuf *) kbd_mmap_ptr;
-	in_mem_p_crt = (inputbuf *) crt_mmap_ptr;
+	in_mem_p_kbd = (inputbuf *) kbd_mmap;
+	in_mem_p_crt = (inputbuf *) crt_mmap;
 	
 	in_mem_p_kbd->ok_flag = 0;
 	in_mem_p_crt->ok_flag = 0;
@@ -177,6 +186,6 @@ int main (){
 	while(1);
 
 	cleanup();
-	exit(1)
+	exit(1);
 	
 }
