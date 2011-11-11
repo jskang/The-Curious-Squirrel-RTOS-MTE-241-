@@ -6,26 +6,28 @@
  *
  *
  */
-#include "kbcrt.h"
 
+#include <signal.h>
+#include "kbcrt.h"
 #include <stdio.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/wait.h>
+#include <string.h>
+#include <unistd.h>
 
 int bufsize = BUFFERSIZE;
 
-void crt_die(int signal)
-{
+void crt_die(int signal){
   exit(0);
 }
 
-int main (int argc, char *crt[])
-{
+int main (int argc, char *crt[]){
+
 	int parent_pid, fid;
 	caddr_t crt_mmap_ptr;
-	char c;
+
 
 	sigset(SIGINT,crt_die);
 
@@ -39,8 +41,8 @@ int main (int argc, char *crt[])
 		crt_die(0);
 	}
 
-	inputbuf *in_Cmem;  // in CRT memory (shared)
-	in_Cmem = (inputbuf*) crt_mmap_ptr; // now we have a shared memory pointer to the CRT shared memory
+	iobuf *in_Cmem;  // in CRT memory (shared)
+	in_Cmem = (iobuf*) crt_mmap_ptr; // now we have a shared memory pointer to the CRT shared memory
 
 	in_Cmem->ok_flag = 0;
 
@@ -52,7 +54,6 @@ int main (int argc, char *crt[])
         	}
 
         	else{
-                	printf("nothing to display"); //for debug
                 	kill(parent_pid, SIGUSR2);    // send a signal to parent
                 	usleep(10000);
         	}

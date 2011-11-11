@@ -11,6 +11,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "rtx.h"
+
 //here are pcb specific queue functions 
 
 void initialize_queue(pcb_queue *Q){

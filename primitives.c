@@ -9,11 +9,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "rtx.h"
+/*
 int request_message_env(){
 	return 1;
 }
-
+*/
 int send_message(int dest_process_id, Msg_Env *msg_envelope){
 	if (msg_envelope == NULL){
 		return INVALID_MESSAGE_PTR_ERROR;
@@ -73,7 +74,7 @@ int send_console_chars(Msg_Env *message_envelope )
 	send_message(PID_I_PROCESS_CRT ,message_envelope);					// sends message to crt(6) 
 	return 1;
 }
-
+/*
 int deallocate_msg_env ( Msg_Env *message_envelope )
 {
 	if(empty_pcb_queue(blocked_message_envelope)==0)
@@ -130,3 +131,5 @@ int request_delay(int time_delay,int wakeup_code,Msg_Env *message_envelope){
 int get_trace_buffers( Msg_Env * message_envelope){
 	return 1;
 }
+*/
+

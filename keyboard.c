@@ -7,10 +7,12 @@
  *
  */
 
-#include <stdio.h>
 #include <signal.h>
-#include "demo.h"
+#include <stdio.h>
+#include "kbcrt.h"
 #include <fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <sys/mman.h>
 #include <sys/wait.h>
@@ -32,7 +34,7 @@ int main (int argc, char * argv[])
 	int parent_pid, fid;
 
 	caddr_t mmap_ptr;
-	inputbuf * in_mem_p;
+	iobuf * in_mem_p;
 	char c;
 
 
@@ -54,12 +56,15 @@ int main (int argc, char * argv[])
 		    MAP_SHARED,    /* Accessible by another process */
 		    fid,           /* which file is associated with mmap */
 		    (off_t) 0);    /* Offset in page frame */
-    if (mmap_ptr == MAP_FAILED){
-      printf("Child memory map has failed, KB is aborting!\n");
-	  in_die(0);
-    }
+
+	printf ("HELLO FROM KBD");
+
+	if (mmap_ptr == MAP_FAILED){
+		printf("Child memory map has failed, KB is aborting!\n");
+		in_die(0);
+	}
 	
-	in_mem_p = (inputbuf *) mmap_ptr; // now we have a shared memory pointer
+	in_mem_p = (iobuf *) mmap_ptr; // now we have a shared memory pointer
 
 	// read keyboard
 	buf_index = 0;
@@ -68,19 +73,17 @@ int main (int argc, char * argv[])
 	{
 		c = getchar();
 		if ( c != '\n' ) {
-					if( buf_index < MAXCHAR-1 ) {
-						in_mem_p->indata[buf_index++] = c;
-					} 
-				} else {
-					in_mem_p->indata[buf_index] = '\0';
-					in_mem_p->ok_flag = 1;  //set ready status bit
-					kill(parent_pid,SIGUSR1); //send a signal to parent	
-					buf_index = 0;  // for now, just restart
-					while( in_mem_p->ok_flag == 1)
-						usleep(100000);
-				}
-	}
-		
-	while(1);  //an infinite loop - exit when parent signals us
+			if( buf_index < MAXCHAR-1 ) {
+				in_mem_p->indata[buf_index++] = c;
+			} 
+		} else {
+			in_mem_p->indata[buf_index] = '\0';
+			in_mem_p->ok_flag = 1;  //set ready status bit
+			kill(parent_pid,SIGUSR1); //send a signal to parent	
+			buf_index = 0;  // for now, just restart
+			while( in_mem_p->ok_flag == 1)
+				usleep(10000);
+		}
+	}while(1);  //an infinite loop - exit when parent signals us
 
 } // keyboard

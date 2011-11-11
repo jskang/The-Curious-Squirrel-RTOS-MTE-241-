@@ -14,6 +14,10 @@ Comments: Global variables and struct definitions for Initialization
 #include <sys/mman.h>
 #include <setjmp.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <errno.h>
 
 /* Decalare global constants*/
 // Message Types
@@ -66,11 +70,12 @@ Comments: Global variables and struct definitions for Initialization
 #define INVALID_MESSAGE_DELETE -107
 #define INVALID_PCB_STATE_ERROR -108
 #define INVALID_QUEUE_ERROR -109
-//typedef struct pcb pcb;
-//typedef struct queue queue;
-//typedef struct Msg_Env Msg_Env;
-//typedef struct msg_trace msg_trace;
 
+// booleans
+#define OFF 0
+#define ON 1
+#define FALSE 0
+#define TRUE 1
 
 /* Struct Definitions */
 typedef struct msg_trace{

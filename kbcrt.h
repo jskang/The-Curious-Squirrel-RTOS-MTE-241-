@@ -20,7 +20,10 @@ typedef struct{
 	int length;
 } iobuf;
 
-iobuf *in_mem_p_kbd, *out_mem_p_kbd;
+iobuf *in_mem_p_kbd;
+iobuf *out_mem_p_crt;
 
+void crt_i_process();
+void kbd_i_process();
 
 #endif

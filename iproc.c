@@ -1,16 +1,17 @@
 #include <string.h>
-#include "kbdcrt.h"
+#include "kbcrt.h"
 #include "rtx.h"
-#include "atomic.h"
 
-extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
+extern iobuf *in_mem_p_kbd; 
+extern iobuf *out_mem_p_crt;
+extern pcb *current_process;
 
 void kbd_i_process (){
 	
 	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
-	current_process = get_process_pointer(PID_I_PROCESS_KBD);
+	current_process = pcb_pointer(PID_I_PROCESS_KBD);
 
 	if (in_mem_p_kbd->ok_flag == 1){
 		if (current_process->inbox->head != NULL){
@@ -33,8 +34,8 @@ void kbd_i_process (){
 
 			//reset the buffer
 			strcpy(in_mem_p_kbd->indata,"");
-			out_mem_p_kbd->ok_flag = 0;
-			out_mem_p_kbd->length = 0;
+			in_mem_p_kbd->ok_flag = 0;
+			in_mem_p_kbd->length = 0;
 		}
 	}
 	
@@ -49,7 +50,7 @@ void crt_i_process(){
 	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process; 
-	current_process = get_process_pointer(PID_I_PROCESS_CRT); 			
+	current_process = pcb_pointer(PID_I_PROCESS_CRT); 			
 
 	// Check if flag from crt u-process is true.
 	if(out_mem_p_crt->ok_flag == 1){
