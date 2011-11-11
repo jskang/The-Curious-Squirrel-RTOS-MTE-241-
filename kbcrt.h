@@ -1,18 +1,18 @@
 /* Include Libraries */
-#include <stdio.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <errno.h>>
 #include <stdlib.h>
-#include <string.h>
 #include <signal.h>
 
 /* Define constants*/
-#define BUFFERSIZE 129
-#define MAXCHAR 80
+#define BUFFERSIZE 1024
+#define MAXCHAR 512 
 
 /* Define structures */
 typedef struct{
-  int ok_flag;
-	char input_data[MAXCHAR];
+	int ok_flag;
+	char indata[MAXCHAR];
 	int length;
-} uart_buffer;
-
-/** Do we need more things? **/
+} inputbuf;
