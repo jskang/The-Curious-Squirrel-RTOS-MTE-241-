@@ -16,9 +16,8 @@ Comments:	Initializes everythang
 
 #include "rtx.h"
 #include "kbcrt.h"
-#include "iproc.h"
 
-inputbuf *in_mem_p_kbd, *in_mem_p_crt;
+extern iobuf *in_mem_p_kbd, *in_mem_p_crt;
 int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
 int bufsize = BUFFERSIZE;
@@ -164,8 +163,8 @@ int main (){
 		die(0);
 	}
 	
-	in_mem_p_kbd = (inputbuf *) kbd_mmap;
-	in_mem_p_crt = (inputbuf *) crt_mmap;
+	in_mem_p_kbd = (iobuf *) kbd_mmap;
+	in_mem_p_crt = (iobuf *) crt_mmap;
 	
 	in_mem_p_kbd->ok_flag = 0;
 	in_mem_p_crt->ok_flag = 0;

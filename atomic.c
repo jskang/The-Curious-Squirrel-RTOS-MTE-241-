@@ -1,6 +1,6 @@
 #include <signal.h>
 #include "rtx.h"
-#include "atomic.h"
+
 
 void atomic(char on){
 	static sigset_t oldmask;

@@ -5,20 +5,22 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <errno.h>>
+#include <errno.h>
 #include <stdlib.h>
 #include <signal.h>
 
 /* Define constants*/
 #define BUFFERSIZE 1024
 #define MAXCHAR 512
-iobuf *in_mem_p_kbd, *out_mem_p_kbd;
 
 /* Define structures */
 typedef struct{
 	int ok_flag;
 	char indata[MAXCHAR];
 	int length;
-} iobuffer;
+} iobuf;
+
+iobuf *in_mem_p_kbd, *out_mem_p_kbd;
+
 
 #endif

@@ -101,13 +101,13 @@ typedef struct pcb_queue{
 
 // Message Envelope Struct
 typedef struct Msg_Env{
-     struct Msg_Env *env_all;              
-     struct Msg_Env *next;               
-     unsigned int owner_id;         
-     unsigned int sender_id;         
-     int time_stamp;                
-     char message_type;            
-     char flag;                    
+     struct Msg_Env *env_all;
+     struct Msg_Env *next;
+     unsigned int owner_id;
+     unsigned int sender_id;
+     int time_stamp;
+     char message_type;
+     char flag;
      char message[MESSAGE_SIZE];
      int size;
 }Msg_Env;
@@ -123,19 +123,17 @@ typedef struct msg_queue{
 // Global Message Trace
 
 pcb *current_process; //global variables
-Msg_Env *all_envelopes;
-Msg_Env *free_envelopes;
-queue *all_pcbs_queue;
-queue *blocked_on_resource_queue;
-queue *blocked_on_receiv_queuee;
-queue *interrupted_queue;
-queue *sleep_queue;
+pcb_queue *all_pcbs_queue;
+pcb_queue *blocked_on_resource_queue;
+pcb_queue *blocked_on_receive_queue;
+pcb_queue *interrupted_queue;
+pcb_queue *sleep_queue;
 pcb_queue *priority_ready_queue[4];  
 pcb_queue *all_pcbs;
 pcb_queue *blocked_message_envelope;
 pcb_queue *blocked_receive;
 msg_queue *all_envelopes;
-msg_queue *free_envelopes
+msg_queue *free_envelopes;
 msg_queue *free_i_envelopes;
 #endif
 
