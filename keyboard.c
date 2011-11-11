@@ -57,7 +57,6 @@ int main (int argc, char * argv[])
 		    fid,           /* which file is associated with mmap */
 		    (off_t) 0);    /* Offset in page frame */
 
-	printf ("HELLO FROM KBD");
 
 	if (mmap_ptr == MAP_FAILED){
 		printf("Child memory map has failed, KB is aborting!\n");
@@ -66,12 +65,15 @@ int main (int argc, char * argv[])
 	
 	in_mem_p = (iobuf *) mmap_ptr; // now we have a shared memory pointer
 
-	// read keyboard
+
 	buf_index = 0;
 	in_mem_p->ok_flag = 0; 
-	do
-	{
+	
+	do{
+		
+		printf ("HELLO FROM KBD");
 		c = getchar();
+		printf ("Hello 123");
 		if ( c != '\n' ) {
 			if( buf_index < MAXCHAR-1 ) {
 				in_mem_p->indata[buf_index++] = c;

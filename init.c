@@ -69,7 +69,8 @@ void cleanup(){
 
 void die (int signal){
 	cleanup();
-	printf("\n\n Signal Received");
+	printf("Signal %i",signal);
+	printf("\n\n Signal Received\n");
 	exit(0);
 }
 
@@ -138,22 +139,20 @@ int main (){
 		exit(1);
 	}
 
-
-		sleep(1);
-		crt_pid = fork();
-		printf("%d",crt_pid);
-		if (crt_pid == 0){
-			execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
-			fprintf(stderr, "Can't exec crt, errno %d\n",errno);
-			cleanup();
-			exit(1);
-		}
-
 	sleep(1);
+	crt_pid = fork();
 
+	if (crt_pid == 0){
+		execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
+		fprintf(stderr, "Can't exec crt, errno %d\n",errno);
+		cleanup();
+		exit(1);
+	}
+	printf ("Hello1");
+	sleep(1);
+	printf ("Hello2");
 	kbd_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,kbd_fid,(off_t) 0);
 	crt_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,crt_fid,(off_t) 0);
-	
 	if (kbd_mmap == MAP_FAILED){
 		printf("Parent's memory map has failed, about to quit!\n");
 		die(0);
