@@ -22,7 +22,7 @@ Task Breakdown for Partial Implementation:
 - RTX C (init.c) - Jin ---------------------------------------------------> In progress - Debugging
 - Queue Implementation (queues.c)- Markus --------------------------------> In progress - Debugging
 - Primitives (primitives.c) - Markus -------------------------------------> In progress - Debugging
-- Process P (processP.c) - -----------------------------------------------> Not yet started.
+- Process P (processP.c) - Bhavik ----------------------------------------> In progress - Debugging
 - KBD uprocess (keyboard.c) - Milan --------------------------------------> In progress - Debugging
 - CRT uprocess (crt.c) - Milan -------------------------------------------> In progress - Debugging
 - KBD iprocess (iproc.c) - Jin -------------------------------------------> In progress - Debugging
