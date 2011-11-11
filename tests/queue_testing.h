@@ -13,3 +13,11 @@
 void print_pcb_queue(pcb_queue *Q);
 
 void print_pcb(pcb *to_print);
+
+void print_msg(Msg_Env *to_print);
+
+void print_msg_queue(msg_queue *Q);
+
+void print_msg_all_queue(msg_queue *Q);
+
+void print_rpq_test(pcb_queue *Q[]);

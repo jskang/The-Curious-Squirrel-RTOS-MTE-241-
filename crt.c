@@ -6,7 +6,7 @@
  *
  *
  */
-#include "rtx.h"
+#include "kbcrt.h"
 
 #include <stdio.h>
 #include <signal.h>
@@ -15,7 +15,6 @@
 #include <sys/wait.h>
 
 int bufsize = BUFFERSIZE;
-int buf_index = 0;
 
 void crt_die(int signal)
 {
@@ -25,7 +24,7 @@ void crt_die(int signal)
 int main (int argc, char *crt[])
 {
 	int parent_pid, fid;
-	caddr_t mmap_ptr;
+	caddr_t crt_mmap_ptr;
 	char c;
 
 	sigset(SIGINT,crt_die);
@@ -35,39 +34,28 @@ int main (int argc, char *crt[])
 
 	crt_mmap_ptr = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED, fid, (off_t) 0);
 
-    if (crt_mmap_ptr == MAP_FAILED)
-    {
-        printf("Child memory map has failed, CRT is aborting!\n");
-	    crt_die(0);
-    }
+	if (crt_mmap_ptr == MAP_FAILED){
+		printf("Child memory map has failed, CRT is aborting!\n");
+		crt_die(0);
+	}
 
-	outputbuf *in_Cmem;  // in CRT memory (shared)
-	in_Cmem = (inputbuf*) mmap_ptr; // now we have a shared memory pointer to the CRT shared memory
+	inputbuf *in_Cmem;  // in CRT memory (shared)
+	in_Cmem = (inputbuf*) crt_mmap_ptr; // now we have a shared memory pointer to the CRT shared memory
 
-	in_Cmem->ready_flag = 0;
+	in_Cmem->ok_flag = 0;
 
-	while(1)
-	{
-	    if(in_Cmem->outdata[buf_index] != NULL)  //if there is something to display, i.e. content in outdata[]
-	    {
-                printf("%s", in_Cmem->outdata[buf_index])
-                buf_index++;
-            }
-            else if(in_Cmem->outdata[buf_index] == NULL && buf_index > 0)  // for debugging, this will show the finish '!'
-            {
-                printf("!"); //this is stupid for but it shows when the outdata limit has been reached
-            }
-            else
-            {
-                printf("nothing to display");
-                in_Cmem->ready_flag=1;           // set ready status bit, ??
-                kill(parent_pid, SIGUSR2);    // send a signal to parent
-                buff_index = 0;               // reset count of buf_index
-		while(in_Cmem->ready_flag = 1) // checks to see if CRT is ready
-                {
-                   usleep(100000);
-                }
-            }
+	while(1){
+	    	if(in_Cmem->ok_flag) { //if there is something to display, i.e. content in outdata[]
+            		printf("%s", in_Cmem->indata);
+                	strcpy(in_Cmem->indata,"");
+                //reset everything in the memory buffer
+        	}
+
+        	else{
+                	printf("nothing to display"); //for debug
+                	kill(parent_pid, SIGUSR2);    // send a signal to parent
+                	usleep(10000);
+        	}
 	}
 
 }
