@@ -27,6 +27,7 @@ Comments: Global variables and struct definitions for Initialization
 #define M_TYPE_MSG_DELAY_BACK 7
 #define M_TYPE_WALL_CLOCK 8
 #define M_TYPE_WALL_CLOCK_SET 9
+#define M_TYPE_MSG_ACK 10
 
 // Global variables
 #define N_TOTAL_PCB 9
@@ -135,8 +136,6 @@ pcb_queue *blocked_receive;
 msg_queue *all_envelopes;
 msg_queue *free_envelopes
 msg_queue *free_i_envelopes;
-pcb * current_process;
-
 #endif
 
 
