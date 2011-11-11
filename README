@@ -1,16 +1,18 @@
-<<<<<<< HEAD
 README
 -------------------------------------------------------------------
 
-Questions:
--The code will be written in some IDE, any recommendations?
--When we do write the code, say in bloodshed, is the file in the folder
- going to be ourcode.cpp in our RTOS folder, and then we push and pull 
- this specific folder?
-	It's our code .c not cpp if you pull you'll see bunch of files
-	and you could edit that files but don't compile and just
-	push and pull those files rather than folders
--Don't ask questions on README this is not what it should be used for
+HAPPY REMEMBRANCE DAY!!!!
+GUYS A LOT HAS CHANGED OVER NIGHT PLEASE PULL BEFORE YOU DO ANYTHING
+CURRENTLY OUR PROGRAM FAILS WHEN THE I_PROCESS IS CALLED AND ME AND BHAVIK WILL BE LOOKING
+AT THAT LATER TODAY.
+
+MARKUS!!
+I HAVE COMMENTED OUT YOUR CODE IN THE PRIMITIVES BECAUSE WE DID NOT NEED IT FOR PARTIAL
+YOU SHOULD CREATE A SEPARATE FILE AND WORK ON THE PRIMITIVES AND MILAN HELP MARKUS AND
+SEE WHAT YOU CAN DO. YOU ARE ALWAYS WELCOME TO TRY TO DEBUG THE CODE. SEE YOU GUYS AT LIKE
+NOONISH
+
+JIN
 
 
 Updates:
