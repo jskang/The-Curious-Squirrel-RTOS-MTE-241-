@@ -34,10 +34,10 @@ int main (int argc, char *crt[])
 
 	crt_mmap_ptr = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED, fid, (off_t) 0);
 
-    if (crt_mmap_ptr == MAP_FAILED){
-        printf("Child memory map has failed, CRT is aborting!\n");
-	    crt_die(0);
-    }
+	if (crt_mmap_ptr == MAP_FAILED){
+		printf("Child memory map has failed, CRT is aborting!\n");
+		crt_die(0);
+	}
 
 	inputbuf *in_Cmem;  // in CRT memory (shared)
 	in_Cmem = (inputbuf*) crt_mmap_ptr; // now we have a shared memory pointer to the CRT shared memory
@@ -45,17 +45,17 @@ int main (int argc, char *crt[])
 	in_Cmem->ok_flag = 0;
 
 	while(1){
-	    if(in_Cmem->ok_flag) { //if there is something to display, i.e. content in outdata[]
-                printf("%s", in_Cmem->indata);
-                strcpy(in_Cmem->indata,"");
+	    	if(in_Cmem->ok_flag) { //if there is something to display, i.e. content in outdata[]
+            		printf("%s", in_Cmem->indata);
+                	strcpy(in_Cmem->indata,"");
                 //reset everything in the memory buffer
-        }
+        	}
 
-        else{
-                printf("nothing to display"); //for debug
-                kill(parent_pid, SIGUSR2);    // send a signal to parent
-                usleep(10000);
-        }
+        	else{
+                	printf("nothing to display"); //for debug
+                	kill(parent_pid, SIGUSR2);    // send a signal to parent
+                	usleep(10000);
+        	}
 	}
 
 }
