@@ -108,7 +108,8 @@ typedef struct Msg_Env{
      int time_stamp;                
      char message_type;            
      char flag;                    
-     char message[MESSAGE_SIZE];            
+     char message[MESSAGE_SIZE];
+     int size;
 }Msg_Env;
 
 //msg queue struct definition
