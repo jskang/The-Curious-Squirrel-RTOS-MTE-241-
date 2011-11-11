@@ -21,15 +21,13 @@ Task Breakdown for Partial Implementation:
 - KBD/CRT Header (kbcrt.h) - Bhavik --------------------------------------> In progress - Debugging
 - RTX C (init.c) - Jin ---------------------------------------------------> In progress - Debugging
 - Queue Implementation (queues.c)- Markus --------------------------------> In progress - Debugging
-- KBD handler (init.c) - Jin ---------------------------------------------> In progress - Debugging
-- CRT handler (init.c) - Jin ---------------------------------------------> In progress - Implementation
 - Primitives (primitives.c) - Markus -------------------------------------> In progress - Debugging
 - Process P (processP.c) - -----------------------------------------------> Not yet started.
-- KBD uprocess (keyboard.c) - Jin ----------------------------------------> In progress - Implementation
-- CRT uprocess (crt.c) - Milan -------------------------------------------> In progress - Implementation
-- KBD iprocess (iproc.c) - Jin -------------------------------------------> In progress - Implementation
-- CRT iprocess (iproc.c) - Bhavik ----------------------------------------> In progress - Implementation
-- MakeFile - Jin ---------------------------------------------------------> In progress - Implementation
+- KBD uprocess (keyboard.c) - Milan --------------------------------------> In progress - Debugging
+- CRT uprocess (crt.c) - Milan -------------------------------------------> In progress - Debugging
+- KBD iprocess (iproc.c) - Jin -------------------------------------------> In progress - Debugging
+- CRT iprocess (iproc.c) - Bhavik ----------------------------------------> In progress - Debugging
+- MakeFile - Jin ---------------------------------------------------------> In progress - Debugging
 
 
 DISCLAIMER
