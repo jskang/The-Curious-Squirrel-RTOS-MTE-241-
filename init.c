@@ -10,10 +10,13 @@ Comments:	Initializes everythang
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "demo.h"
 #include <sys/mman.h>
 #include <sys/wait.h>
 #include <stdio.h>
+
+#include "rtx.h"
+#include "kbcrt.h"
+#include "iproc.h"
 
 inputbuf *in_mem_p_kbd, *in_mem_p_crt;
 int kbd_pid, crt_pid;
@@ -71,24 +74,6 @@ void die (int signal){
 	exit(0);
 }
 
-void kbd_handler (int signum){
-	inputbuf command;
-	if (in_mem_p_kbd->indata[0] !='\0'){
-		strcpy(command.indata, in_mem_p_kbd->indata);
-		printf("Keybaord inpus was %s\n",command.indata);
-		in_mem_p_kbd->ok_flag=0;
-	}
-}
-
-void crt_handler (int signum){
-	inputbuf command;
-	if (in_mem_p_kbd->indata[0] != '\0'){
-		strcpy(command.indata, in_mem_p_kbd->indata);
-		printf("CRT input was %s\n", command.indata);
-		in_mem_p_kbd->ok_flag=0;
-	}
-}
-
 int main (){
 	
 	//handles all the signals
@@ -102,8 +87,8 @@ int main (){
 	sigset(SIGSEGV,die);
 	
 	//kbd handler signal
-	sigset(SIGUSR1,kbd_handler);
-	sigset(SIGUSR2,crt_handler);
+	sigset(SIGUSR1,kbd_i_process);
+	sigset(SIGUSR2,crt_i_process);
 	
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
@@ -152,17 +137,19 @@ int main (){
 		cleanup();
 		exit(1);
 	}
-	
-	sleep(1);
 
-	crt_pid = fork();
-
-	if (crt_pid == 0){
-		execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
-		fprintf(stderr, "Can't exec crt, errno %d\n",errno);
-		cleanup();
-		exit(1);
+	else {
+		sleep(1);	
+		crt_pid = fork();
+		if (crt_pid == 0){
+			execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
+			fprintf(stderr, "Can't exec crt, errno %d\n",errno);
+			cleanup();
+			exit(1);
+		}
 	}
+
+	sleep(1);
 
 	kbd_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,kbd_fid,(off_t) 0);
 	crt_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,crt_fid,(off_t) 0);
