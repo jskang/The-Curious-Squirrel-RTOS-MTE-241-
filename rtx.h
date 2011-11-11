@@ -134,4 +134,30 @@ queue *blocked_on_receiv_queuee;
 queue *interrupted_queue;
 queue *sleep_queue;
 */
+
+
+
+pcb_queue *priority_ready_queue[4];  
+
+pcb_queue *all_pcbs;
+				   
+pcb_queue *blocked_message_envelope;
+														
+pcb_queue *blocked_receive;
+																				  
+																				   
+msg_queue *all_envelopes;
+																										  
+msg_queue *free_envelopes;																																 
+																																  
+msg_queue *free_i_envelopes;
+
+pcb * current_process;
+
+
 #endif
+
+
+
+
+

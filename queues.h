@@ -7,7 +7,7 @@
  *
  */
 
-#define MAXQUEUESIZE 100
+
 #include "rtx.h"
 
 
@@ -23,7 +23,7 @@ pcb *dequeue(pcb_queue *Q);
 
 pcb *dequeue_selected_pcb(pcb_queue *Q, char desired_pcb);
 
-pcb *pcb_pointer(pcb_queue *Q, char indesired_pcb);
+pcb *pcb_pointer(char desired_pcb);
 
 void initialize_msg_queue(msg_queue *Q);
 
@@ -39,13 +39,9 @@ int delete_all_msg_queue (msg_queue *Q);
 
 Msg_Env *dequeue_selected_envelope(msg_queue *Q, int desired_pcb);
 
+int initialize_rpq_queue();
+
 int rpq_enqueue (pcb *ready_pcb);
 
-pcb *rpq_dequeue ();
-
-int initialize_rpq_queue(pcb_queue *Q[]);
-
-int test_rpq_enqueue (pcb_queue *Q[],pcb *ready_pcb);
-
-pcb* test_rpq_dequeue (pcb_queue *Q[]);
+pcb* rpq_dequeue ();
 

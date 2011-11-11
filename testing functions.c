@@ -66,6 +66,22 @@ void print_msg_queue(msg_queue *Q){
 }
 
 
+void print_msg_all_queue(msg_queue *Q){
+	if(Q == NULL){
+		printf("the queue is gone\n");
+		return;
+	}
+		
+	Msg_Env *current_msg = Q->head;
+	
+	if(current_msg == NULL)
+		printf("msg_queue == NULL\n");
+	
+	while(current_msg != NULL){
+		print_msg (current_msg);
+		current_msg = current_msg->env_all;
+	}
+}
 
 
 void print_rpq_test(pcb_queue *Q[]){

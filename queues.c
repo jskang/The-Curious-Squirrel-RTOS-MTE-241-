@@ -144,17 +144,16 @@ int delete_pcb_queue (pcb_queue *Q){
 }*/
 
 //this will return the pointer of a pcb specified by the id passed in (looks through the all_pcb_queue)
-pcb *pcb_pointer(pcb_queue *Q, char desired_pcb){
-	if(Q == NULL)
-		return NULL;
-	pcb *current_pcb=Q->head;
+pcb *pcb_pointer(char desired_pcb){
+	
+	pcb *current_pcb=all_pcbs->head;
 	int found =0;
 	while (current_pcb != NULL && found ==0){							//loops until found or looped throught the entire queue
 		if(current_pcb->pid == desired_pcb)
 			found=1;
 		
 		if(current_pcb->pid != desired_pcb)
-			current_pcb = current_pcb->next;
+			current_pcb = current_pcb->pcb_all;
 
 		
 	}
@@ -188,7 +187,7 @@ int msg_enqueue_all (msg_queue *Q, Msg_Env *chain_mail){
 	if(chain_mail == NULL)
 		return INVALID_MSG_POINTER;
 	
-	chain_mail->next=NULL;
+	chain_mail->env_all=NULL;
 	if(empty_msg_queue(Q)){						//if queue is currently empty head and tail point to same element
 		Q->head = chain_mail;
 		Q->tail = chain_mail;
@@ -239,132 +238,90 @@ Msg_Env *msg_dequeue(msg_queue *Q){
 	return front;
 }
 
-/*//this function will delete (free all memory) of a desird msg_queue ONLY USED WHEN TERMINATING RTX
-int delete_all_msg_queue (msg_queue *Q){
-	if (Q== NULL)
+//this function will delete (free all memory) of a desird Msg_env ONLY USED WHEN TERMINATING RTX
+/*int delete_msg_env (Msg_Env *message){
+	if (message== NULL)
 		return INVALID_MSG_POINTER;
-	
-	Msg_Env *current_msg = Q->head;
-	Msg_Env *next_msg;
-	
-	while(current_msg != NULL){									//will loop until all elements of the queue are freed
-		if(current_msg->next !=NULL)
-			return INVALID_MESSAGE_DELETE;						//CANT DELETE if the message is still owned by a pcb
-		
-		next_msg = current_msg->env_all;						//stores the next value of current_pcb so we dont lose the queue
-		free(current_msg->owner_id);
-		free(current_msg->sender_id);
-		free(current_msg->time_stamp);
-		free(current_msg->message_type);
-		free(current_msg->flag);
-		free(current_msg->message);
-		free(current_msg);										//frees the pcb we are currently looking at
-		current_msg = next_msg;						//goes to the next element
-	}
-	
-	free(Q);										//frees the memory of the actual 
-}*/
 
-//may get rid of this does not seem like it is needed
-/*Msg_Env *dequeue_selected_envelope(msg_queue *Q, int desired_pcb){
-	Msg_Env * current = Q->head;
-	Msg_Env *previous = NULL;
-	int found=0;
+	if (message->next != NULL)									//cant delete if it exists in a queue other than all msg env queue
+		return INVALID_MESSAGE_DELETE;
+
+		free(message->owner_id);
+		free(message->sender_id);
+		free(message->time_stamp);
+		free(message->message_type);
+		free(message->flag);
+		//free(message->message);
+		free(message);											//frees the message  we are currently looking at
+
+	return 1;
+}*/
+//this function will delete (free all memory) of a desird Msg_env ONLY USED WHEN TERMINATING RTX
+/*int delete_msg_all(msg_queue *Q)
+{
+	if (Q== NULL)
+		return INVALID_QUEUE_ERROR;
 	
-	if(current->pid == desired_pcb){									// if desired pcb is the first element needs to be treated differently
-		Q->head = current->next;										// head points tonext element
-		if(current->next == NULL)											// if desired pcb is the only element in the queue
-			Q->tail = NULL;
-	}
-	
-	else{
+	Msg_Env *current, *next;
+	current=Q->head;
+
+	while(current!=NULL){
+		next = current->next;
 		
-		while (current!= NULL || found == 0){	// searches throught the queue until reaches the end or finds a pcb with p_id as its pid
-			previous=current;
-			current=current->next;
-			
-			if (current->pid==desired_pcb){		//if the desired pcb is at the tail of the
-				previous->next=current->next;
-				if(previous->next == NULL)		//if tail was pointing at the desired pcb tail now needs to point to the previous pcb
-					Q->tail== previous;	
-				found == 1;						//exits the loop
-			}
-		}
-		
+		if(delete_msg_env(current)==INVALID_MESSAGE_DELETE)
+			return INVALID_MESSAGE_DELETE;
+		else
+			current=next;
 	}
+	free(Q);
 	
-	return current;
+	return 1;
 }*/
 
 /***************here is where the code for the ready process queue starts************************************/
-/*
-int rpq_enqueue (pcb *ready_pcb){
-	if (ready_pcb == NULL)
-		return INVALID_PID_ERROR;											
-	if (ready_pcb ->state != READY)
-		return INVALID_PCB_STATE_ERROR;
-	
-	enqueue(priority_ready_queue[ready_pcb->priority], ready_pcb);				//sends the queue of which has the priority of the pcb
-	return 1;
-}
 
-pcb* rpq_dequeue (){
+int initialize_rpq_queue(){
 
-	
-	int i=0;
-	while(!empty_queue(priority_ready_queue[i]))							//loops until a queue level is found whch contains elements
-		i++;
-	return dequeue(empty_queue(priority_ready_queue[i]);
-}
-
-*/
-//test rpq functions
-int initialize_rpq_queue(pcb_queue *Q[]){
-  	if (Q== NULL)
-		return INVALID_QUEUE_ERROR;
 	
 	int i;
 	for(i=0;i<4;i++){
-		Q[i] = (pcb_queue*)malloc(sizeof(pcb_queue));
-		Q[i]->head = NULL;	//queue start with zero elements
-		Q[i]->tail = NULL;
+		priority_ready_queue[i] = (pcb_queue*)malloc(sizeof(pcb_queue));
+		priority_ready_queue[i]->head = NULL;	//queue start with zero elements
+		priority_ready_queue[i]->tail = NULL;
 	}
 	return 1;
 }
 
-int test_rpq_enqueue (pcb_queue *Q[],pcb *ready_pcb){
-	if (Q== NULL)
-		return INVALID_QUEUE_ERROR;
+int rpq_enqueue (pcb *ready_pcb){
+
 	if (ready_pcb == NULL)
 		return INVALID_PCB_POINTER;	
-	if(ready_pcb->pid >50 || ready_pcb->pid<0)
+	if(ready_pcb->pid >9 || ready_pcb->pid<0)
 		return INVALID_PID_ERROR;
 	if (ready_pcb ->state != READY)
 		return INVALID_PCB_STATE_ERROR;
 	
 		ready_pcb->next = NULL;		//makes sure that the new pcb doesnt point to anything else
 	
-	if(Q[ready_pcb->priority]->head == NULL){		//if queue is currently empty head and tail point to same element
-		Q[ready_pcb->priority]->head = ready_pcb;
-		Q[ready_pcb->priority]->tail = ready_pcb;
+	if(priority_ready_queue[ready_pcb->priority]->head == NULL){		//if queue is currently empty head and tail point to same element
+		priority_ready_queue[ready_pcb->priority]->head = ready_pcb;
+		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;
 	}
 	else{
-		Q[ready_pcb->priority]->tail->next = ready_pcb;    //pcb who is currently is at end now points to the new pcb
-		Q[ready_pcb->priority]->tail = ready_pcb;			//tail points to new pcb
+		priority_ready_queue[ready_pcb->priority]->tail->next = ready_pcb;    //pcb who is currently is at end now points to the new pcb
+		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;			//tail points to new pcb
 	}
 	return 1;	
 
 }
 
-pcb* test_rpq_dequeue (pcb_queue *Q[]){
-	if(Q == NULL)
-		return NULL;
+pcb* rpq_dequeue (){
 	int i=0;
-	while(empty_pcb_queue(Q[i])==1)							//loops until a queue level is found whch contains elements
+	while(empty_pcb_queue(priority_ready_queue[i])==1)							//loops until a queue level is found whch contains elements
 		i++;
 	
 		
-	return dequeue(Q[i]);
+	return dequeue(priority_ready_queue[i]);
 }
 	
 
