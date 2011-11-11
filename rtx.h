@@ -119,7 +119,7 @@ typedef struct msg_queue{
 
 
 // Global Message Trace
-/*
+
 pcb *current_process; //global variables
 
 msg_trace *hello;
@@ -133,5 +133,5 @@ queue *blocked_on_resource_queue;
 queue *blocked_on_receiv_queuee;
 queue *interrupted_queue;
 queue *sleep_queue;
-*/
+
 #endif
