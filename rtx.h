@@ -133,9 +133,6 @@ queue *blocked_on_resource_queue;
 queue *blocked_on_receiv_queuee;
 queue *interrupted_queue;
 queue *sleep_queue;
-<<<<<<< HEAD
-=======
-*/
 
 
 
