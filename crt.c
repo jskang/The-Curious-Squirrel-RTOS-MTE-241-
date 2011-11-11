@@ -1,86 +1,73 @@
 /*
  * keyboard.c
  *
- * Keyboard Reader - emulate a hardware interrupt
- * read the keyboard and signal the parent process when a key is received
+ * CRT Display - emulate a hardware interrupt
+ * display and signal the parent process when displayed
  *
  *
  */
+#include "rtx.h"
 
 #include <stdio.h>
 #include <signal.h>
-#include "demo.h"
 #include <fcntl.h>
-
 #include <sys/mman.h>
 #include <sys/wait.h>
 
 int bufsize = BUFFERSIZE;
-int buf_index;
+int buf_index = 0;
 
-// do any necessary cleanup before exitting
-// ( in this case, there is no cleanup to do)
-// Basically, we rely on the parent process to cleanup shared memory
-void in_die(int signal)
+void crt_die(int signal)
 {
   exit(0);
 }
 
-
-int main (int argc, char * argv[])
+int main (int argc, char *crt[])
 {
 	int parent_pid, fid;
-
 	caddr_t mmap_ptr;
-	inputbuf * in_mem_p;
 	char c;
 
+	sigset(SIGINT,crt_die);
 
-	// if parent tells us to terminate, then clean up first
-	sigset(SIGINT,in_die);
+	sscanf(crt[1], "%d", &parent_pid );
+	sscanf(crt[2], "%d", &fid );
 
-	// get id of process to signal when we have input
-	// and the file id of the memory mapped file
-	// i.e. process input arguments 
-	sscanf(argv[1], "%d", &parent_pid );
-	sscanf(argv[2], "%d", &fid );  // get the file id
+	crt_mmap_ptr = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED, fid, (off_t) 0);
 
-	// attach to shared memory so we can pass input to 
-	// keyboard interrupt handler
-	
-	mmap_ptr = mmap((caddr_t) 0,   /* Memory Location, 0 lets O/S choose */
-		    bufsize,/* How many bytes to mmap */
-		    PROT_READ | PROT_WRITE, /* Read and write permissions */
-		    MAP_SHARED,    /* Accessible by another process */
-		    fid,           /* which file is associated with mmap */
-		    (off_t) 0);    /* Offset in page frame */
-    if (mmap_ptr == MAP_FAILED){
-      printf("Child memory map has failed, KB is aborting!\n");
-	  in_die(0);
+    if (crt_mmap_ptr == MAP_FAILED)
+    {
+        printf("Child memory map has failed, CRT is aborting!\n");
+	    crt_die(0);
     }
-	
-	in_mem_p = (inputbuf *) mmap_ptr; // now we have a shared memory pointer
 
-	// read keyboard
-	buf_index = 0;
-	in_mem_p->ok_flag = 0; 
-	do
+	outputbuf *in_Cmem;  // in CRT memory (shared)
+	in_Cmem = (inputbuf*) mmap_ptr; // now we have a shared memory pointer to the CRT shared memory
+
+	in_Cmem->ready_flag = 0;
+
+	while(1)
 	{
-		c = getchar();
-		if ( c != '\n' ) {
-					if( buf_index < MAXCHAR-1 ) {
-						in_mem_p->indata[buf_index++] = c;
-					} 
-				} else {
-					in_mem_p->indata[buf_index] = '\0';
-					in_mem_p->ok_flag = 1;  //set ready status bit
-					kill(parent_pid,SIGUSR1); //send a signal to parent	
-					buf_index = 0;  // for now, just restart
-					while( in_mem_p->ok_flag == 1)
-						usleep(100000);
-				}
+	    if(in_Cmem->outdata[buf_index] != NULL)  //if there is something to display, i.e. content in outdata[]
+	    {
+                printf("%s", in_Cmem->outdata[buf_index])
+                buf_index++;
+            }
+            else if(in_Cmem->outdata[buf_index] == NULL && buf_index > 0)  // for debugging, this will show the finish '!'
+            {
+                printf("!"); //this is stupid for but it shows when the outdata limit has been reached
+            }
+            else
+            {
+                printf("nothing to display");
+                in_Cmem->ready_flag=1;           // set ready status bit, ??
+                kill(parent_pid, SIGUSR2);    // send a signal to parent
+                buff_index = 0;               // reset count of buf_index
+		while(in_Cmem->ready_flag = 1) // checks to see if CRT is ready
+                {
+                   usleep(100000);
+                }
+            }
 	}
-		
-	while(1);  //an infinite loop - exit when parent signals us
 
-} // keyboard
+}
