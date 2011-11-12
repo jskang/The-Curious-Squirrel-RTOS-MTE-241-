@@ -98,7 +98,6 @@ int initialize_table(){
 	printf("Hello 2");
 	int i;
        
-        pcbList[TEMP_NUM_PROCESS];
         for(i = 0;i<TEMP_NUM_PROCESS;i++){
                 pcbList[i] = (pcb*)(malloc(sizeof(pcb)));
                 pcbList[i]->inbox = (msg_queue*)(malloc(sizeof(msg_queue)));
@@ -115,6 +114,7 @@ int initialize_table(){
 	
 	printf ("Hello 3");
 	Msg_Env* tempMsgEnv;
+	tempMsgEnv = (Msg_Env*) malloc (sizeof(Msg_Env));
 	msg_enqueue(pcbList[PID_PROCESS_P]->inbox,tempMsgEnv);
 	return 1;
 }

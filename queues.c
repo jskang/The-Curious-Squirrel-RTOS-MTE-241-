@@ -263,7 +263,7 @@ int msg_enqueue(msg_queue *Q, Msg_Env *chain_mail){
 		return INVALID_MSG_POINTER;
 	
 	chain_mail->next=NULL;
-	if(empty_msg_queue(Q)){						//if queue is currently empty head and tail point to same element
+	if(empty_msg_queue(Q)){	//if queue is currently empty head and tail point to same element
 		Q->head = chain_mail;
 		Q->tail = chain_mail;
 	}

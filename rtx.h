@@ -128,7 +128,7 @@ typedef struct msg_queue{
 }msg_queue;
 
 typedef struct initialization_table{
-  char pid;
+	char pid;
         char state;
         char priority;
 }initialization_table;
@@ -148,6 +148,7 @@ extern msg_queue *all_i_envelopes;
 extern msg_queue *free_i_envelopes;
 
 extern pcb *pcbList[TEMP_NUM_PROCESS];
+
 //io buffer global variable
 extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
 #endif
