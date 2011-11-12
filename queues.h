@@ -13,7 +13,7 @@ int initialize_pcb(pcb *to_be_initialized);
 
 int initialize_msg_env(Msg_Env *to_be_initialized);		//may not need this one
 
-void initialize_queue(pcb_queue *Q);
+int initialize_queue(pcb_queue *Q);
 
 int empty_pcb_queue(pcb_queue *Q);
 

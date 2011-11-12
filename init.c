@@ -1,10 +1,10 @@
-	/*****************************************************************************************************
+/************************************************************************************************
 Filename: 	init.c
 Author:		JinSung Kang
 Revision:	1.0
 Date:		November 6, 2011
 Comments:	Initializes everythang
-*****************************************************************************************************/
+**********************************************************************************************/
 
 #include <stdlib.h>
 #include <signal.h>
@@ -75,6 +75,22 @@ void die (int signal){
 	exit(0);
 }
 
+void initialize_data_structures (){
+	int i;
+
+	for (i = 0; i < 4; i++){
+		priority_ready_queue[i] = (pcb_queue*)(malloc(sizeof(pcb_queue)));
+	}
+
+	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
+	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
+	sleep_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));
+
+	all_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	all_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	free_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+}
 
 int init (){
 	

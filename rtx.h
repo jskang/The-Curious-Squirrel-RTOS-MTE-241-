@@ -19,6 +19,8 @@ Comments: Global variables and struct definitions for Initialization
 #include <sys/shm.h>
 #include <errno.h>
 
+#include "kbcrt.h"
+
 /* Decalare global constants*/
 // Message Types
 #define M_TYPE_EMPTY 0
@@ -40,15 +42,16 @@ Comments: Global variables and struct definitions for Initialization
 #define MESSAGE_SIZE 129
 
 // Process IDs
-#define PID_PROCESS_A 0
-#define PID_PROCESS_B 1
-#define PID_PROCESS_C 2
-#define PID_PROCESS_CCI 3
-#define PID_PROCESS_NULL 4
-#define PID_PROCESS_CLOCK 5
-#define PID_I_PROCESS_CRT 6
-#define PID_I_PROCESS_KBD 7
-#define PID_I_PROCESS_TIMER 8
+#define PID_PROCESS_P 0		//only for partial implementation
+#define PID_I_PROCESS_CRT 1	//PID is 0 for final
+#define PID_I_PROCESS_KBD 2	//PID is 1 for final
+#define PID_I_PROCESS_TIMER 2
+#define PID_PROCESS_A 3
+#define PID_PROCESS_B 4
+#define PID_PROCESS_C 5
+#define PID_PROCESS_CCI 6
+#define PID_PROCESS_NULL 7
+#define PID_PROCESS_CLOCK 8
 
 // Process States
 #define READY 0
@@ -58,6 +61,7 @@ Comments: Global variables and struct definitions for Initialization
 #define INTERRUPTED 4
 #define SLEEP 5
 #define NO_BLK_RCV 6 //state needed for partial implimentation, not used for actual project
+#define I_PROCESS 7
 
 // Error Codes
 #define DESTINATION_PID_ERROR -100
@@ -87,8 +91,7 @@ typedef struct msg_trace{
 
 // PCB Struct
 typedef struct pcb{
-	 struct pcb *next;            
-     struct pcb *pcb_all;            
+     struct pcb *next;            
      char pid;
      char state;            
      char priority;            
@@ -128,21 +131,17 @@ typedef struct msg_queue{
 // Global Message Trace
 
 extern pcb *current_process; //global variables
-extern pcb_queue *all_pcbs_queue;
-extern pcb_queue *blocked_on_resource_queue;
-extern pcb_queue *blocked_on_receive_queue;
-extern pcb_queue *interrupted_queue;
-extern pcb_queue *sleep_queue;
+
 extern pcb_queue *priority_ready_queue[4];  
-extern pcb_queue *all_pcbs;
 extern pcb_queue *blocked_message_envelope;
-extern pcb_queue *blocked_receive;
+extern pcb_queue *blocked_message_receive;
+extern pcb_queue *sleep_queue;
+
 extern msg_queue *all_envelopes;
 extern msg_queue *free_envelopes;
+extern msg_queue *all_i_envelopes;
 extern msg_queue *free_i_envelopes;
+
+//io buffer global variable
+extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
 #endif
-
-
-
-
-

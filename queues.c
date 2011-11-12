@@ -13,77 +13,112 @@
 #include <stdlib.h>
 #include "queues.h"
 int initialize_pcb(pcb *to_be_initialized){
-	if(to_be_initialized == NULL)
+
+	if(to_be_initialized == NULL){
 		return INVALID_PCB_POINTER;
-	to_be_initialized->next=NULL;											//new pcbs next always points to null
-	enqueue_all(to_be_initialized);											//adds process to the all pcb queue
-	to_be_initialized->inbox= (msg_queue*)malloc(sizeof(struct msg_queue));	//allocates space for inbox message queue
-	initialize_msg_queue(to_be_initialized->inbox);							//makes the inboxs head and tail point to null
+	}
+
+	to_be_initialized->next=NULL;	//new pcbs next always points to null
+	enqueue_all(to_be_initialized);	//adds process to the all pcb queue
+
+	//allocates space for inbox message queue
+	to_be_initialized->inbox= (msg_queue*)malloc(sizeof(struct msg_queue));
+
+	//makes the inboxs head and tail point to null
+	initialize_msg_queue(to_be_initialized->inbox);
 	
 	return 1;
 }
 
 int initialize_msg_env(Msg_Env *to_be_initialized){
-	if(to_be_initialized==NULL)
+
+	if(to_be_initialized==NULL) {
 		return INVALID_MSG_POINTER;
-	
-	to_be_initialized->next = NULL;											//new message envelope next always point to null
-	msg_enqueue_all(to_be_initialized);										// add msg_env to the all envelope queue
+	}
+
+	//new message envelope next always point to null
+	to_be_initialized->next = NULL;
+
+	// add msg_env to the all envelope queue
+	msg_enqueue_all(to_be_initialized);
 	return 1;
 }
 
-
+/*****************************************************************************************
 //here are pcb specific queue functions 
-
-void initialize_queue(pcb_queue *Q){
-	if(Q == NULL)
-		return;
+****************************************************************************************/
+int initialize_queue (pcb_queue *Q){
+	if(Q == NULL){
+		return 0;
+	}	
 	
   	Q->head = NULL;	//queue start with zero elements
 	Q->tail = NULL;
+	return 1;
 }
 
 int empty_pcb_queue(pcb_queue *Q){
-	if(Q == NULL)
+	if(Q == NULL){
 		return INVALID_QUEUE_ERROR;
-	if (Q->head == NULL)
-		return 1;						//queue is empty
-	else
-		return 0;						//false queue is not empty
+	}
+
+	if (Q->head == NULL){
+		//queue is empty
+		return 1;
+	}
+
+	else{
+		//false queue is not empty
+		return 0;
+	}
 }
 
+/*
 int enqueue_all(pcb *new_pcb){
-	if(all_pcbs == NULL)
+	if( == NULL)
 		return INVALID_QUEUE_ERROR;
 	if(new_pcb == NULL)
 		return INVALID_PCB_POINTER;
 	
 	new_pcb->pcb_all = NULL;
-	if(empty_pcb_queue(all_pcbs)){		//if queue is currently empty head and tail point to same element
+	
+	//if queue is currently empty head and tail point to same element
+	if(empty_pcb_queue(all_pcbs)){	
 		all_pcbs->head = new_pcb;
 		all_pcbs->tail = new_pcb;
 	}
+
 	else{
-		all_pcbs->tail->pcb_all = new_pcb;    //pcb who is currently is at end now points to the new pcb
-		all_pcbs->tail = new_pcb;			//tail points to new pcb
+		//pcb who is currently is at end now points to the new pcb
+		all_pcbs->tail->pcb_all = new_pcb;
+		all_pcbs->tail = new_pcb;	//tail points to new pcb
 	}
 	return 1;	
-	
 }
+*/
 
 int enqueue(pcb_queue *Q, pcb *new_pcb){
-	if(Q == NULL)
+	if(Q == NULL){
 		return INVALID_QUEUE_ERROR;
-	if(new_pcb == NULL)
+	}
+
+	if(new_pcb == NULL){
 		return INVALID_PCB_POINTER;
-	new_pcb->next = NULL;		//makes sure that the new pcb doesnt point to anything else
-	if(empty_pcb_queue(Q)){		//if queue is currently empty head and tail point to same element
+	}
+	
+	//makes sure that the new pcb doesnt point to anything else
+	new_pcb->next = NULL;
+	
+	//if queue is currently empty head and tail point to same element
+	if(empty_pcb_queue(Q)){
 		Q->head = new_pcb;
 		Q->tail = new_pcb;
 	}
+
 	else{
-		Q->tail->next = new_pcb;    //pcb who is currently is at end now points to the new pcb
-		Q->tail = new_pcb;			//tail points to new pcb
+		//pcb who is currently is at end now points to the new pcb
+		Q->tail->next = new_pcb;
+		Q->tail = new_pcb;		//tail points to new pcb
 	}
 	return 1;	
 	
@@ -92,60 +127,68 @@ int enqueue(pcb_queue *Q, pcb *new_pcb){
 
 //this will take first element out of the queue and return pointer to said element
 pcb *dequeue(pcb_queue *Q){
-	if(Q == NULL)
+	if(Q == NULL){
 		return NULL;
+	}
+
 	pcb *front= Q->head;
 	Q->head = Q->head->next;
 	
-	if(Q->head == NULL)								//if the last item is being dequeued
+	if(Q->head == NULL){			//if the last item is being dequeued
 		Q->tail==NULL;
-	
+	}
+
 	front->next == NULL;
 	return front;
 }
 
 //this dequeue remove a specified process from the queue, pid of process which is to be removed is passed to this function
 pcb *dequeue_selected_pcb(pcb_queue *Q, char desired_pcb){				
-	if(Q == NULL)
+	if(Q == NULL){
 		return NULL;
-	if(empty_pcb_queue(Q))
+	}
+
+	if(empty_pcb_queue(Q)){
 		return NULL;
-	if(desired_pcb >9 || desired_pcb<0 )
+	}
+
+	if(desired_pcb >9 || desired_pcb<0 ){
 		return NULL;
+	}
 	
 	pcb *current_pcb = Q->head;
 	pcb *previous_pcb;
 	int pcb_found=0;
 
-	
-	
 	if(current_pcb->pid == desired_pcb)    // if desired pcb is the first element
 		current_pcb=dequeue(Q);
 	else{
+		//loops until found or looped throught the entire queue
+		while (current_pcb != NULL && pcb_found==0){
 		
-	
-			while (current_pcb != NULL && pcb_found==0){							//loops until found or looped throught the entire queue
-		
-				if(current_pcb->pid != desired_pcb)
-					{
-					previous_pcb = current_pcb;
-					current_pcb = current_pcb->next;
-					}
-		
-		
-				else									
-					{
-					pcb_found=1;
-					previous_pcb->next = current_pcb->next;							//the one behind the one we remove point to the pcb after (jumps it)
-					if(current_pcb->next == NULL)									//if the pcb we are looking for is the last pcb
-						Q->tail=previous_pcb;										//sets tail to second last pcb
-					current_pcb->next == NULL;										//current_pcb no longer looks at anything
-					}	
-
-		
+			if(current_pcb->pid != desired_pcb){
+				previous_pcb = current_pcb;
+				current_pcb = current_pcb->next;
 			}
+	
+		
+			else{
+				pcb_found=1;
+				//the one behind the one we remove point to the pcb after
+				// (jumps it)
+				previous_pcb->next = current_pcb->next;
+				//if the pcb we are looking for is the last pcb
+				if(current_pcb->next == NULL){
+					//sets tail to second last pcb
+					Q->tail=previous_pcb;
+				}
+				//current_pcb no longer looks at anything
+				current_pcb->next == NULL;
+			}	
+
 		}
-		return current_pcb;
+	}
+	return current_pcb;
 	
 }
 
@@ -165,22 +208,10 @@ int delete_pcb_queue (pcb_queue *Q){
 }*/
 
 //this will return the pointer of a pcb specified by the id passed in (looks through the all_pcb_queue)
-pcb *pcb_pointer(char desired_pcb){
-	
-	pcb *current_pcb = all_pcbs->head;
-	int found =0;
-	while (current_pcb != NULL && found ==0){							//loops until found or looped throught the entire queue
-		if(current_pcb->pid == desired_pcb)
-			found=1;
-		
-		if(current_pcb->pid != desired_pcb)
-			current_pcb = current_pcb->pcb_all;
-
-		
+pcb* pcb_pointer(char desired_pcb){
+	if (pcbList[desired_pcb]){
+		return pcbList[desired_pcb];
 	}
-	return current_pcb;
-	
-	
 }
 
 /************* here is where message envelope queue functions begin*******************/
