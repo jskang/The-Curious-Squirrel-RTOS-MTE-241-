@@ -6,11 +6,12 @@
 void processP(){
 	printf("HIIIIIIIII");
 	const tWait = 500000;	// rcv loop wait time in usec, appriox value
-	Msg_Env* env = pcbList[PID_PROCESS_P]->inbox->head;
+	Msg_Env* env = msg_dequeue( pcbList[PID_PROCESS_P]->inbox);
 
-	{
+	do{
 		get_console_chars(env);		// keyboard input.
-		env = (Msg_Env*) receive_message();
+		env = receive_message();
+		
 		while (env == NULL){
 			usleep(tWait);
 			env = (Msg_Env*) receive_message();
