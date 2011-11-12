@@ -7,6 +7,7 @@ void processP(){
 	printf("HIIIIIIIII");
 	const tWait = 500000;	// rcv loop wait time in usec, appriox value
 	Msg_Env* env = pcbList[PID_PROCESS_P]->inbox->head;
+
 	{
 		get_console_chars(env);		// keyboard input.
 		env = (Msg_Env*) receive_message();
@@ -14,7 +15,7 @@ void processP(){
 			usleep(tWait);
 			env = (Msg_Env*) receive_message();
 		}
-		
+		printf("received message\n");
 		send_console_chars(env);	// CRT output, wait for acknowledgement.
 		env = (Msg_Env*)receive_message();
 		while(env == NULL){

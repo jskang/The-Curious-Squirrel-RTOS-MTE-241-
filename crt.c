@@ -45,7 +45,7 @@ int main (int argc, char * argv[]){
 	do{
 		kill(parent_pid, SIGUSR2);
 		usleep(10000);
-		printf (" 1 second ");
+		//printf (" 1 second ");
 	    	if(in_mem_p->ok_flag) { //if there is something to display, i.e. content in outdata[]
             		printf("%s", in_mem_p->indata);
                 	strcpy(in_mem_p->indata,"");
