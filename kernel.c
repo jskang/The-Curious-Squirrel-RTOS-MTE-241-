@@ -31,7 +31,6 @@ iobuf *in_mem_p_kbd, *out_mem_p_crt;
 int main (void){
 
 	init();
-	printf("init complete \n");
 	processP();
 	return EXIT_SUCCESS;
 

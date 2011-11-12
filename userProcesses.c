@@ -4,7 +4,7 @@
 #include "userProcesses.h"
 
 void processP(){
-	printf("HIIIIIIIII");
+
 	const tWait = 500000;	// rcv loop wait time in usec, appriox value
 	Msg_Env* env = msg_dequeue( pcbList[PID_PROCESS_P]->inbox);
 

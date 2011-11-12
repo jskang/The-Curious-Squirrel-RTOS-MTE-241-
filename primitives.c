@@ -20,7 +20,7 @@ int request_message_env(){
 */
 
 int send_message(char dest_process_id, Msg_Env *msg_envelope){
-printf("at send message\n");	
+	
 	if (msg_envelope == NULL){
 		printf("null message\n");		
 		return INVALID_MESSAGE_PTR_ERROR;

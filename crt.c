@@ -47,7 +47,7 @@ int main (int argc, char * argv[]){
 		usleep(10000);
 
 	    	if(in_mem_p->ok_flag == 1) { //if there is something to display, i.e. content in outdata[]
-            		printf("printing %s", in_mem_p->indata);
+            		printf("\nOutput: %s\n\n", in_mem_p->indata);
 			fflush(stdout);
                 	strcpy(in_mem_p->indata,"");
 			in_mem_p->length = 0;

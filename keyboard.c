@@ -29,7 +29,6 @@ void in_die(int signal)
 
 
 int main (int argc, char * argv[]){
-	printf ("Hello from keyboard u process");
 	int parent_pid, fid;
 
 	caddr_t mmap_ptr;
