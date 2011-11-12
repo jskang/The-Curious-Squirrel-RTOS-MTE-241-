@@ -40,7 +40,7 @@ Comments: Global variables and struct definitions for Initialization
 #define N_MSG_ENV 30
 #define N_I_MSG_ENV 30
 #define MESSAGE_SIZE 129
-
+#define TEMP_NUM_PROCESS 3
 // Process IDs
 #define PID_PROCESS_P 0		//only for partial implementation
 #define PID_I_PROCESS_CRT 1	//PID is 0 for final
@@ -127,6 +127,11 @@ typedef struct msg_queue{
 	char n_elements;
 }msg_queue;
 
+typedef struct initialization_table{
+  char pid;
+        char state;
+        char priority;
+}initialization_table;
 
 // Global Message Trace
 
@@ -142,6 +147,7 @@ extern msg_queue *free_envelopes;
 extern msg_queue *all_i_envelopes;
 extern msg_queue *free_i_envelopes;
 
+extern pcb *pcbList[TEMP_NUM_PROCESS];
 //io buffer global variable
 extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
 #endif

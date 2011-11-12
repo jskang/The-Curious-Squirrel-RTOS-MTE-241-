@@ -58,7 +58,8 @@ int initialization(){
 	tempNumProcess = 3; // Temporary number of processes for partial implementation.
 	pcb* pcbList[tempNumProcess];
 	for(i = 0;i<tempNumProcess;i++){
-		pcbList[i] = (pcb*)malloc(sizeof(pcb));
+		pcbList[i] = (pcb*)(malloc(sizeof(pcb)));
+		pcbList[i]->inbox = (msg_queue*)(malloc(sizeof(msg_queue)));
 		if(pcbList[i] == NULL){
 			return INVALID_QUEUE_ERROR;
 		}		
@@ -66,9 +67,8 @@ int initialization(){
 		pcbList[i]->state = i_table[i].state;
 		pcbList[i]->priority = i_table[i].priority;
 		pcbList[i]->next = NULL;
-		// pcbList[i]->pcb_all = 
-		// pcbList[i]->inbox->head = NULL;
-		// pcbList[i]->inbox->tail = NULL;
+		pcbList[i]->inbox->head = NULL;
+		pcbList[i]->inbox->tail = NULL;
 	}
 	
 	Msg_Env* tempMsgEnv;

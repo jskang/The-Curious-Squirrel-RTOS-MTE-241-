@@ -24,10 +24,12 @@ msg_queue *free_envelopes;
 msg_queue *all_i_envelopes;
 msg_queue *free_i_envelopes;
 
+pcb* pcbList[TEMP_NUM_PROCESS];
+
 iobuf *in_mem_p_kbd, *out_mem_p_crt;
 
 int main (void){
-
+	printf ("hello");
 	init();
 
 	return EXIT_SUCCESS;

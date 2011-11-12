@@ -75,12 +75,58 @@ void die (int signal){
 	exit(0);
 }
 
+int initialize_table(){
+	printf("Hello 1");
+	initialization_table i_table[N_TOTAL_PCB];	
+        // Process P only required for partial implementation.
+        i_table[0].pid = PID_PROCESS_P;
+        i_table[0].state = NO_BLK_RCV;
+        i_table[0].priority = 0;
+
+        i_table[1].pid = PID_I_PROCESS_CRT;
+        i_table[1].state = I_PROCESS;
+        i_table[1].priority = 0;
+
+        i_table[2].pid = PID_I_PROCESS_KBD;
+        i_table[2].state = I_PROCESS;
+        i_table[2].priority = 0;
+
+        i_table[3].pid = PID_I_PROCESS_TIMER;
+        i_table[3].state = I_PROCESS;
+        i_table[3].priority = 0;
+	
+	printf("Hello 2");
+	int i;
+       
+        pcbList[TEMP_NUM_PROCESS];
+        for(i = 0;i<TEMP_NUM_PROCESS;i++){
+                pcbList[i] = (pcb*)(malloc(sizeof(pcb)));
+                pcbList[i]->inbox = (msg_queue*)(malloc(sizeof(msg_queue)));
+                if(pcbList[i] == NULL){
+                        return INVALID_QUEUE_ERROR;
+                }
+                pcbList[i]->pid = i_table[i].pid;
+                pcbList[i]->state = i_table[i].state;
+                pcbList[i]->priority = i_table[i].priority;
+                pcbList[i]->next = NULL;
+                pcbList[i]->inbox->head = NULL;
+                pcbList[i]->inbox->tail = NULL;
+        }
+	
+	printf ("Hello 3");
+	Msg_Env* tempMsgEnv;
+	msg_enqueue(pcbList[PID_PROCESS_P]->inbox,tempMsgEnv);
+	return 1;
+}
+
+
 void initialize_data_structures (){
 	int i;
-
+	printf ("Hello 4");
 	for (i = 0; i < 4; i++){
 		priority_ready_queue[i] = (pcb_queue*)(malloc(sizeof(pcb_queue)));
 	}
+	printf ("Hello 5");
 
 	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
 	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
@@ -90,10 +136,12 @@ void initialize_data_structures (){
 	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	all_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	free_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	printf("Hello 6");
 }
 
 int init (){
-	
+	initialize_data_structures();
+	initialize_table();
 	//handles all the signals
 	sigset(SIGINT,die);
 	sigset(SIGBUS,die);

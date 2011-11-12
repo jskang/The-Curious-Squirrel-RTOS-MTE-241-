@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "queues.h"
+/*
 int initialize_pcb(pcb *to_be_initialized){
 
 	if(to_be_initialized == NULL){
@@ -29,6 +30,7 @@ int initialize_pcb(pcb *to_be_initialized){
 	
 	return 1;
 }
+*/
 
 int initialize_msg_env(Msg_Env *to_be_initialized){
 
