@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS= -c
+CFLAGS= -c -g
 LINK = gcc
 LNFLAGS = -g
 
@@ -9,13 +9,13 @@ all: init keyboard crt
 
 #make executables
 init: $(OBJS) 
-	$(LINK) -o rtx $(OBJS)
+	$(LINK) $(LNFLAGS) -o rtx $(OBJS)
 
 keyboard: keyboard.o
-	$(LINK)  -o $@ keyboard.o -lrt
+	$(LINK) $(LNFLAGS)  -o $@ keyboard.o -lrt
 
 crt: crt.o
-	$(LINK) -o $@ crt.o -lrt
+	$(LINK) $(LNFLAGS)  -o $@ crt.o -lrt
 
 #compilation
 
