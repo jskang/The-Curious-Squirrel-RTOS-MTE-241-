@@ -1,4 +1,4 @@
-/*****************************************************************************************************
+	/*****************************************************************************************************
 Filename: 	init.c
 Author:		JinSung Kang
 Revision:	1.0
@@ -77,39 +77,6 @@ void die (int signal){
 }
 
 
-void kbd_handler(int signum){
-        iobuf command;
-	printf("debug_kbd_handler \n");
-        // copy input buffer
-        if (in_mem_p_kbd->indata[0] != '\0'){
-            strcpy(command.indata,in_mem_p_kbd->indata);
-
-            // we should parse the input string and execute the command given,
-            //  but for now we just echo the input
-            // 
-            printf("Keyboard input was: %s\n",command.indata);
-            in_mem_p_kbd->ok_flag = 0;  // tell child that the buffer has been emptied
-
-        }
-
-}
-
-void crt_handler(int signum){
-
-	iobuf command;
-	out_mem_p_crt->indata[0] = 'a';
-
-        // copy input buffer
-        if (out_mem_p_crt->indata[0] != '\0'){
-            strcpy(command.indata,out_mem_p_crt->indata);
-
-            printf("Keyboard input was: %s\n",out_mem_p_crt->indata);
-            out_mem_p_crt->ok_flag = 0;  // tell child that th buffer has been emptied
-        }
-}
-
-
-
 int main (){
 	
 	//handles all the signals
@@ -121,11 +88,11 @@ int main (){
 	sigset(SIGABRT,die);
 	sigset(SIGTERM,die);
 	sigset(SIGSEGV,die);
-	
+	printf("testing 1");	
 	//kbd handler signal
-	sigset(SIGUSR1,kbd_handler);
-	sigset(SIGUSR2,crt_handler);
-	
+	sigset(SIGUSR1,kbd_i_process);
+	sigset(SIGUSR2,crt_i_process);
+	printf("testing 2");
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
 	crt_fid = open(sfilename_crt, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
@@ -210,8 +177,7 @@ int main (){
 	sleep(1);
 
 	printf("\nType something followed by end of line and it will be echoed \n\n");
-	while(1);
-
+	
 	cleanup();
 	exit(1);
 }
