@@ -45,10 +45,13 @@ int main (int argc, char * argv[]){
 	do{
 		kill(parent_pid, SIGUSR2);
 		usleep(10000);
-		//printf (" 1 second ");
-	    	if(in_mem_p->ok_flag) { //if there is something to display, i.e. content in outdata[]
-            		printf("%s", in_mem_p->indata);
+
+	    	if(in_mem_p->ok_flag == 1) { //if there is something to display, i.e. content in outdata[]
+            		printf("printing %s", in_mem_p->indata);
+			fflush(stdout);
                 	strcpy(in_mem_p->indata,"");
+			in_mem_p->length = 0;
+			in_mem_p->ok_flag = 0;
         	}
 	}while(1);
 }

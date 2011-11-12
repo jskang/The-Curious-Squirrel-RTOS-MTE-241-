@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS= -c -g
+CFLAGS= -c -g -Wall
 LINK = gcc
 LNFLAGS = -g
 
@@ -18,6 +18,8 @@ crt: crt.o
 	$(LINK) -o $@ crt.o -lrt
 
 #compilation
+
+compile : $(OBJS)
 
 init.o: init.c 
 	$(CC) $(CFLAGS) init.c

@@ -227,7 +227,7 @@ void init (){
 		crt_pid = fork();
 
 		if (crt_pid == 0){
-			execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
+			execl("./crt","crt",childarg1_crt, childarg2_crt, (char *)0);
 			fprintf(stderr, "Can't exec crt, errno %d\n",errno);
 			cleanup();
 			exit(1);
