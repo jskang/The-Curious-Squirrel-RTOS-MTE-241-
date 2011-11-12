@@ -7,7 +7,6 @@
 
 void kbd_i_process (){	
 	atomic(ON);
-	printf("Yo I got an interrupt");
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
 	current_process =(pcb*) pcb_pointer(PID_I_PROCESS_KBD);
@@ -58,8 +57,7 @@ void crt_i_process(){
 	
 	if(out_mem_p_crt->ok_flag == 0){
 		//printf("flag is on \n");
-		if(current_process->inbox->head != NULL){
-			printf("We have a messsage(crt_i)");		
+		if(current_process->inbox->head != NULL){	
 			Msg_Env *out_message;
 			// Receive and store the message into message envelope.
 			out_message =(Msg_Env*) receive_message();
