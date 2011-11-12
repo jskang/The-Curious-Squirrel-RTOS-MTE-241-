@@ -1,23 +1,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "rtx.h"
+#include "userProcesses.h"
 
 void processP(void){
-  const tWait = 500000;	// rcv loop wait time in usec, approx value
-	Msg_Env *env = request_message_env();
+	const tWait = 500000;	// rcv loop wait time in usec, appriox value
+	Msg_Env* env = pcbList[PID_PROCESS_P]->inbox->head;
 	while(1){
 		get_console_chars(env);		// keyboard input.
-		env = receive_message();
+		env = (Msg_Env*) receive_message();
 		while (env == NULL){
-			usleep(twait);
-			env = receive_message();
+			usleep(tWait);
+			env = (Msg_Env*) receive_message();
 		}
 		
 		send_console_chars(env);	// CRT output, wait for acknowledgement.
-		env = receive_message();
+		env = (Msg_Env*)receive_message();
 		while(env == NULL){
-			usleep(twait);
-			env = receive_message();
+			usleep(tWait);
+			env = (Msg_Env*)receive_message();
 		}
 	}
 }

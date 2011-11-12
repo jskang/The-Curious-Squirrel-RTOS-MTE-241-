@@ -11,7 +11,7 @@
 
 #include "rtx.h"
 #include "init.h"
-
+#include "userProcesses.h"
 pcb *current_process; //global variables
 
 pcb_queue *priority_ready_queue[4];
@@ -31,7 +31,7 @@ iobuf *in_mem_p_kbd, *out_mem_p_crt;
 int main (void){
 	printf ("hello");
 	init();
-
+	processP();
 	return EXIT_SUCCESS;
 
 }

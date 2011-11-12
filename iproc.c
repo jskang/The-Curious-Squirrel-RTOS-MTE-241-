@@ -10,7 +10,7 @@ void kbd_i_process (){
 	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
-	current_process = pcb_pointer(PID_I_PROCESS_KBD);
+	current_process =(pcb*) pcb_pointer(PID_I_PROCESS_KBD);
 
 	if (in_mem_p_kbd->ok_flag == 1){
 		if (current_process->inbox->head != NULL){
@@ -19,7 +19,7 @@ void kbd_i_process (){
 			Msg_Env *in_message;
 		
 			//get the pointer to the received message
-			in_message = receive_message();
+			in_message =(Msg_Env*) receive_message();
 
 			//copy the buffer to the message and send it
 			strcpy(in_message->message, in_mem_p_kbd->indata);
@@ -42,12 +42,11 @@ void kbd_i_process (){
 
 
 void crt_i_process(){
-	printf("CRT!!!i \n");
+	
 	atomic(ON);
-	printf("passed atomic \n");
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process; 
-	current_process = pcb_pointer(PID_I_PROCESS_CRT); 			
+	current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT); 			
 
 	// Check if flag from crt u-process is true.
 	if(out_mem_p_crt->ok_flag == 1){
@@ -55,7 +54,7 @@ void crt_i_process(){
 					
 			Msg_Env *out_message;
 			// Receive and store the message into message envelope.
-			out_message = receive_message();
+			out_message =(Msg_Env*) receive_message();
 			// Need to dequeue message form the message queue.
 			
 			strcpy(out_mem_p_crt->indata, out_message->message);

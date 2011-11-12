@@ -76,7 +76,6 @@ void die (int signal){
 }
 
 int initialize_table(){
-	printf("Hello 1");
 	initialization_table i_table[N_TOTAL_PCB];	
         // Process P only required for partial implementation.
         i_table[0].pid = PID_PROCESS_P;
@@ -95,7 +94,6 @@ int initialize_table(){
         i_table[3].state = I_PROCESS;
         i_table[3].priority = 0;
 	
-	printf("Hello 2");
 	int i;
        
         for(i = 0;i<TEMP_NUM_PROCESS;i++){
@@ -112,21 +110,20 @@ int initialize_table(){
                 pcbList[i]->inbox->tail = NULL;
         }
 	
-	printf ("Hello 3");
 	Msg_Env* tempMsgEnv;
 	tempMsgEnv = (Msg_Env*) malloc (sizeof(Msg_Env));
 	msg_enqueue(pcbList[PID_PROCESS_P]->inbox,tempMsgEnv);
+
+	current_process = pcbList[0];
 	return 1;
 }
 
 
 void initialize_data_structures (){
 	int i;
-	printf ("Hello 4");
 	for (i = 0; i < 4; i++){
 		priority_ready_queue[i] = (pcb_queue*)(malloc(sizeof(pcb_queue)));
 	}
-	printf ("Hello 5");
 
 	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
 	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
@@ -136,7 +133,6 @@ void initialize_data_structures (){
 	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	all_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	free_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
-	printf("Hello 6");
 }
 
 int init (){
@@ -240,7 +236,7 @@ int init (){
 	sleep(1);
 
 	printf("\nType something followed by end of line and it will be echoed \n\n");
-	
+	while(1);	
 	cleanup();
 	exit(1);
 }
