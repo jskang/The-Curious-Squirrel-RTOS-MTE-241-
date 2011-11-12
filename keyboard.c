@@ -78,7 +78,7 @@ int main (int argc, char * argv[]){
 			kill(parent_pid,SIGUSR1); //send a signal to parent	
 			buf_index = 0;  // for now, just restart
 			while( in_mem_p->ok_flag == 1)
-				usleep(10000);
+				usleep(100000);
 		}
 	}while(1);  //an infinite loop - exit when parent signals us
 

@@ -29,8 +29,9 @@ pcb* pcbList[TEMP_NUM_PROCESS];
 iobuf *in_mem_p_kbd, *out_mem_p_crt;
 
 int main (void){
-	printf ("hello");
+
 	init();
+	printf("init complete \n");
 	processP();
 	return EXIT_SUCCESS;
 

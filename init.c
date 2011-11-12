@@ -236,7 +236,7 @@ int init (){
 	sleep(1);
 
 	printf("\nType something followed by end of line and it will be echoed \n\n");
-	while(1);	
+	
 	cleanup();
 	exit(1);
 }
