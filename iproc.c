@@ -7,7 +7,7 @@
 
 
 void kbd_i_process (){	
-	atomic(ON);
+//	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
 	current_process =(pcb*) pcb_pointer(PID_I_PROCESS_KBD);
@@ -37,13 +37,13 @@ void kbd_i_process (){
 	
 	current_process = temp_pcb;
 	current_process->state = RUNNING; 
-	atomic(OFF);
+//	atomic(OFF);
 }
 
 
 void crt_i_process(){
 	
-	atomic(ON);
+//	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process; 
 	current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT); 			
@@ -72,5 +72,5 @@ void crt_i_process(){
 	}
 	current_process = temp_pcb;
 	current_process->state = RUNNING; 
-	atomic(OFF);
+//	atomic(OFF);
 }

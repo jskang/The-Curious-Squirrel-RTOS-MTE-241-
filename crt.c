@@ -51,7 +51,7 @@ int main (int argc, char * argv[]){
         	}
 
         	else{
- 	            	usleep(100000);
+ 	            	usleep(10000);
                 	kill(parent_pid, SIGUSR2);    // send a signal to parent
         	}
 	}while(1);

@@ -135,7 +135,7 @@ void initialize_data_structures (){
 	free_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 }
 
-int init (){
+void init (){
 	initialize_data_structures();
 	initialize_table();
 	//handles all the signals
@@ -236,7 +236,4 @@ int init (){
 	sleep(1);
 
 	printf("\nType something followed by end of line and it will be echoed \n\n");
-	
-	cleanup();
-	exit(1);
 }
