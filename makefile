@@ -3,19 +3,19 @@ CFLAGS= -c -g
 LINK = gcc
 LNFLAGS = -g
 
-OBJS = init.o iproc.o primitives.o queues.o atomic.o
+OBJS = init.o iproc.o primitives.o queues.o atomic.o kernel.o
 
 all: init keyboard crt
 
 #make executables
 init: $(OBJS) 
-	$(LINK) $(LNFLAGS) -o rtx $(OBJS)
+	$(LINK) -o rtx $(OBJS)
 
 keyboard: keyboard.o
-	$(LINK) $(LNFLAGS)  -o $@ keyboard.o -lrt
+	$(LINK)  -o $@ keyboard.o -lrt
 
 crt: crt.o
-	$(LINK) $(LNFLAGS)  -o $@ crt.o -lrt
+	$(LINK) -o $@ crt.o -lrt
 
 #compilation
 
@@ -39,6 +39,9 @@ queues.o: queues.c
 
 atomic.o: atomic.c
 	$(CC) $(CFLAGS) atomic.c
+
+kernel.o: kernel.c
+	$(CC) $(CFLAGS) kernel.c
 
 #clean
 clean:

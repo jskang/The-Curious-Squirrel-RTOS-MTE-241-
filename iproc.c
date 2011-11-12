@@ -1,15 +1,12 @@
 #include <string.h>
+
 #include "kbcrt.h"
 #include "rtx.h"
 #include "iproc.h"
+#include "atomic.h"
 
-extern iobuf *in_mem_p_kbd; 
-extern iobuf *out_mem_p_crt;
-extern pcb *current_process;
-extern void atomic(char on);
 
-void kbd_i_process (){
-	
+void kbd_i_process (){	
 	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
@@ -45,8 +42,9 @@ void kbd_i_process (){
 
 
 void crt_i_process(){
-	
+	printf("CRT!!!i \n");
 	atomic(ON);
+	printf("passed atomic \n");
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process; 
 	current_process = pcb_pointer(PID_I_PROCESS_CRT); 			

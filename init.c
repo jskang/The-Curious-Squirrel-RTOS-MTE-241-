@@ -19,7 +19,6 @@ Comments:	Initializes everythang
 #include "kbcrt.h"
 #include "iproc.h"
 
-iobuf *in_mem_p_kbd, *out_mem_p_crt;
 int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
 int bufsize = BUFFERSIZE;
@@ -77,7 +76,7 @@ void die (int signal){
 }
 
 
-int main (){
+int init (){
 	
 	//handles all the signals
 	sigset(SIGINT,die);
@@ -88,11 +87,11 @@ int main (){
 	sigset(SIGABRT,die);
 	sigset(SIGTERM,die);
 	sigset(SIGSEGV,die);
-	printf("testing 1");	
+	
 	//kbd handler signal
 	sigset(SIGUSR1,kbd_i_process);
 	sigset(SIGUSR2,crt_i_process);
-	printf("testing 2");
+	
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
 	crt_fid = open(sfilename_crt, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);

@@ -127,19 +127,19 @@ typedef struct msg_queue{
 
 // Global Message Trace
 
-pcb *current_process; //global variables
-pcb_queue *all_pcbs_queue;
-pcb_queue *blocked_on_resource_queue;
-pcb_queue *blocked_on_receive_queue;
-pcb_queue *interrupted_queue;
-pcb_queue *sleep_queue;
-pcb_queue *priority_ready_queue[4];  
-pcb_queue *all_pcbs;
-pcb_queue *blocked_message_envelope;
-pcb_queue *blocked_receive;
-msg_queue *all_envelopes;
-msg_queue *free_envelopes;
-msg_queue *free_i_envelopes;
+extern pcb *current_process; //global variables
+extern pcb_queue *all_pcbs_queue;
+extern pcb_queue *blocked_on_resource_queue;
+extern pcb_queue *blocked_on_receive_queue;
+extern pcb_queue *interrupted_queue;
+extern pcb_queue *sleep_queue;
+extern pcb_queue *priority_ready_queue[4];  
+extern pcb_queue *all_pcbs;
+extern pcb_queue *blocked_message_envelope;
+extern pcb_queue *blocked_receive;
+extern msg_queue *all_envelopes;
+extern msg_queue *free_envelopes;
+extern msg_queue *free_i_envelopes;
 #endif
 
 

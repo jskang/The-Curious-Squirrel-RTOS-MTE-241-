@@ -19,6 +19,6 @@ typedef struct{
 	int length;
 } iobuf;
 
-
+extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
 
 #endif
