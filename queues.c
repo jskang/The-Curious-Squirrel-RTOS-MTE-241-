@@ -137,10 +137,10 @@ pcb *dequeue(pcb_queue *Q){
 	Q->head = Q->head->next;
 	
 	if(Q->head == NULL){			//if the last item is being dequeued
-		Q->tail==NULL;
+		Q->tail=NULL;
 	}
 
-	front->next == NULL;
+	front->next = NULL;
 	return front;
 }
 
@@ -185,7 +185,7 @@ pcb *dequeue_selected_pcb(pcb_queue *Q, char desired_pcb){
 					Q->tail=previous_pcb;
 				}
 				//current_pcb no longer looks at anything
-				current_pcb->next == NULL;
+				current_pcb->next = NULL;
 			}	
 
 		}
@@ -286,9 +286,9 @@ Msg_Env *msg_dequeue(msg_queue *Q){
 	Q->head = Q->head->next;
 	
 	if(Q->head == NULL)
-		Q->tail =NULL;								//if the last item is being dequeued
+		Q->tail = NULL;								//if the last item is being dequeued
 	
-	front->next == NULL;
+	front->next = NULL;
 	return front;
 }
 
