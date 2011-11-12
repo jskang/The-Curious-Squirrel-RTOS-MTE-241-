@@ -11,7 +11,27 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "rtx.h"
+#include "queues.h"
+int initialize_pcb(pcb *to_be_initialized){
+	if(to_be_initialized == NULL)
+		return INVALID_PCB_POINTER;
+	to_be_initialized->next=NULL;											//new pcbs next always points to null
+	enqueue_all(to_be_initialized);											//adds process to the all pcb queue
+	to_be_initialized->inbox= (msg_queue*)malloc(sizeof(struct msg_queue));	//allocates space for inbox message queue
+	initialize_msg_queue(to_be_initialized->inbox);							//makes the inboxs head and tail point to null
+	
+	return 1;
+}
+
+int initialize_msg_env(Msg_Env *to_be_initialized){
+	if(to_be_initialized==NULL)
+		return INVALID_MSG_POINTER;
+	
+	to_be_initialized->next = NULL;											//new message envelope next always point to null
+	msg_enqueue_all(to_be_initialized);										// add msg_env to the all envelope queue
+	return 1;
+}
+
 
 //here are pcb specific queue functions 
 
@@ -32,20 +52,20 @@ int empty_pcb_queue(pcb_queue *Q){
 		return 0;						//false queue is not empty
 }
 
-int enqueue_all(pcb_queue *Q, pcb *new_pcb){
-	if(Q == NULL)
+int enqueue_all(pcb *new_pcb){
+	if(all_pcbs == NULL)
 		return INVALID_QUEUE_ERROR;
 	if(new_pcb == NULL)
 		return INVALID_PCB_POINTER;
 	
 	new_pcb->pcb_all = NULL;
-	if(empty_pcb_queue(Q)){		//if queue is currently empty head and tail point to same element
-		Q->head = new_pcb;
-		Q->tail = new_pcb;
+	if(empty_pcb_queue(all_pcbs)){		//if queue is currently empty head and tail point to same element
+		all_pcbs->head = new_pcb;
+		all_pcbs->tail = new_pcb;
 	}
 	else{
-		Q->tail->pcb_all = new_pcb;    //pcb who is currently is at end now points to the new pcb
-		Q->tail = new_pcb;			//tail points to new pcb
+		all_pcbs->tail->pcb_all = new_pcb;    //pcb who is currently is at end now points to the new pcb
+		all_pcbs->tail = new_pcb;			//tail points to new pcb
 	}
 	return 1;	
 	
@@ -147,7 +167,7 @@ int delete_pcb_queue (pcb_queue *Q){
 //this will return the pointer of a pcb specified by the id passed in (looks through the all_pcb_queue)
 pcb *pcb_pointer(char desired_pcb){
 	
-	pcb *current_pcb=all_pcbs->head;
+	pcb *current_pcb = all_pcbs->head;
 	int found =0;
 	while (current_pcb != NULL && found ==0){							//loops until found or looped throught the entire queue
 		if(current_pcb->pid == desired_pcb)
@@ -182,22 +202,22 @@ int empty_msg_queue(msg_queue *Q){
 }
 
 //add message envelopes to the queue which contains all envelopes used once
-int msg_enqueue_all (msg_queue *Q, Msg_Env *chain_mail){
-	if(Q == NULL)
+int msg_enqueue_all (Msg_Env *chain_mail){
+	if(all_envelopes == NULL)
 		return INVALID_QUEUE_ERROR;
 	if(chain_mail == NULL)
 		return INVALID_MSG_POINTER;
 	
 	chain_mail->env_all=NULL;
-	if(empty_msg_queue(Q)){						//if queue is currently empty head and tail point to same element
-		Q->head = chain_mail;
-		Q->tail = chain_mail;
+	if(empty_msg_queue(all_envelopes)==1){						//if queue is currently empty head and tail point to same element
+		all_envelopes->head = chain_mail;
+		all_envelopes->tail = chain_mail;
 	}
 	
 	else{
 		chain_mail->env_all = NULL;
-		Q->tail->env_all = chain_mail;				//message envelope who is currently is at end now points to the new message envelope
-		Q->tail = chain_mail;					//tail points to new message envelope
+		all_envelopes->tail->env_all = chain_mail;				//message envelope who is currently is at end now points to the new message envelope
+		all_envelopes->tail = chain_mail;					//tail points to new message envelope
 	}
 	
 	return 1;	
