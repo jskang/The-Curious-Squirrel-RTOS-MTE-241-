@@ -27,7 +27,6 @@ int main (int argc, char * argv[]){
 	caddr_t mmap_ptr;
 	iobuf *in_mem_p;
 
-
 	sigset(SIGINT,crt_die);
 
 	sscanf(argv[1], "%d", &parent_pid );
@@ -44,16 +43,12 @@ int main (int argc, char * argv[]){
 	in_mem_p->ok_flag = 0;
 
 	do{
+		kill(parent_pid, SIGUSR2);
+		usleep(10000);
+		printf (" 1 second ");
 	    	if(in_mem_p->ok_flag) { //if there is something to display, i.e. content in outdata[]
             		printf("%s", in_mem_p->indata);
                 	strcpy(in_mem_p->indata,"");
-                //reset everything in the memory buffer
-        	}
-
-        	else{
- 	            	usleep(10000);
-                	kill(parent_pid, SIGUSR2);    // send a signal to parent
         	}
 	}while(1);
-
 }

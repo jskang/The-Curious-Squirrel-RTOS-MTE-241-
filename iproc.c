@@ -5,13 +5,12 @@
 #include "iproc.h"
 #include "atomic.h"
 
-
 void kbd_i_process (){	
-//	atomic(ON);
+	atomic(ON);
+	printf("Yo I got an interrupt");
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
 	current_process =(pcb*) pcb_pointer(PID_I_PROCESS_KBD);
-
 	if (in_mem_p_kbd->ok_flag == 1){
 		if (current_process->inbox->head != NULL){
 		
@@ -37,21 +36,21 @@ void kbd_i_process (){
 	
 	current_process = temp_pcb;
 	current_process->state = RUNNING; 
-//	atomic(OFF);
+	atomic(OFF);
 }
 
 
 void crt_i_process(){
 	
-//	atomic(ON);
+	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process; 
 	current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT); 			
-
 	// Check if flag from crt u-process is true.
 	if(out_mem_p_crt->ok_flag == 1){
+		printf("flag is on \n");
 		if(current_process->inbox->head != NULL){
-					
+			printf("We have a messsage");		
 			Msg_Env *out_message;
 			// Receive and store the message into message envelope.
 			out_message =(Msg_Env*) receive_message();
@@ -72,5 +71,5 @@ void crt_i_process(){
 	}
 	current_process = temp_pcb;
 	current_process->state = RUNNING; 
-//	atomic(OFF);
+	atomic(OFF);
 }
