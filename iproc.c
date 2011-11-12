@@ -15,17 +15,25 @@ void kbd_i_process (){
 		if (current_process->inbox->head != NULL){
 		
 			//message envelope that points to the message
-			Msg_Env *in_message;
+			Msg_Env *in_message = NULL;
 		
 			//get the pointer to the received message
 			in_message =(Msg_Env*) receive_message();
-
+			
 			//copy the buffer to the message and send it
+			
 			strcpy(in_message->message, in_mem_p_kbd->indata);
-
+			/*int i;
+			for(i=0;i<in_message->size;i++){
+				in_message->message[i]=in_mem_p_kbd->indata[i];
+			}*/
+			//in_message->message[0]= 'h';
+			//printf("actual message --> %s\n\n",in_message->message[0]);
 			in_message->size = in_mem_p_kbd->length;
+			
+
 			in_message->message_type =  M_TYPE_MSG_ACK;
-			send_message(in_message->owner_id,in_message);
+			send_message(in_message->sender_id,in_message);
 
 			//reset the buffer
 			strcpy(in_mem_p_kbd->indata,"");
@@ -50,7 +58,7 @@ void crt_i_process(){
 	if(out_mem_p_crt->ok_flag == 1){
 		printf("flag is on \n");
 		if(current_process->inbox->head != NULL){
-			printf("We have a messsage");		
+			printf("We have a messsage(crt_i)");		
 			Msg_Env *out_message;
 			// Receive and store the message into message envelope.
 			out_message =(Msg_Env*) receive_message();
@@ -61,7 +69,7 @@ void crt_i_process(){
 						
 			// Send acknowledgement message.
 			out_message->message_type =  M_TYPE_MSG_ACK;
-			send_message(out_message->owner_id,out_message);
+			send_message(out_message->sender_id,out_message);
 				
 			// Reset the buffer.
 			out_mem_p_crt->ok_flag = 0;

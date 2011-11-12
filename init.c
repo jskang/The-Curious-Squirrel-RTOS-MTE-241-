@@ -121,18 +121,25 @@ int initialize_table(){
 
 void initialize_data_structures (){
 	int i;
-	for (i = 0; i < 4; i++){
+	/*for (i = 0; i < 4; i++){
 		priority_ready_queue[i] = (pcb_queue*)(malloc(sizeof(pcb_queue)));
-	}
-
+	}*/
+	initialize_rpq_queue();													//initializes the ready process queue
 	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
+	initialize_msg_queue(blocked_message_envelope);
 	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
+	initialize_msg_queue(blocked_message_receive);
 	sleep_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));
+	initialize_msg_queue(sleep_queue);
 
 	all_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	initialize_msg_queue(all_envelopes);
 	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	initialize_msg_queue(free_envelopes);
 	all_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	initialize_msg_queue(all_i_envelopes);
 	free_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	initialize_msg_queue(free_i_envelopes);
 }
 
 void init (){

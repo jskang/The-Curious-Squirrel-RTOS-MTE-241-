@@ -32,6 +32,14 @@ int send_message(char dest_process_id, Msg_Env *msg_envelope){
 	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
 	pcb *receiver = pcb_pointer(dest_process_id);		//gets the pointer to the receiving pcb
 	msg_enqueue(receiver->inbox, msg_envelope);		//adds envelope to the pcbs inbox
+	printf("\nmessage sent from %i to %i\n",msg_envelope->sender_id,msg_envelope->owner_id);
+		printf("----Msg_env------\n");
+		printf("owner_id --> %i\n",msg_envelope->owner_id);
+		printf("sender_id --> %i\n",msg_envelope->sender_id);
+		printf("message_type --> %i\n",msg_envelope->message_type);
+		printf("flag --> %i\n",msg_envelope->flag);
+		printf("actual message --> %s\n\n",msg_envelope->message[0]);	
+		
 	/*
 	if (receiver->state == BLOCKED_ON_RECEIVE){
 		receiver->state = READY;
@@ -53,11 +61,12 @@ Msg_Env* receive_message(){
 
 	if(current_process ->inbox->head == NULL){	//this code is only for initial implemantation
 		current_process->state = NO_BLK_RCV;
+	//printf("\ninbox is empty\n");
 		return NULL;
 	}
 	Msg_Env *message_envelope = msg_dequeue(current_process->inbox);
 	//Add SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
-
+	printf("\n has received message from %i to %i\n",message_envelope->sender_id,message_envelope->owner_id);
 	return message_envelope;
 }
 

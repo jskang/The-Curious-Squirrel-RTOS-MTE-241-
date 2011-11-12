@@ -218,11 +218,12 @@ pcb* pcb_pointer(char desired_pcb){
 
 /************* here is where message envelope queue functions begin*******************/
 
-void initialize_msg_queue(msg_queue *Q){
+int initialize_msg_queue(msg_queue *Q){
 	if(Q == NULL)
-		return;
+		return INVALID_QUEUE_ERROR;
 	Q->head = NULL;	//queue start with zero elements
 	Q->tail = NULL;
+	return 1;
 }
 
 int empty_msg_queue(msg_queue *Q){
