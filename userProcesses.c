@@ -16,7 +16,7 @@ void processP(){
 			usleep(tWait);
 			env = (Msg_Env*) receive_message();
 		}
-		printf("received message\n");
+		
 		send_console_chars(env);	// CRT output, wait for acknowledgement.
 		env = (Msg_Env*)receive_message();
 		while(env == NULL){

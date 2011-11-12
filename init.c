@@ -112,8 +112,6 @@ int initialize_table(){
 	
 	Msg_Env* tempMsgEnv;
 	tempMsgEnv = (Msg_Env*) (malloc(sizeof(struct Msg_Env)));
-	tempMsgEnv->message[0] = 'h';
-	printf("actual message --> %s\n\n",tempMsgEnv->message[0]);
 	msg_enqueue(pcbList[PID_PROCESS_P]->inbox,tempMsgEnv);
 
 	current_process = pcbList[0];

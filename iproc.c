@@ -49,14 +49,15 @@ void kbd_i_process (){
 
 
 void crt_i_process(){
-	
+
 	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process; 
 	current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT); 			
 	// Check if flag from crt u-process is true.
-	if(out_mem_p_crt->ok_flag == 1){
-		printf("flag is on \n");
+	
+	if(out_mem_p_crt->ok_flag == 0){
+		//printf("flag is on \n");
 		if(current_process->inbox->head != NULL){
 			printf("We have a messsage(crt_i)");		
 			Msg_Env *out_message;
@@ -66,15 +67,15 @@ void crt_i_process(){
 			
 			strcpy(out_mem_p_crt->indata, out_message->message);
 			out_mem_p_crt->length = out_message->size;
-						
+			out_mem_p_crt->ok_flag = 1;
+			
 			// Send acknowledgement message.
 			out_message->message_type =  M_TYPE_MSG_ACK;
+			strcpy(out_message->message,"");
+			out_message->size =0;
+			//out->message->flag = 
 			send_message(out_message->sender_id,out_message);
 				
-			// Reset the buffer.
-			out_mem_p_crt->ok_flag = 0;
-			out_mem_p_crt->length = 0;
-			strcpy(out_mem_p_crt->indata,"");
 		}
 	}
 	current_process = temp_pcb;

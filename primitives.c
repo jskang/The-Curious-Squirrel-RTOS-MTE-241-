@@ -20,14 +20,17 @@ int request_message_env(){
 */
 
 int send_message(char dest_process_id, Msg_Env *msg_envelope){
+printf("at send message\n");	
 	if (msg_envelope == NULL){
+		printf("null message\n");		
 		return INVALID_MESSAGE_PTR_ERROR;
+
 	}
 
 	if (dest_process_id < 0 || dest_process_id >9 ){        //checks validit of the p_id
+		printf("invalid id\n");
 		return INVALID_PID_ERROR;
 	}
-
 	msg_envelope->sender_id = msg_envelope->owner_id; 	//owner id becomes sender id
 	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
 	pcb *receiver = pcb_pointer(dest_process_id);		//gets the pointer to the receiving pcb
@@ -38,7 +41,8 @@ int send_message(char dest_process_id, Msg_Env *msg_envelope){
 		printf("sender_id --> %i\n",msg_envelope->sender_id);
 		printf("message_type --> %i\n",msg_envelope->message_type);
 		printf("flag --> %i\n",msg_envelope->flag);
-		printf("actual message --> %s\n\n",msg_envelope->message[0]);	
+		printf("size --> %i\n",msg_envelope->size);
+		printf("actual message --> %c\n\n",msg_envelope->message[0]);	
 		
 	/*
 	if (receiver->state == BLOCKED_ON_RECEIVE){
@@ -62,6 +66,7 @@ Msg_Env* receive_message(){
 	if(current_process ->inbox->head == NULL){	//this code is only for initial implemantation
 		current_process->state = NO_BLK_RCV;
 	//printf("\ninbox is empty\n");
+
 		return NULL;
 	}
 	Msg_Env *message_envelope = msg_dequeue(current_process->inbox);
@@ -79,11 +84,14 @@ int get_console_chars(Msg_Env *message_envelope ){
 }
 
 int send_console_chars(Msg_Env *message_envelope){
-	if(message_envelope = NULL)
+	if(message_envelope == NULL){
+		printf("it is null");
 		return INVALID_MESSAGE_PTR_ERROR;		//INVALID_MESSAGE_PTR_ERROR
+	}	
 	/*if(message_envelope->flag == 3
 	   return  INVALID_MESSAGE_TYPE*/
-	send_message(PID_I_PROCESS_CRT ,message_envelope);	// sends message to crt(6) 
+	printf("sending message to crt\n");
+	send_message(PID_I_PROCESS_CRT ,message_envelope);	// sends message to crt(1) 
 	return 1;
 }
 /*
