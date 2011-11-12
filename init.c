@@ -13,11 +13,13 @@ Comments:	Initializes everythang
 #include <sys/mman.h>
 #include <sys/wait.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "rtx.h"
 #include "kbcrt.h"
+#include "iproc.h"
 
-extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
+iobuf *in_mem_p_kbd, *out_mem_p_crt;
 int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
 int bufsize = BUFFERSIZE;
@@ -74,6 +76,40 @@ void die (int signal){
 	exit(0);
 }
 
+
+void kbd_handler(int signum){
+        iobuf command;
+	printf("debug_kbd_handler \n");
+        // copy input buffer
+        if (in_mem_p_kbd->indata[0] != '\0'){
+            strcpy(command.indata,in_mem_p_kbd->indata);
+
+            // we should parse the input string and execute the command given,
+            //  but for now we just echo the input
+            // 
+            printf("Keyboard input was: %s\n",command.indata);
+            in_mem_p_kbd->ok_flag = 0;  // tell child that the buffer has been emptied
+
+        }
+
+}
+
+void crt_handler(int signum){
+
+	iobuf command;
+	out_mem_p_crt->indata[0] = 'a';
+
+        // copy input buffer
+        if (out_mem_p_crt->indata[0] != '\0'){
+            strcpy(command.indata,out_mem_p_crt->indata);
+
+            printf("Keyboard input was: %s\n",out_mem_p_crt->indata);
+            out_mem_p_crt->ok_flag = 0;  // tell child that th buffer has been emptied
+        }
+}
+
+
+
 int main (){
 	
 	//handles all the signals
@@ -87,8 +123,8 @@ int main (){
 	sigset(SIGSEGV,die);
 	
 	//kbd handler signal
-	sigset(SIGUSR1,kbd_i_process);
-	sigset(SIGUSR2,crt_i_process);
+	sigset(SIGUSR1,kbd_handler);
+	sigset(SIGUSR2,crt_handler);
 	
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
@@ -100,9 +136,10 @@ int main (){
 	}
 	
 	if (crt_fid < 0){
-		printf("Bad Open of mmpa file <%s>\n",sfilename_crt);
+		printf("Bad Open of mmap file <%s>\n",sfilename_crt);
 		exit(0);
 	}
+	
 
 	//truncate the filesisze the the size of the buffer
 	kbd_status = ftruncate(kbd_fid,bufsize);
@@ -117,6 +154,26 @@ int main (){
 		printf ("failed to ftruncate the file <%s>, status = %d\n",sfilename_crt, crt_status);
 		exit(0);
 	}
+	
+	kbd_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,kbd_fid,(off_t) 0);
+        crt_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,crt_fid,(off_t) 0);
+
+        
+        if (kbd_mmap == MAP_FAILED){
+                printf("Parent's memory map has failed, about to quit!\n");
+                die(0);
+        }
+        
+        if (crt_mmap == MAP_FAILED){
+                printf("Parent's memory map has failed, about to quit!\n");
+                die(0);
+        }
+        
+        in_mem_p_kbd = (iobuf *) kbd_mmap;
+        out_mem_p_crt = (iobuf *) crt_mmap;
+
+        in_mem_p_kbd->ok_flag = 0;
+        out_mem_p_crt->ok_flag = 0;
 
 	//send an argument to the child
 	char childarg1_kbd[20], childarg2_kbd[20];
@@ -138,40 +195,23 @@ int main (){
 		cleanup();
 		exit(1);
 	}
+	
+	else{		
+		sleep(1);
+		crt_pid = fork();
 
+		if (crt_pid == 0){
+			execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
+			fprintf(stderr, "Can't exec crt, errno %d\n",errno);
+			cleanup();
+			exit(1);
+		}
+	}	
 	sleep(1);
-	crt_pid = fork();
 
-	if (crt_pid == 0){
-		execl("./crt","crt",childarg1_crt, childarg2_kbd, (char *)0);
-		fprintf(stderr, "Can't exec crt, errno %d\n",errno);
-		cleanup();
-		exit(1);
-	}
-	printf ("Hello1");
-	sleep(1);
-	printf ("Hello2");
-	kbd_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,kbd_fid,(off_t) 0);
-	crt_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,crt_fid,(off_t) 0);
-	if (kbd_mmap == MAP_FAILED){
-		printf("Parent's memory map has failed, about to quit!\n");
-		die(0);
-	}
-	
-	if (kbd_mmap == MAP_FAILED){
-		printf("Parent's memory map has failed, about to quit!\n");
-		die(0);
-	}
-	
-	in_mem_p_kbd = (iobuf *) kbd_mmap;
-	out_mem_p_crt = (iobuf *) crt_mmap;
-	
-	in_mem_p_kbd->ok_flag = 0;
-	out_mem_p_crt->ok_flag = 0;
 	printf("\nType something followed by end of line and it will be echoed \n\n");
 	while(1);
 
 	cleanup();
 	exit(1);
-	
 }

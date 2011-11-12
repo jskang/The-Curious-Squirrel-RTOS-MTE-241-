@@ -10,12 +10,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "rtx.h"
+#include "primitives.h"
+#include "queues.h"
+
 /*
 int request_message_env(){
 	return 1;
 }
 */
-int send_message(int dest_process_id, Msg_Env *msg_envelope){
+
+int send_message(char dest_process_id, Msg_Env *msg_envelope){
 	if (msg_envelope == NULL){
 		return INVALID_MESSAGE_PTR_ERROR;
 	}
@@ -24,30 +28,30 @@ int send_message(int dest_process_id, Msg_Env *msg_envelope){
 		return INVALID_PID_ERROR;
 	}
 
-	msg_envelope->sender_id = msg_envelope->owner_id;		//owner id becomes sender id
-	msg_envelope->owner_id = dest_process_id;					//destination process is now the owner
-	pcb *receiver = pcb_pointer(dest_process_id);			//gets the pointer to the receiving pcb
-	msg_enqueue(receiver->inbox, msg_envelope);				//adds envelope to the pcbs inbox
-
+	msg_envelope->sender_id = msg_envelope->owner_id; 	//owner id becomes sender id
+	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
+	pcb *receiver = pcb_pointer(dest_process_id);		//gets the pointer to the receiving pcb
+	msg_enqueue(receiver->inbox, msg_envelope);		//adds envelope to the pcbs inbox
+	/*
 	if (receiver->state == BLOCKED_ON_RECEIVE){
 		receiver->state = READY;
 		rpq_enqueue(receiver);				//adds process to ready process queue
 	}
 
 	//Add SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
+	*/
 	return 1;
 }
 
-Msg_Env *receive_message()
-{
+Msg_Env* receive_message(){
 
 	/*if(current_process ->inbox->head == NULL){
-		current_process->state = 3;							//sets state to blocked on receive
+		current_process->state = 3;				//sets state to blocked on receive
 		enqueue(blocked_on_receive, current_process);		// adds to blocked on receive queue
 		switch_process();
 	}*/
 
-	if(current_process ->inbox->head == NULL){					//this code is only for initial implemantation
+	if(current_process ->inbox->head == NULL){	//this code is only for initial implemantation
 		current_process->state = NO_BLK_RCV;
 		return NULL;
 	}
@@ -61,17 +65,16 @@ Msg_Env *receive_message()
 int get_console_chars(Msg_Env *message_envelope ){
 	if(message_envelope == NULL)
 		 return INVALID_MESSAGE_PTR_ERROR;
-	send_message(PID_I_PROCESS_KBD, message_envelope);					// sends message to kbd(7) 
+	send_message(PID_I_PROCESS_KBD, message_envelope);// sends message to kbd(7) 
 	return 1;
 }
 
-int send_console_chars(Msg_Env *message_envelope )
-{
+int send_console_chars(Msg_Env *message_envelope){
 	if(message_envelope = NULL)
-		return INVALID_MESSAGE_PTR_ERROR;								//INVALID_MESSAGE_PTR_ERROR
+		return INVALID_MESSAGE_PTR_ERROR;		//INVALID_MESSAGE_PTR_ERROR
 	/*if(message_envelope->flag == 3
 	   return  INVALID_MESSAGE_TYPE*/
-	send_message(PID_I_PROCESS_CRT ,message_envelope);					// sends message to crt(6) 
+	send_message(PID_I_PROCESS_CRT ,message_envelope);	// sends message to crt(6) 
 	return 1;
 }
 /*

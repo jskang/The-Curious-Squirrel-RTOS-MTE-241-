@@ -100,7 +100,7 @@ typedef struct pcb{
 typedef struct pcb_queue{
      pcb *head;
      pcb *tail;
-     char n_elements;
+     int n_elements;
 }pcb_queue;
 
 

@@ -1,10 +1,12 @@
 #include <string.h>
 #include "kbcrt.h"
 #include "rtx.h"
+#include "iproc.h"
 
 extern iobuf *in_mem_p_kbd; 
 extern iobuf *out_mem_p_crt;
 extern pcb *current_process;
+extern void atomic(char on);
 
 void kbd_i_process (){
 	
@@ -24,11 +26,8 @@ void kbd_i_process (){
 
 			//copy the buffer to the message and send it
 			strcpy(in_message->message, in_mem_p_kbd->indata);
+
 			in_message->size = in_mem_p_kbd->length;
-
-			in_message->owner_id = in_message->sender_id;
-			in_message->sender_id = PID_I_PROCESS_KBD;
-
 			in_message->message_type =  M_TYPE_MSG_ACK;
 			send_message(in_message->owner_id,in_message);
 
@@ -64,10 +63,6 @@ void crt_i_process(){
 			strcpy(out_mem_p_crt->indata, out_message->message);
 			out_mem_p_crt->length = out_message->size;
 						
-			// Swap owner and sender ids.
-			out_message->owner_id = out_message->sender_id;
-			out_message->sender_id = PID_I_PROCESS_CRT;
-
 			// Send acknowledgement message.
 			out_message->message_type =  M_TYPE_MSG_ACK;
 			send_message(out_message->owner_id,out_message);
