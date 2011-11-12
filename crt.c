@@ -52,7 +52,7 @@ int main (int argc, char * argv[]){
 
         	else{
                 	kill(parent_pid, SIGUSR2);    // send a signal to parent
-                	usleep(100000);
+                	usleep(10000);
         	}
 	}while(1);
 
