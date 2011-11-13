@@ -9,7 +9,7 @@ all: init keyboard crt
 
 #make executables
 init: $(OBJS) 
-	$(LINK) -o rtx $(OBJS)
+	$(LINK) -o iRTX-G17 $(OBJS)
 
 keyboard: keyboard.o
 	$(LINK)  -o $@ keyboard.o -lrt
@@ -54,5 +54,5 @@ userAPI.o: userAPI.c
 
 #clean
 clean:
-	rm *.o rtx keyboard crt *_mmap
+	rm *.o iRTX-G17 keyboard crt *_mmap
 
