@@ -70,7 +70,7 @@ void cleanup(){
 
 void die (int signal){
 	cleanup();
-	printf("\n\nSignal %i received. Terminating Program\n\n",signal);
+	printf("\n\nSignal %i received. Terminating Program.\n\n",signal);
 	exit(0);
 }
 
