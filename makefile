@@ -3,7 +3,7 @@ CFLAGS= -c -g -Wall
 LINK = gcc
 LNFLAGS = -g
 
-OBJS = init.o iproc.o primitives.o queues.o atomic.o kernel.o userProcesses.o
+OBJS = init.o iproc.o primitives.o queues.o atomic.o kernel.o userProcesses.o userAPI.o
 
 all: init keyboard crt
 
@@ -47,6 +47,10 @@ kernel.o: kernel.c
 
 userProcesses.o: userProcesses.c
 	$(CC) $(CFLAGS) userProcesses.c
+
+userAPI.o: userAPI.c
+	$(CC) $(CFLAGS) userAPI.c
+
 
 #clean
 clean:

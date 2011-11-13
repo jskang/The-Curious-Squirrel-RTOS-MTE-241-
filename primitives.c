@@ -19,7 +19,7 @@ int request_message_env(){
 }
 */
 
-int send_message(char dest_process_id, Msg_Env *msg_envelope){
+int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 	
 	if (msg_envelope == NULL){
 		printf("null message\n");		
@@ -47,7 +47,7 @@ int send_message(char dest_process_id, Msg_Env *msg_envelope){
 	return 1;
 }
 
-Msg_Env* receive_message(){
+Msg_Env* k_receive_message(){
 
 	/*if(current_process ->inbox->head == NULL){
 		current_process->state = 3;				//sets state to blocked on receive
@@ -67,21 +67,21 @@ Msg_Env* receive_message(){
 }
 
 
-int get_console_chars(Msg_Env *message_envelope ){
+int k_get_console_chars(Msg_Env *message_envelope ){
 	if(message_envelope == NULL)
 		 return INVALID_MESSAGE_PTR_ERROR;
-	send_message(PID_I_PROCESS_KBD, message_envelope);// sends message to kbd(7) 
+	k_send_message(PID_I_PROCESS_KBD, message_envelope);// sends message to kbd(7) 
 	return 1;
 }
 
-int send_console_chars(Msg_Env *message_envelope){
+int k_send_console_chars(Msg_Env *message_envelope){
 	if(message_envelope == NULL){
 		printf("it is null");
 		return INVALID_MESSAGE_PTR_ERROR;		//INVALID_MESSAGE_PTR_ERROR
 	}	
 	/*if(message_envelope->flag == 3
 	   return  INVALID_MESSAGE_TYPE*/
-	send_message(PID_I_PROCESS_CRT ,message_envelope);	// sends message to crt(1) 
+	k_send_message(PID_I_PROCESS_CRT ,message_envelope);	// sends message to crt(1) 
 	return 1;
 }
 /*

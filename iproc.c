@@ -4,6 +4,7 @@
 #include "rtx.h"
 #include "iproc.h"
 #include "atomic.h"
+#include "primitives.h"
 
 void kbd_i_process (){	
 	atomic(ON);
@@ -17,7 +18,7 @@ void kbd_i_process (){
 			Msg_Env *in_message = NULL;
 		
 			//get the pointer to the received message
-			in_message =(Msg_Env*) receive_message();
+			in_message =(Msg_Env*)k_receive_message();
 			
 			//copy the buffer to the message and send it
 			
@@ -32,7 +33,7 @@ void kbd_i_process (){
 			
 
 			in_message->message_type =  M_TYPE_MSG_ACK;
-			send_message(in_message->sender_id,in_message);
+			k_send_message(in_message->sender_id,in_message);
 
 			//reset the buffer
 			strcpy(in_mem_p_kbd->indata,"");
@@ -60,7 +61,7 @@ void crt_i_process(){
 		if(current_process->inbox->head != NULL){	
 			Msg_Env *out_message;
 			// Receive and store the message into message envelope.
-			out_message =(Msg_Env*) receive_message();
+			out_message =(Msg_Env*) k_receive_message();
 			// Need to dequeue message form the message queue.
 			
 			strcpy(out_mem_p_crt->indata, out_message->message);
@@ -72,7 +73,7 @@ void crt_i_process(){
 			strcpy(out_message->message,"");
 			out_message->size =0;
 			//out->message->flag = 
-			send_message(out_message->sender_id,out_message);
+			k_send_message(out_message->sender_id,out_message);
 				
 		}
 	}
