@@ -32,13 +32,3 @@ userAPI.h - This is the header for the userAPI.c
 iproc.h - This is the header for iproc.c .
 
 There is also an additional file named "makefile" which compiles and links all the source and object files together.
-
-First you should issue the command 'make clean'
-In order to compile this project you can use the makefile. In order to use it call 'make all'.
-If any sources have been changed do 'make clean' and do 'make all'
-
-After compiling and linking there will be three executables. These are 'rtx' 'keyboard' 'crt'
-run the 'rtx' executable by using './rtx'command. Wait until prompted to enter characters.
-The expected result is a console output of the input text.
-
-end of file!!. 
