@@ -1,40 +1,39 @@
-README
--------------------------------------------------------------------
-
-HAPPY REMEMBRANCE DAY!!!!
-GUYS A LOT HAS CHANGED OVER NIGHT PLEASE PULL BEFORE YOU DO ANYTHING
-CURRENTLY OUR PROGRAM FAILS WHEN THE I_PROCESS IS CALLED AND ME AND BHAVIK WILL BE LOOKING
-AT THAT LATER TODAY.
-
-MARKUS!!
-I HAVE COMMENTED OUT YOUR CODE IN THE PRIMITIVES BECAUSE WE DID NOT NEED IT FOR PARTIAL
-YOU SHOULD CREATE A SEPARATE FILE AND WORK ON THE PRIMITIVES AND MILAN HELP MARKUS AND
-SEE WHAT YOU CAN DO. YOU ARE ALWAYS WELCOME TO TRY TO DEBUG THE CODE. SEE YOU GUYS AT LIKE
-NOONISH
-
-JIN
+   
+  *-------------------------------------------------------------------
+  * MTE 241 - Real Time Operating Systems
+  * University of Waterloo
+  * Group 17
+  * Implemented by:
+  * Bhavik Vyas
+  * JinSung Kang
+  * Markus Trapp
+  * Milan Stanivuk
+  *
+  * DISCLAIMER
+  * For all University of Waterloo students taking MTE 241 in Fall 2011:
+  * We are not responsible for the plagarism for this code. We advise
+  * everyone not to copy and if you do and get copied, it is entirely
+  * your responsibility. The source code is open to the public for 
+  * referencing only. Thank you.
+  *-------------------------------------------------------------------
 
 
 Updates:
-- Partial Implementation has started.
+- Partial Implementation is completed. Nov 5/11
+- Final Implementation started. Nov 17/11
 
 Task Breakdown for Partial Implementation: 
 - RTX Header (rtx.h) - Bhavik --------------------------------------------> Done
-- KBD/CRT Header (kbcrt.h) - Bhavik --------------------------------------> In progress - Debugging
-- RTX C (init.c) - Jin ---------------------------------------------------> In progress - Debugging
-- Queue Implementation (queues.c)- Markus --------------------------------> In progress - Debugging
-- Primitives (primitives.c) - Markus -------------------------------------> In progress - Debugging
-- Process P (processP.c) - Bhavik ----------------------------------------> In progress - Debugging
-- KBD uprocess (keyboard.c) - Milan --------------------------------------> In progress - Debugging
-- CRT uprocess (crt.c) - Milan -------------------------------------------> In progress - Debugging
-- KBD iprocess (iproc.c) - Jin -------------------------------------------> In progress - Debugging
-- CRT iprocess (iproc.c) - Bhavik ----------------------------------------> In progress - Debugging
-- MakeFile - Jin ---------------------------------------------------------> In progress - Debugging
+- KBD/CRT Header (kbcrt.h) - Bhavik --------------------------------------> Done
+- RTX C (init.c) - Jin ---------------------------------------------------> Done
+- Queue Implementation (queues.c)- Markus --------------------------------> Done
+- Primitives (primitives.c) - Markus -------------------------------------> Done
+- Process P (processP.c) - Bhavik ----------------------------------------> Done
+- KBD uprocess (keyboard.c) - Milan --------------------------------------> Done
+- CRT uprocess (crt.c) - Milan -------------------------------------------> Done
+- KBD iprocess (iproc.c) - Jin -------------------------------------------> Done
+- CRT iprocess (iproc.c) - Bhavik ----------------------------------------> Done
+- MakeFile - Jin ---------------------------------------------------------> Done
 
-
-DISCLAIMER
-FOR ALL UNIVERSITY OF  WATERLOO STUDENTS TAKING MTE241 IN FALL 2011
-WE ARE NOT RESPONSIBLE FOR YOU COPYING AND SUBMITTING THIS CODE
-AND GETTING CAUGHT. PLEASE DON'T COPY!!!!
-BY HAVING THIS REPOSITORY PUBLIC IT DOES NOT MEAN THAT WE ARE GIVING YOU
-PERMISSION TO COPY, OR CHANGE THE CODE
+Task Breakdown for Final Implemetation:
+-
