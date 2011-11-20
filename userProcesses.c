@@ -89,8 +89,39 @@ void process_cci(){
 
 }
 
-void process_clock(){
+void process_clock(MsgEnv *msg_env){
 
+	extern k_second;
+	extern k_minute;
+	extern k_hour;
+	MsgEnv *msg_delay = request_msg_env();
+	
+	do{
+
+		request_delay(10,M_TYPE_MSG_DELAY,msg_delay); 	// send envelope using reques	t delay message	
+		// receive messages from timer_i_process (how am I receiving the message? is it handled by send_message()?)
+		
+		if(msg_env != NULL){
+			k_second++; 	// increment by one k_second
+			k_second = (k_second++)%60;
+			if(k_second == 0) {			// check to increment k_minute 
+				k_minute = (k_minute++)%60;
+				if (k_minute == 0) {			// check to increment k_hour
+					k_hour = (k_hour++)%60;
+				}	
+			} 
+			
+			if(msg_env->message_type == M_TYPE_WALL_CLOCK){  // display to CRT if true
+				
+				// send msg_envelope to crt.
+				k_send_console_chars(msg_env);
+				
+			}
+			
+		}
+		
+		release_processor();
+	}while(1);
 
 }
 
