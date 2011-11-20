@@ -27,3 +27,5 @@ void print_rpq_test(pcb_queue);
 void print_pcb_inbox(pcb *to_print);
 
 void print_all_pcb_inbox();
+
+void print_message(Msg_Env *message);

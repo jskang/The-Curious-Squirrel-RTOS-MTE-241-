@@ -33,6 +33,7 @@ Comments: Global variables and struct definitions for Initialization
 #define N_MSG_ENV 30
 #define N_I_MSG_ENV 30
 #define MESSAGE_SIZE 129
+#define TEMP_NUM_PROCESS 3
 
 // Process IDs
 #define PID_PROCESS_A 0
@@ -65,13 +66,16 @@ Comments: Global variables and struct definitions for Initialization
 #define INVALID_MESSAGE_DELETE -107
 #define INVALID_PCB_STATE_ERROR -108
 #define INVALID_QUEUE_ERROR -109
+#define INVALID_TRACE_PTR -110
+#define INVALID_TRACE_BUFFER_PTR -111
+#define INVALID_TIME_DELAY -112
 //typedef struct pcb pcb;
 //typedef struct queue queue;
 //typedef struct Msg_Env Msg_Env;
 //typedef struct msg_trace msg_trace;
 
 
-/* Struct Definitions */
+/* Struct Definitions */		
 typedef struct msg_trace{
      char sender_PID;
      char receiver_PID;
@@ -81,8 +85,7 @@ typedef struct msg_trace{
 
 // PCB Struct
 typedef struct pcb{
-	 struct pcb *next;            
-     struct pcb *pcb_all;            
+	 struct pcb *next;                      
      char pid;
      char state;            
      char priority;            
@@ -107,7 +110,8 @@ typedef struct Msg_Env{
      int time_stamp;                
      char message_type;            
      char flag;                    
-     char message[MESSAGE_SIZE];            
+     char message[MESSAGE_SIZE];  
+	int size;
 }Msg_Env;
 
 //msg queue struct definition
@@ -117,8 +121,12 @@ typedef struct msg_queue{
 	char n_elements;
 }msg_queue;
 
+typedef struct msg_trace_buffer{
+	int entry_element;								//stores the location where next message infor will be stored
+	msg_trace *messages[16];							//stores 16 messages traces at a time ie SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
+}msg_trace_buffer;
 
-// Global Message Trace
+
 /*
 pcb *current_process; //global variables
 
@@ -143,7 +151,9 @@ pcb_queue *all_pcbs;
 				   
 pcb_queue *blocked_message_envelope;
 														
-pcb_queue *blocked_receive;
+pcb_queue *blocked_message_receive;
+
+pcb_queue *blocked_on_sleep;
 																				  
 																				   
 msg_queue *all_envelopes;
@@ -153,7 +163,9 @@ msg_queue *free_envelopes;
 msg_queue *free_i_envelopes;
 
 pcb * current_process;
-
+ msg_trace_buffer *message_buffer;
+extern long number_messages_sent;
+pcb *pcbList[TEMP_NUM_PROCESS];
 
 #endif
 

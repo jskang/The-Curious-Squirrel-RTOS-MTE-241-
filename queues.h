@@ -13,7 +13,7 @@ int initialize_pcb(pcb *to_be_initialized);
 
 int initialize_msg_env(Msg_Env *to_be_initialized);		//may not need this one
 
-int initialize_queue(pcb_queue *Q);
+void initialize_queue(pcb_queue *Q);
 
 int empty_pcb_queue(pcb_queue *Q);
 
@@ -39,11 +39,15 @@ Msg_Env *msg_dequeue(msg_queue *Q);
 
 int delete_all_msg_queue (msg_queue *Q);
 
-Msg_Env *dequeue_selected_envelope(msg_queue *Q, int desired_pcb);
-
 int initialize_rpq_queue();
 
 int rpq_enqueue (pcb *ready_pcb);
 
 pcb* rpq_dequeue ();
+
+pcb* rpq_dequeue_specific_pcb (pcb *desired_pcb);
+
+int initialize_msg_trace(msg_trace_buffer *trace);
+
+int enqueue_msg_trace(Msg_Env *message);
 

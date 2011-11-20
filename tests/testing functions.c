@@ -38,15 +38,10 @@ void print_pcb_queue(pcb_queue *Q){
 
 void print_all_pcb_queue(){
 	
-	pcb *current_pcb = all_pcbs->head;
 	
-	if(current_pcb == NULL)
-		printf("pcb_queue == NULL\n");
-	
-	while(current_pcb != NULL){
-		print_pcb(current_pcb);
-		current_pcb = current_pcb->pcb_all;
-	}
+	int i;
+	for(i=0;i<9;i++)
+		print_pcb(pcbList[i]);
 }
 void print_msg(Msg_Env *to_print){
 	if(to_print == NULL)
@@ -112,16 +107,21 @@ void print_pcb_inbox(pcb *to_print){
 		print_msg_queue(to_print->inbox);
 }
 
-void print_all_pcb_inbox(){
-	if (all_pcbs==NULL)
+
+void print_message(Msg_Env *message){
+	if (message == NULL)
 		return;
-	pcb *current=all_pcbs->head;
-	while(current!=NULL){
-		printf("pcb_id ==%i has the following messages in its inbox:\n",current->pid);
-		print_pcb_inbox(current);
-		current=current->pcb_all;
+	int i;
+	if(message->flag == M_TYPE_REQ_PROCESS_STATUS){
+		printf("Now printing request process status\n");
+		for (i=0; i<message->size;i++){
+			printf("----PCB------\n");
+			printf("pid --> %i\n",message->message[i*3]);
+			printf("state --> %i\n",message->message[i*3 +1]);
+			printf("priority --> %i\n\n",message->message[i*3 +2]);		
+		}
 	}
-		
-	printf("end of inboxes\n");
+
+	
 }
 	

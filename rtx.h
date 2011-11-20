@@ -74,6 +74,9 @@ Comments: Global variables and struct definitions for Initialization
 #define INVALID_MESSAGE_DELETE -107
 #define INVALID_PCB_STATE_ERROR -108
 #define INVALID_QUEUE_ERROR -109
+#define INVALID_TRACE_PTR -110
+#define INVALID_TRACE_BUFFER_PTR -111
+#define INVALID_TIME_DELAY -112
 
 // booleans
 #define OFF 0
@@ -139,7 +142,12 @@ typedef struct initialization_table{
      void **stack_address;
 }initialization_table;
 
-// Global Message Trace
+typedef struct msg_trace_buffer{
+	int entry_element;								//stores the location where next message infor will be stored
+	msg_trace *messages[16];							//stores 16 messages traces at a time ie SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
+}msg_trace_buffer;
+
+
 
 extern pcb *current_process; //global variables
 
@@ -155,6 +163,8 @@ extern msg_queue *all_i_envelopes;
 extern msg_queue *free_i_envelopes;
 
 extern pcb *pcbList[TEMP_NUM_PROCESS];
+extern long number_messages_sent;
+extern msg_trace_buffer *message_buffer;
 
 //io buffer global variable
 extern iobuf *in_mem_p_kbd, *out_mem_p_crt;

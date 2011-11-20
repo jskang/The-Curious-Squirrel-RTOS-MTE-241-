@@ -13,56 +13,50 @@
 #include "primitives.h"
 #include "queues.h"
 
-/*
-int request_message_env(){
-	return 1;
-}
-*/
 
 int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
-	
 	if (msg_envelope == NULL){
-		printf("null message\n");		
 		return INVALID_MESSAGE_PTR_ERROR;
-
 	}
 
 	if (dest_process_id < 0 || dest_process_id >9 ){        //checks validit of the p_id
-		printf("invalid id\n");
 		return INVALID_PID_ERROR;
 	}
-	msg_envelope->sender_id = msg_envelope->owner_id; 	//owner id becomes sender id
-	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
+
 	pcb *receiver = pcb_pointer(dest_process_id);		//gets the pointer to the receiving pcb
-	msg_enqueue(receiver->inbox, msg_envelope);		//adds envelope to the pcbs inbox
-		
-	/*
 	if (receiver->state == BLOCKED_ON_RECEIVE){
+		receiver = dequeue_selected_pcb(blocked_message_receive,dest_process_id);
 		receiver->state = READY;
 		rpq_enqueue(receiver);				//adds process to ready process queue
 	}
 
-	//Add SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
-	*/
+	
+	msg_envelope->sender_id = msg_envelope->owner_id; 	//owner id becomes sender id
+	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
+	msg_enqueue(receiver->inbox, msg_envelope);		//adds envelope to the pcbs inbox
+	
+
+
+	enqueue_msg_trace(msg_envelope);
+	
 	return 1;
 }
 
 Msg_Env* k_receive_message(){
 
-	/*if(current_process ->inbox->head == NULL){
+	if(current_process ->inbox->head == NULL){
 		current_process->state = 3;				//sets state to blocked on receive
-		enqueue(blocked_on_receive, current_process);		// adds to blocked on receive queue
-		switch_process();
-	}*/
+		enqueue(blocked_message_receive, current_process);		// adds to blocked on receive queue
+		//process_switch();
+	}
 
 	if(current_process ->inbox->head == NULL){	//this code is only for initial implemantation
 		current_process->state = NO_BLK_RCV;
-	//printf("\ninbox is empty\n");
-
 		return NULL;
 	}
 	Msg_Env *message_envelope = msg_dequeue(current_process->inbox);
-	//Add SENDER_PID, RECEIVER_PID, CURRENT_TIME to message trace.
+	enqueue_msg_trace(message_envelope);
+
 	return message_envelope;
 }
 
@@ -70,76 +64,160 @@ Msg_Env* k_receive_message(){
 int k_get_console_chars(Msg_Env *message_envelope ){
 	if(message_envelope == NULL)
 		 return INVALID_MESSAGE_PTR_ERROR;
-	k_send_message(PID_I_PROCESS_KBD, message_envelope);// sends message to kbd(7) 
+	k_send_message(PID_I_PROCESS_KBD, message_envelope);					// sends message to kbd(7) 
 	return 1;
 }
 
 int k_send_console_chars(Msg_Env *message_envelope){
-	if(message_envelope == NULL){
-		printf("it is null");
-		return INVALID_MESSAGE_PTR_ERROR;		//INVALID_MESSAGE_PTR_ERROR
-	}	
+	if(message_envelope == NULL)
+		return INVALID_MESSAGE_PTR_ERROR;									//INVALID_MESSAGE_PTR_ERROR
 	/*if(message_envelope->flag == 3
 	   return  INVALID_MESSAGE_TYPE*/
-	k_send_message(PID_I_PROCESS_CRT ,message_envelope);	// sends message to crt(1) 
+	k_send_message(PID_I_PROCESS_CRT ,message_envelope);					// sends message to crt(6) 
 	return 1;
 }
-/*
-int deallocate_msg_env ( Msg_Env *message_envelope )
-{
-	if(empty_pcb_queue(blocked_message_envelope)==0)
+
+Msg_Env *k_allocate_msg_env (){
+	while(empty_msg_queue(free_envelopes) == 1){								//while there are no free envelopes available
+	//if(empty_msg_queue(free_envelopes)==1 && current_process->state!=BLOCKED_ON_RESOURCE){
+			current_process->state= BLOCKED_ON_RESOURCE;
+			enqueue(blocked_message_envelope, current_process);					//adds this process to blocked on resource queue
+			//process_switch();													//when this process eventually runs again it will start here
+	    }																		//exits loop once there is an envelope available for process
+
+	
+	
+	Msg_Env *message_envelope = msg_dequeue(free_envelopes);
+	return message_envelope;
+}
+
+int k_deallocate_msg_env ( Msg_Env *message_envelope ){					//make sure when using this that the pcb no longer owns msg_env
+	if (message_envelope == NULL)
+		return INVALID_MESSAGE_PTR_ERROR;
+	if(empty_pcb_queue(blocked_message_envelope)==0)						//if there is an process blocked on resource
 	{
-		pcb *free_pcb= dequeue(blocked_message_envelope);		//gets first pcb that is blocked on resource
-		free_pcb->state = READY;									//sets state to this process to ready
+		pcb *free_pcb= dequeue(blocked_message_envelope);					//gets first pcb that is blocked on resource
+		free_pcb->state = READY;											//sets state to this process to ready
 		rpq_enqueue (free_pcb);
 
 	}
-	//dequeue envelope from inbox of pcb?
 	msg_enqueue(free_envelopes,message_envelope);
 	return 1;
 }
 
 
-int request_process_status( Msg_Env * message_envelope ){
+int k_request_process_status( Msg_Env *message_envelope ){
 	if (message_envelope == NULL)
 		return INVALID_MESSAGE_PTR_ERROR;
-	pcb *current = all_pcbs->head;
 	int i=0;
-	do{																	//may switch this to a for loop
-		message_envelope-> message[i]=current->pid;
-		message_envelope-> message[i+1]=current->state;
-		message_envelope-> message[i+2]=current->priority;
-		current=current->pcb_all;
-		i+=3;
-	}while(current !=NULL);
+	for(i=0;i<10;i++){
+		message_envelope-> message[i]=pcbList[i]->pid;
+		message_envelope-> message[i+1]=pcbList[i]->state;
+		message_envelope-> message[i+2]=pcbList[i]->priority;
+		i+=3;														//jumps to the next area for pcb info
+	}
 
-	message_envelope->flag=M_TYPE_REQ_PROCESS_STATUS ;
-	send_message(PID_I_PROCESS_CRT, message_envelope);
+	message_envelope->flag = M_TYPE_REQ_PROCESS_STATUS ;			//sets the flag on envelope
+	k_send_message(PID_I_PROCESS_CRT, message_envelope);				//sends message to crt to be displayed on screen
 	return 1;
 }
 
-int terminate( ){
+int k_terminate( ){
 	return 1;
 }
 
-int change_priority(int new_priority, int target_process_id){
+int k_change_priority(int new_priority, int target_process_id){
 	if (target_process_id>9 || target_process_id<0)
 		return INVALID_PID_ERROR;
 	if (new_priority <0 || new_priority>2)								//2 as 3 is reserved for null process
 		return INVALID_PRIORITY_ERROR;
 
-	pcb *process = pcb_pointer(target_process_id);
-	process->priority = new_priority;
+	pcb *process = pcb_pointer(target_process_id);						
+	if (process->state == READY){										//incase the pcb is already in the ready process queue
+		rpq_dequeue_specific_pcb(process);
+		process->priority = new_priority;
+		rpq_enqueue(process);
+	}
+		
+	else
+		process->priority = new_priority;
+	
 	return 1;
 }
 
-int request_delay(int time_delay,int wakeup_code,Msg_Env *message_envelope){
+int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
+	if (time_delay <= 0)
+		return INVALID_TIME_DELAY;
+	if(message_envelope == NULL)
+		return INVALID_MESSAGE_PTR_ERROR;
+	//how are we doing wake up codes?
+	current_process->state = SLEEP;
+	if (enqueue(blocked_on_sleep,current_process) != 1)				//if enqueing fails
+		return -1;
+	
+	message_envelope->flag= M_TYPE_MSG_DELAY;	
+	message_envelope->message[0] = time_delay;
+	message_envelope->message[1] = wakeup_code;						//i_timer should know how to respond to this
+	
+	if(k_send_message(PID_I_PROCESS_TIMER, message_envelope) != 1)
+		return -1;
+	
+	process_switch();
 	return 1;
+	
 }
 
 
-int get_trace_buffers( Msg_Env * message_envelope){
+int k_get_trace_buffers( Msg_Env * message_envelope){
+	if(message_envelope == NULL)
+		return INVALID_MESSAGE_PTR_ERROR;
+	message_envelope->flag = M_TYPE_MESSAGE_TRACE ;
+	
+	char i;
+	
+	if (number_messages_sent <= 16){
+		for (i=0;i<number_messages_sent;i++){
+			message_envelope->message[4*i] = message_buffer->messages[4*i]->sender_PID;
+			message_envelope->message[4*i +1]= message_buffer->messages[4*i]->receiver_PID;
+			message_envelope->message[4*i +2]= message_buffer->messages[4*i]->time_stamp;
+			message_envelope->message[4*i +3]= message_buffer->messages[4*i]->m_type;
+		}
+		message_envelope->size=16*number_messages_sent;
+	}
+	else{
+		int position = message_buffer->entry_element;												//where we start reading from
+		for (i=0;i<16;i++){																			//loops 16 times
+			message_envelope->message[4*i] = message_buffer->messages[position%16]->sender_PID;
+			message_envelope->message[4*i +1]= message_buffer->messages[position%16]->receiver_PID;
+			message_envelope->message[4*i +2]= message_buffer->messages[position%16]->time_stamp;
+			message_envelope->message[4*i +3]= message_buffer->messages[position%16]->m_type;
+			position+=1;
+		}		
+		message_envelope->size=64;
+	}
 	return 1;
 }
-*/
 
+int release_processor(){
+	current_process->state = READY;								//only use when putting back intot he rpq
+	rpq_enqueue(current_process);
+	process_switch();
+}
+
+void process_switch(){
+
+		pcb* next_process; 
+		next_process = rpq_dequeue();							//highest priority process in the ready process queue 
+		
+		atomic(on);
+		context_switch(next_process);
+		atomic (off); 
+}
+
+void context_switch(pcb* next_process){
+	setjmp(current_process->jbdata);
+	longjmp(next_process->jbdata,1);
+	
+	current_process = next_process;							//note they have both been dequeued by this point
+
+}
