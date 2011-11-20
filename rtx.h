@@ -41,17 +41,17 @@ Comments: Global variables and struct definitions for Initialization
 #define N_I_MSG_ENV 30
 #define MESSAGE_SIZE 129
 #define TEMP_NUM_PROCESS 3
+
 // Process IDs
-#define PID_PROCESS_P 0		//only for partial implementation
-#define PID_I_PROCESS_CRT 1	//PID is 0 for final
-#define PID_I_PROCESS_KBD 2	//PID is 1 for final
+#define PID_I_PROCESS_CRT 0	//PID is 0 for final
+#define PID_I_PROCESS_KBD 1	//PID is 1 for final
 #define PID_I_PROCESS_TIMER 2
 #define PID_PROCESS_A 3
 #define PID_PROCESS_B 4
 #define PID_PROCESS_C 5
 #define PID_PROCESS_CCI 6
-#define PID_PROCESS_NULL 7
-#define PID_PROCESS_CLOCK 8
+#define PID_PROCESS_CLOCK 7
+#define PID_PROCESS_NULL 8
 
 // Process States
 #define READY 0
@@ -81,6 +81,10 @@ Comments: Global variables and struct definitions for Initialization
 #define FALSE 0
 #define TRUE 1
 
+//Stacks
+#define STACKSIZE 16384
+#define STACK_OFFSET 8
+
 /* Struct Definitions */
 typedef struct msg_trace{
      char sender_PID;
@@ -97,6 +101,8 @@ typedef struct pcb{
      char priority;            
      struct msg_queue *inbox;        
      jmp_buf jbdata;
+     int stacksize;
+     void *stack;     
 }pcb;
 
 //pcb queue struct definition
@@ -115,22 +121,22 @@ typedef struct Msg_Env{
      unsigned int sender_id;
      int time_stamp;
      char message_type;
-     char flag;
      char message[MESSAGE_SIZE];
      int size;
 }Msg_Env;
 
 //msg queue struct definition
 typedef struct msg_queue{
-	Msg_Env *head;
-	Msg_Env *tail;
-	char n_elements;
+     Msg_Env *head;
+     Msg_Env *tail;
+     char n_elements;
 }msg_queue;
 
 typedef struct initialization_table{
-	char pid;
-        char state;
-        char priority;
+     char pid;
+     char state;
+     char priority;
+     void **stack_address;
 }initialization_table;
 
 // Global Message Trace
@@ -141,6 +147,7 @@ extern pcb_queue *priority_ready_queue[4];
 extern pcb_queue *blocked_message_envelope;
 extern pcb_queue *blocked_message_receive;
 extern pcb_queue *sleep_queue;
+extern pcb_queue *i_process_queue;
 
 extern msg_queue *all_envelopes;
 extern msg_queue *free_envelopes;

@@ -18,6 +18,7 @@ Comments:	Initializes everythang
 #include "rtx.h"
 #include "kbcrt.h"
 #include "iproc.h"
+#include "queues.h"
 
 int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
@@ -27,6 +28,8 @@ int kbd_fid, crt_fid, kbd_status , crt_status;
 char *sfilename_kbd = "kbd_mmap";
 char *sfilename_crt = "crt_mmap";
 
+
+//Used to cleanup all the processes and memory maps after the kill function
 void cleanup(){
 	kill(kbd_pid,SIGINT);
 	kill(crt_pid,SIGINT);
@@ -68,6 +71,7 @@ void cleanup(){
 	}
 }
 
+//called by the sigset signal handler
 void die (int signal){
 	cleanup();
 	printf("\n\nSignal %i received. Terminating Program.\n\n",signal);
@@ -76,42 +80,118 @@ void die (int signal){
 
 int initialize_table(){
 	initialization_table i_table[N_TOTAL_PCB];	
-        // Process P only required for partial implementation.
-        i_table[0].pid = PID_PROCESS_P;
-        i_table[0].state = NO_BLK_RCV;
-        i_table[0].priority = 0;
 
-        i_table[1].pid = PID_I_PROCESS_CRT;
+        // Process P only required for partial implementation.
+
+        i_table[0].pid = PID_I_PROCESS_CRT;
+        i_table[0].state = I_PROCESS;
+        i_table[0].priority = 0;
+	i_table[0].stack_address=&(kbd_i_process);
+
+        i_table[1].pid = PID_I_PROCESS_KBD;
         i_table[1].state = I_PROCESS;
         i_table[1].priority = 0;
+	i_table[1].stack_address = &(crt_i_process);
 
-        i_table[2].pid = PID_I_PROCESS_KBD;
+        i_table[2].pid = PID_I_PROCESS_TIMER;
         i_table[2].state = I_PROCESS;
         i_table[2].priority = 0;
+	i_table[2].stack_address = &(timer_i_process);
 
-        i_table[3].pid = PID_I_PROCESS_TIMER;
-        i_table[3].state = I_PROCESS;
-        i_table[3].priority = 0;
+	i_table[3].pid = PID_PROCESS_A;
+	i_table[3].state = READY;
+	i_table[3].priority = 0;
+	i_table[3].stack_address = &(process_a);
 	
+	i_table[4].pid = PID_PROCESS_B;
+	i_table[4].state = READY;
+	i_table[4].pritority = 0;
+	i_table[4].stack_address = &(process_b);
+
+	i_table[5].pid = PID_PROCESS_C;
+	i_table[5].state = READY;
+	i_table[5].pritority = 0;
+	i_table[5].stack_address = &(process_c);
+	
+	i_table[6].pid = PID_PROCESS_CCI;
+	i_table[6].state = READY;
+	i_table[6].priority = 0;
+	i_table[6].stack_address = &(proccess_cci);
+
+	i_table[7].pid = PID_PROCESS_CLOCK;
+	i_table[7].state = READY;
+	i_table[7].priority = 0;
+	i_table[7].stack_address = &(process_clock);
+	
+	i_table[8].pid = PID_PROCESS_NULL;
+	i_table[8].state = READY;
+	i_table[8].pritority = 0;
+	i_table[8].stack_address = &(process_null);
+	
+
 	int i;
        
-        for(i = 0;i<TEMP_NUM_PROCESS;i++){
-                pcbList[i] = (pcb*)(malloc(sizeof(pcb)));
-                pcbList[i]->inbox = (msg_queue*)(malloc(sizeof(msg_queue)));
-                if(pcbList[i] == NULL){
+        for(i = 0;i<N_TOTAL_PCB;i++){
+		jmp_buf temp_buf; //jump buffer to store temporary context
+
+                pcbList[i] = (pcb*)(malloc(sizeof(pcb))); //creates pcbs
+ 		pcbList[i]->stack = malloc(STACKSIZE);
+		//check if it is actually created
+		if(pcbList[i] == NULL){
                         return INVALID_QUEUE_ERROR;
                 }
-                pcbList[i]->pid = i_table[i].pid;
-                pcbList[i]->state = i_table[i].state;
-                pcbList[i]->priority = i_table[i].priority;
+
+		initialize_pcb(pcbList[i]);
+		
+		//initialize the pcbs
+                pcbList[i].pid = i_table[i].pid;
+                pcbList[i].state = i_table[i].state;
+                pcbList[i].priority = i_table[i].priority;
+		pcbList[i].stack = (void *) i_table[i].stack_address;
+
                 pcbList[i]->next = NULL;
                 pcbList[i]->inbox->head = NULL;
                 pcbList[i]->inbox->tail = NULL;
+
+		if (i =< 3){
+			rpq_enqueue(pcList[i]);
+		}
+		else{
+			enqueue(i_process_queue,pcList[i]);
+		}
+
+		if (!setjmp(temp_buf)){
+			char *sp_top = pcbList[i]->stack+STACKSIZE-STACK_OFFSET;
+			_asm_("mov1 %0, %%esp": "=m" (sp_top_));
+			if (setjump(pcbList[i]->jbdata)){
+				longjump(temp_buf,1);
+			}
+			else{
+				void (*temp_fn) ();
+				tmp_fn = (void *) current_process->stack;
+				tmp_fn();
+			}
+		}
         }
 	
-	Msg_Env* tempMsgEnv;
-	tempMsgEnv = (Msg_Env*) (malloc(sizeof(struct Msg_Env)));
-	msg_enqueue(pcbList[PID_PROCESS_P]->inbox,tempMsgEnv);
+	Msg_Env* tempMsg;
+	for(i = 0;i<N_MSG_ENV;i++){
+		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
+		if(tempMsg == NULL){
+			return INVALID_MSG_POINTER;
+		}
+		msg_enqueue_all(tempMsgEnv);
+		msg_enqueue(free_envelopes,tempMsgEnv);
+	}
+	
+	for(i = 0;i<N_I_MSG_ENV;i++){
+		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
+		if(tempMsg == NULL){
+			return INVALID_MSG_POINTER;
+		}
+		msg_enqueue(all_i_envelopes,tempMsg);
+		msg_enqueue(free_i_envelopes,tempMsg);
+	}
 
 	current_process = pcbList[0];
 	return 1;
@@ -119,12 +199,11 @@ int initialize_table(){
 
 
 void initialize_data_structures (){
-	int i;
-	for (i = 0; i < 4; i++){
-		priority_ready_queue[i] = (pcb_queue*)(malloc(sizeof(pcb_queue)));
-	}
 
-	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
+	initialize_rpq_enqueue();
+
+	i_process_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));	
+	blocked_message_envelope = (pcb_queue*i) (malloc(sizeof(pcb_queue)));
 	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
 	sleep_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));
 
@@ -132,11 +211,23 @@ void initialize_data_structures (){
 	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	all_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	free_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+
+	initialize_queue(i_process_queue);
+	initialize_queue(blocked_message_envelope);
+	initialize_queue(blocked_message_receive);
+
+	initialize_msg_queue(all_envelopes);
+	initialize_msg_queue(free_envelopes);
+	initialize_msg_queue(all_i_envelopes);
+	initialize_msg_queue(free_i_envelopes);
 }
 
 void init (){
+	//initializes all the data structures
 	initialize_data_structures();
+	//initializes all the pcbs.
 	initialize_table();
+
 	//handles all the signals
 	sigset(SIGINT,die);
 	sigset(SIGBUS,die);
@@ -150,6 +241,7 @@ void init (){
 	//kbd handler signal
 	sigset(SIGUSR1,kbd_i_process);
 	sigset(SIGUSR2,crt_i_process);
+	sigset(SIGALRM,timer_i_process);
 	
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
