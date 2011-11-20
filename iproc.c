@@ -81,3 +81,39 @@ void crt_i_process(){
 	current_process->state = RUNNING; 
 	atomic(OFF);
 }
+
+void timer_i_process(){
+	
+	atomic(ON); // Turn atomic on.
+	// Save state of original process and switch to current process.
+	current_process->state = INTERRUPTED;
+	pcb *temp_pcb = current_process;
+	current_process =  (pcb*)pcb_pointer(PID_I_PROCESS_CRT);
+	
+	time_since_init++;
+	Msg_Env *msg_env = (Msg_Env*) k_receive_message();
+	
+	while(msg_env != NULL){
+		
+		// decrement the counters in the received messages.
+		msg_env->time_stamp--;	
+		
+		if(msg_env->time_stamp == 0){    //What does the 0 mean here?
+		
+			// send the message flag back to the delayed process		
+			k_send_message(msg_env->sender_id,msg_env);
+			
+			// Am I missing something here? 
+			
+			// set the flag to M_TYPE_MSG_DELAY_BACK
+			msg_env->flag = M_TYPE_MSG_DELAY_BACK;
+			
+		}
+		msg_env = msg_env->next;
+	}	
+	
+	// Return the back to the previous process.
+	current_process = temp_pcb;
+	current_process->state = RUNNING;
+	atomic(OFF);
+}

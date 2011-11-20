@@ -36,4 +36,7 @@ Task Breakdown for Partial Implementation:
 - MakeFile - Jin ---------------------------------------------------------> Done
 
 Task Breakdown for Final Implemetation:
--
+-Primitives - Markus ----------------------------------------------------->
+-Context Switching - Jin-------------------------------------------------->
+-CCI,Message Trace - Milan-------------------------------------------------------------->
+-Timer i_process & Wall clock - Bhavik------------------------------------->
