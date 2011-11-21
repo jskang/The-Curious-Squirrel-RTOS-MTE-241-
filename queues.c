@@ -91,7 +91,7 @@ pcb *dequeue(pcb_queue *Q){
 }
 
 //this dequeue remove a specified process from the queue, pid of process which is to be removed is passed to this function
-pcb *dequeue_selected_pcb(pcb_queue *Q, char desired_pcb){				
+pcb *dequeue_selected_pcb(pcb_queue *Q, int desired_pcb){				
 	if(Q == NULL)
 		return NULL;
 	if(empty_pcb_queue(Q))
@@ -105,34 +105,27 @@ pcb *dequeue_selected_pcb(pcb_queue *Q, char desired_pcb){
 	int pcb_found=0;
 
 	
-	
 	if(current_pcb->pid == desired_pcb)    // if desired pcb is the first element
 		current_pcb=dequeue(Q);
 	else{
-		
-	
-			while (current_pcb != NULL && pcb_found==0){							//loops until found or looped throught the entire queue
-		
-				if(current_pcb->pid != desired_pcb)
-					{
-					previous_pcb = current_pcb;
-					current_pcb = current_pcb->next;
-					}
-		
-		
-				else									
-					{
-					pcb_found=1;
-					previous_pcb->next = current_pcb->next;							//the one behind the one we remove point to the pcb after (jumps it)
-					if(current_pcb->next == NULL)									//if the pcb we are looking for is the last pcb
-						Q->tail=previous_pcb;										//sets tail to second last pcb
-					current_pcb->next = NULL;										//current_pcb no longer looks at anything
-					}	
 
-		
+		while (current_pcb != NULL && pcb_found==0){							//loops until found or looped throught the entire queue
+	
+			if(current_pcb->pid != desired_pcb){
+				previous_pcb = current_pcb;
+				current_pcb = current_pcb->next;
 			}
+
+			else{
+				pcb_found=1;
+				previous_pcb->next = current_pcb->next;							//the one behind the one we remove point to the pcb after (jumps it)
+				if(current_pcb->next == NULL)									//if the pcb we are looking for is the last pcb
+					Q->tail=previous_pcb;										//sets tail to second last pcb
+				current_pcb->next = NULL;										//current_pcb no longer looks at anything
+			}	
 		}
-		return current_pcb;
+	}
+	return current_pcb;
 	
 }
 
@@ -152,7 +145,7 @@ int delete_pcb_queue (pcb_queue *Q){
 }*/
 
 //this will return the pointer of a pcb specified by the id passed in (looks through the all_pcb_queue)
-pcb* pcb_pointer(char desired_pcb){
+pcb* pcb_pointer (int desired_pcb){
 	if (pcbList[desired_pcb]){
 		return pcbList[desired_pcb];
 	}
@@ -362,7 +355,7 @@ int enqueue_msg_trace(Msg_Env *message){
 	message_buffer->messages[message_buffer->entry_element *4]->sender_PID= message->sender_id;
 	message_buffer->messages[message_buffer->entry_element *4]->receiver_PID = message->owner_id;				//receiver id
 	message_buffer->messages[message_buffer->entry_element *4]->time_stamp = message->time_stamp;		
-	message_buffer->messages[message_buffer->entry_element *4]->m_type = message->flag;
+	message_buffer->messages[message_buffer->entry_element *4]->m_type = message->message_type;
 	
 	message_buffer->entry_element+=1;
 	number_messages_sent +=1;

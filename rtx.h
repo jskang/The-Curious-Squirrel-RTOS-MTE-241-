@@ -164,6 +164,10 @@ extern msg_queue *free_i_envelopes;
 
 extern pcb *pcbList[TEMP_NUM_PROCESS];
 extern long number_messages_sent;
+extern long time_since_init;
+extern int k_second;
+extern int k_minute;
+extern int k_hour;
 extern msg_trace_buffer *message_buffer;
 
 //io buffer global variable

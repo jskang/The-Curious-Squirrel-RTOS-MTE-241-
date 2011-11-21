@@ -19,6 +19,7 @@ Comments:	Initializes everythang
 #include "kbcrt.h"
 #include "iproc.h"
 #include "queues.h"
+#include "userProcesses.h"
 
 int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
@@ -86,47 +87,47 @@ int initialize_table(){
         i_table[0].pid = PID_I_PROCESS_CRT;
         i_table[0].state = I_PROCESS;
         i_table[0].priority = 0;
-	i_table[0].stack_address=&(kbd_i_process);
+	i_table[0].stack_address=(void *) &(kbd_i_process);
 
         i_table[1].pid = PID_I_PROCESS_KBD;
         i_table[1].state = I_PROCESS;
         i_table[1].priority = 0;
-	i_table[1].stack_address = &(crt_i_process);
+	i_table[1].stack_address =(void *) &(crt_i_process);
 
         i_table[2].pid = PID_I_PROCESS_TIMER;
         i_table[2].state = I_PROCESS;
         i_table[2].priority = 0;
-	i_table[2].stack_address = &(timer_i_process);
+	i_table[2].stack_address =(void *) &(timer_i_process);
 
 	i_table[3].pid = PID_PROCESS_A;
 	i_table[3].state = READY;
 	i_table[3].priority = 0;
-	i_table[3].stack_address = &(process_a);
+	i_table[3].stack_address =(void *) &(process_a);
 	
 	i_table[4].pid = PID_PROCESS_B;
 	i_table[4].state = READY;
-	i_table[4].pritority = 0;
-	i_table[4].stack_address = &(process_b);
+	i_table[4].priority = 0;
+	i_table[4].stack_address =(void *) &(process_b);
 
 	i_table[5].pid = PID_PROCESS_C;
 	i_table[5].state = READY;
-	i_table[5].pritority = 0;
-	i_table[5].stack_address = &(process_c);
+	i_table[5].priority = 0;
+	i_table[5].stack_address =(void *) &(process_c);
 	
 	i_table[6].pid = PID_PROCESS_CCI;
 	i_table[6].state = READY;
 	i_table[6].priority = 0;
-	i_table[6].stack_address = &(proccess_cci);
+	i_table[6].stack_address =(void *) &(process_cci);
 
 	i_table[7].pid = PID_PROCESS_CLOCK;
 	i_table[7].state = READY;
 	i_table[7].priority = 0;
-	i_table[7].stack_address = &(process_clock);
+	i_table[7].stack_address =(void *) &(process_clock);
 	
 	i_table[8].pid = PID_PROCESS_NULL;
 	i_table[8].state = READY;
-	i_table[8].pritority = 0;
-	i_table[8].stack_address = &(process_null);
+	i_table[8].priority = 0;
+	i_table[8].stack_address =(void *) &(process_null);
 	
 
 	int i;
@@ -144,30 +145,30 @@ int initialize_table(){
 		initialize_pcb(pcbList[i]);
 		
 		//initialize the pcbs
-                pcbList[i].pid = i_table[i].pid;
-                pcbList[i].state = i_table[i].state;
-                pcbList[i].priority = i_table[i].priority;
-		pcbList[i].stack = (void *) i_table[i].stack_address;
+                pcbList[i]->pid = i_table[i].pid;
+                pcbList[i]->state = i_table[i].state;
+                pcbList[i]->priority = i_table[i].priority;
+		pcbList[i]->stack = (void *) i_table[i].stack_address;
 
                 pcbList[i]->next = NULL;
                 pcbList[i]->inbox->head = NULL;
                 pcbList[i]->inbox->tail = NULL;
 
-		if (i =< 3){
-			rpq_enqueue(pcList[i]);
+		if (i <= 3){
+			rpq_enqueue(pcbList[i]);
 		}
 		else{
-			enqueue(i_process_queue,pcList[i]);
+			enqueue(i_process_queue,pcbList[i]);
 		}
 
 		if (!setjmp(temp_buf)){
 			char *sp_top = pcbList[i]->stack+STACKSIZE-STACK_OFFSET;
-			_asm_("mov1 %0, %%esp": "=m" (sp_top_));
-			if (setjump(pcbList[i]->jbdata)){
-				longjump(temp_buf,1);
+			__asm__("movl %0,%%esp": "=m" (sp_top));
+			if (setjmp(pcbList[i]->jbdata)){
+				longjmp(temp_buf,1);
 			}
 			else{
-				void (*temp_fn) ();
+				void (*tmp_fn) ();
 				tmp_fn = (void *) current_process->stack;
 				tmp_fn();
 			}
@@ -180,8 +181,8 @@ int initialize_table(){
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;
 		}
-		msg_enqueue_all(tempMsgEnv);
-		msg_enqueue(free_envelopes,tempMsgEnv);
+		msg_enqueue_all(tempMsg);
+		msg_enqueue(free_envelopes,tempMsg);
 	}
 	
 	for(i = 0;i<N_I_MSG_ENV;i++){
@@ -200,10 +201,10 @@ int initialize_table(){
 
 void initialize_data_structures (){
 
-	initialize_rpq_enqueue();
+	initialize_rpq_queue();
 
 	i_process_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));	
-	blocked_message_envelope = (pcb_queue*i) (malloc(sizeof(pcb_queue)));
+	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
 	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
 	sleep_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));
 

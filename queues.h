@@ -23,9 +23,9 @@ int enqueue(pcb_queue *Q, pcb *new_pcb);
 
 pcb *dequeue(pcb_queue *Q);
 
-pcb *dequeue_selected_pcb(pcb_queue *Q, char desired_pcb);
+pcb *dequeue_selected_pcb(pcb_queue *Q, int desired_pcb);
 
-pcb *pcb_pointer(char desired_pcb);
+pcb *pcb_pointer(int desired_pcb);
 
 void initialize_msg_queue(msg_queue *Q);
 

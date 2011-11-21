@@ -106,7 +106,7 @@ void timer_i_process(){
 			// Am I missing something here? 
 			
 			// set the flag to M_TYPE_MSG_DELAY_BACK
-			msg_env->flag = M_TYPE_MSG_DELAY_BACK;
+			msg_env->message_type = M_TYPE_MSG_DELAY_BACK;
 			
 		}
 		msg_env = msg_env->next;

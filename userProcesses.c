@@ -4,67 +4,45 @@
 #include "userProcesses.h"
 #include "userAPI.h"
 
-void processP(){
-
-	const tWait = 500000;	// rcv loop wait time in usec, appriox value
-	Msg_Env* env = msg_dequeue(pcbList[PID_PROCESS_P]->inbox);
-
-	do{
-		get_console_chars(env);		// keyboard input.
-		env = receive_message();
-		
-		while (env == NULL){
-			usleep(tWait);
-			env = (Msg_Env*) receive_message();
-		}
-		
-		send_console_chars(env);	// CRT output, wait for acknowledgement.
-		env = (Msg_Env*)receive_message();
-		while(env == NULL){
-			usleep(tWait);
-			env = (Msg_Env*)receive_message();
-		}
-	}while(1);
-}
-
 void process_a(){
-	Msg_Env *message;
+	Msg_Env *tmp_msg;
 	static int num = 0;
 
 	do{
-		message = request_msg_env();
-		message->set_type(num);
-		send(B_PID,message);
+		tmp_msg = request_msg_env();
+		tmp_msg->message_type(M_TYPE_DEFAULT);
+		tmp_msg->message[1] = num;
+		send_message(PID_PROCESS_B,tmp_msg);
 		num++;
-		process_switch();
+		release_processor();
 	}while (1);
 
 }
 
 void process_b(){
-	Msg_Env *message;
+	Msg_Env *tmp_msg;
 
 	do{
-		message = receive_message();
-		send(C_PID,message);
-		process_switch();
+		tmp_message = receive_message();
+		send(PID_PROCESS_C,tmp_msg);
+		release_processor();
 	}while(1);
 }
 
 void process_c(){
-	Msg_Env *message;
+	Msg_Env *tmp_msg;
 
 	do{
 		// check for message on local queue first
-		message = local_dequeue();
+		message = local_dequeue;
 
 		if (message == NULL){
 			message = receive_message();
 		}
 
-		if ((message->get_type()) % 20 == 0){
+		if ((message->) % 20 == 0){
 			strcpy(message->data,"Process C\n");
-			message->set_type(MSG);
+			message->message_type(MSG);
 			send_console_characters(message);
 			message = receive_message();
 			while( message->get_type() != MSG ){
