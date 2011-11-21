@@ -9,7 +9,7 @@ void process_a(){
 	static int num = 0;
 
 	do{
-		tmp_msg = request_msg_env();
+		tmp_msg = allocate_msg_env();
 		tmp_msg->message_type = M_TYPE_DEFAULT;
 		tmp_msg->message[1] = num;
 		send_message(PID_PROCESS_B,tmp_msg);
@@ -45,7 +45,7 @@ void process_c(){
 		if ((tmp_msg->message[1]) % 20 == 0){
 			strcpy(tmp_msg->message,"Process C\n");
 			tmp_msg->message_type = M_TYPE_DEFAULT;
-			send_console_char(tmp_msg);
+			send_console_chars(tmp_msg);
 			tmp_msg = receive_message();
 			while( tmp_msg->message_type != M_TYPE_MSG_ACK){
 				enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
@@ -96,10 +96,10 @@ void process_cci(){
 				send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 			}
 			else if(strncmp(usr_cmd,"ct",2) == 0){
-				send_mesasge(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
+				send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 			}
 			else if(strncmp(usr_cmd,"b",2) == 0){
-				get_trace_buffer(msg_env);				
+				get_trace_buffers(msg_env);				
 			}
 			else if(strncmp(usr_cmd,"t",2) == 0){
 				terminate();	// terminate the process.
@@ -117,7 +117,7 @@ void process_clock(Msg_Env *msg_env){
 	extern k_second;
 	extern k_minute;
 	extern k_hour;
-	Msg_Env *msg_delay = request_msg_env();
+	Msg_Env *msg_delay = allocate_msg_env();
 	
 	do{
 
