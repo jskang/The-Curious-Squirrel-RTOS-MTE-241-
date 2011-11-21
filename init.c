@@ -129,6 +129,7 @@ int initialize_table(){
 	i_table[8].priority = 0;
 	i_table[8].stack_address =(void *) &(process_null);
 	
+	printf("itable is set \n");
 
 	int i;
        
@@ -148,25 +149,32 @@ int initialize_table(){
                 pcbList[i]->pid = i_table[i].pid;
                 pcbList[i]->state = i_table[i].state;
                 pcbList[i]->priority = i_table[i].priority;
-		pcbList[i]->stack = (void *) i_table[i].stack_address;
+		pcbList[i]->stack = i_table[i].stack_address;
 
                 pcbList[i]->next = NULL;
                 pcbList[i]->inbox->head = NULL;
                 pcbList[i]->inbox->tail = NULL;
 
-		if (i <= 3){
+		printf("ready to enque the pcbs \n");
+		if (i <= 2){
 			rpq_enqueue(pcbList[i]);
 		}
 		else{
 			enqueue(i_process_queue,pcbList[i]);
 		}
-
-		if (!setjmp(temp_buf)){
+		printf("Saving current context \n");
+		if (setjmp(temp_buf) == 0){
+		printf("Saved current context \n");
+		
 			char *sp_top = pcbList[i]->stack+STACKSIZE-STACK_OFFSET;
+			printf("current pcb stack \n");
 			__asm__("movl %0,%%esp": "=m" (sp_top));
-			if (setjmp(pcbList[i]->jbdata)){
+			printf("setjumping \n");			
+			if (setjmp(pcbList[i]->jbdata)==0){
+				printf("long jumping back to initialization \n");
 				longjmp(temp_buf,1);
 			}
+
 			else{
 				void (*tmp_fn) ();
 				tmp_fn = (void *) current_process->stack;
@@ -226,9 +234,11 @@ void initialize_data_structures (){
 void init (){
 	//initializes all the data structures
 	initialize_data_structures();
+	printf("data structures made \n");
 	//initializes all the pcbs.
 	initialize_table();
-
+	printf("table completed \n");
+	fflush(stdout);
 	//handles all the signals
 	sigset(SIGINT,die);
 	sigset(SIGBUS,die);
@@ -243,7 +253,8 @@ void init (){
 	sigset(SIGUSR1,kbd_i_process);
 	sigset(SIGUSR2,crt_i_process);
 	sigset(SIGALRM,timer_i_process);
-	
+
+	ualarm(100000, 100000);	
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
 	crt_fid = open(sfilename_crt, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
