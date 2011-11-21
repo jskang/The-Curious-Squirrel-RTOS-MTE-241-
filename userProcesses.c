@@ -63,8 +63,63 @@ void process_c(){
 }
 
 void process_cci(){
+	
+	MsgEnv *msg_env;
+	char msg_first_char[1];
+	char msg_second_char[1];
+	char msg_cmd[2];
+	do{
 
-
+		msg_env = (Msg_Env*) k_receive_message();	// receive message.
+		// extract first and second character
+		msg_first_char = msg_env->message[0];		
+		msg_second_char = msg_env->message[1];		
+		
+		if(msg_env->size< 12){
+		
+			switch(strncpy(msg_cmd,msg_env->message,2){
+			
+				case 's':
+					send_message(msg_env, PID_PROCESS_A);	// send message to process A
+					break;
+				
+				case 'ps':
+					request_process_status(msg_env);	// request process status (message envelope)
+					break;
+				
+				case 'c':
+					if(msg_env->size == 11){
+						send_message(msg_env, PID_PROCESS_CLOCK);	// send message to clock process
+					}
+					break;
+					
+				case 'cd':
+					send_message(msg_env, PID_PROCESS_CLOCK);	// send message to clock process
+					break;
+					
+				case 'ct':
+					send_mesasge(msg_env, PID_PROCESS_CLOCK);	// send message to clock process
+					break;
+					
+				case 'b':
+					get_trace_buffer(msg_env);	
+					break;
+					
+				case 't':
+					terminate();	// terminate the process.
+					break;
+					
+				case 'n':
+					if(msg_env->size == 5){
+						change_priority(msg_env->message[4],msg_env->message[2]);	// change priority of process.
+					}
+					break;
+					
+				default
+					break;	
+			}
+		}	
+	}while(1);
 }
 
 void process_clock(MsgEnv *msg_env){
