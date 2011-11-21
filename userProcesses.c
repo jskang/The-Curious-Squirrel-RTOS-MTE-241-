@@ -69,7 +69,6 @@ void process_cci(){
 	char msg_second_char[1];
 	char msg_cmd[2];
 	do{
-
 		msg_env = (Msg_Env*) k_receive_message();	// receive message.
 		// extract first and second character
 		msg_first_char = msg_env->message[0];		
@@ -77,10 +76,10 @@ void process_cci(){
 		
 		if(msg_env->size< 12){
 		
-			switch(strncpy(msg_cmd,msg_env->message,2){
+			switch(strncpy(msg_cmd,msg_env->message,2)){
 			
 				case 's':
-					send_message(msg_env, PID_PROCESS_A);	// send message to process A
+					send_message(PID_PROCESS_A, msg_env);	// send message to process A
 					break;
 				
 				case 'ps':
@@ -89,16 +88,16 @@ void process_cci(){
 				
 				case 'c':
 					if(msg_env->size == 11){
-						send_message(msg_env, PID_PROCESS_CLOCK);	// send message to clock process
+						send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 					}
 					break;
 					
 				case 'cd':
-					send_message(msg_env, PID_PROCESS_CLOCK);	// send message to clock process
+					send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 					break;
 					
 				case 'ct':
-					send_mesasge(msg_env, PID_PROCESS_CLOCK);	// send message to clock process
+					send_mesasge(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 					break;
 					
 				case 'b':
@@ -115,12 +114,13 @@ void process_cci(){
 					}
 					break;
 					
-				default
+				default:
 					break;	
 			}
 		}	
 	}while(1);
 }
+
 
 void process_clock(MsgEnv *msg_env){
 
