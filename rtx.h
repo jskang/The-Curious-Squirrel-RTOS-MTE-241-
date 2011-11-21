@@ -105,7 +105,8 @@ typedef struct pcb{
      struct msg_queue *inbox;        
      jmp_buf jbdata;
      int stacksize;
-     void *stack;     
+     char* stack;
+     void* process_code;
 }pcb;
 
 //pcb queue struct definition

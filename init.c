@@ -25,6 +25,8 @@ int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
 int bufsize = BUFFERSIZE;
 int kbd_fid, crt_fid, kbd_status , crt_status;
+jmp_buf kernel_buf;
+initialization_table i_table[N_TOTAL_PCB];
 
 char *sfilename_kbd = "kbd_mmap";
 char *sfilename_crt = "crt_mmap";
@@ -80,110 +82,107 @@ void die (int signal){
 }
 
 int initialize_table(){
-	initialization_table i_table[N_TOTAL_PCB];	
 
         // Process P only required for partial implementation.
 
         i_table[0].pid = PID_I_PROCESS_CRT;
         i_table[0].state = I_PROCESS;
         i_table[0].priority = 0;
-	i_table[0].stack_address=(void *) &(kbd_i_process);
+	i_table[0].stack_address=(void *) (kbd_i_process);
 
         i_table[1].pid = PID_I_PROCESS_KBD;
         i_table[1].state = I_PROCESS;
         i_table[1].priority = 0;
-	i_table[1].stack_address =(void *) &(crt_i_process);
+	i_table[1].stack_address =(void *) (crt_i_process);
 
         i_table[2].pid = PID_I_PROCESS_TIMER;
         i_table[2].state = I_PROCESS;
         i_table[2].priority = 0;
-	i_table[2].stack_address =(void *) &(timer_i_process);
+	i_table[2].stack_address =(void *) (timer_i_process);
 
 	i_table[3].pid = PID_PROCESS_A;
 	i_table[3].state = READY;
 	i_table[3].priority = 0;
-	i_table[3].stack_address =(void *) &(process_a);
+	i_table[3].stack_address =(void *) (process_a);
 	
 	i_table[4].pid = PID_PROCESS_B;
 	i_table[4].state = READY;
 	i_table[4].priority = 0;
-	i_table[4].stack_address =(void *) &(process_b);
+	i_table[4].stack_address =(void *) (process_b);
 
 	i_table[5].pid = PID_PROCESS_C;
 	i_table[5].state = READY;
 	i_table[5].priority = 0;
-	i_table[5].stack_address =(void *) &(process_c);
+	i_table[5].stack_address =(void *) (process_c);
 	
 	i_table[6].pid = PID_PROCESS_CCI;
 	i_table[6].state = READY;
 	i_table[6].priority = 0;
-	i_table[6].stack_address =(void *) &(process_cci);
+	i_table[6].stack_address =(void *) (process_cci);
 
 	i_table[7].pid = PID_PROCESS_CLOCK;
 	i_table[7].state = READY;
 	i_table[7].priority = 0;
-	i_table[7].stack_address =(void *) &(process_clock);
+	i_table[7].stack_address =(void *) (process_clock);
 	
 	i_table[8].pid = PID_PROCESS_NULL;
 	i_table[8].state = READY;
 	i_table[8].priority = 0;
 	i_table[8].stack_address =(void *) &(process_null);
 	
-	printf("itable is set \n");
+}
 
+int init_pcb(){
 	int i;
        
         for(i = 0;i<N_TOTAL_PCB;i++){
-		jmp_buf temp_buf; //jump buffer to store temporary context
-
-                pcbList[i] = (pcb*)(malloc(sizeof(pcb))); //creates pcbs
- 		pcbList[i]->stack = malloc(STACKSIZE);
-		//check if it is actually created
+                
+		pcbList[i] = (pcb*)(malloc(sizeof(pcb))); //creates pcbs
+		initialize_pcb(pcbList[i]);
 		if(pcbList[i] == NULL){
                         return INVALID_QUEUE_ERROR;
                 }
 
 		initialize_pcb(pcbList[i]);
 		
-		//initialize the pcbs
                 pcbList[i]->pid = i_table[i].pid;
                 pcbList[i]->state = i_table[i].state;
                 pcbList[i]->priority = i_table[i].priority;
-		pcbList[i]->stack = i_table[i].stack_address;
+		pcbList[i]->stack = ((char *)malloc(STACKSIZE))+STACKSIZE-STACK_OFFSET;
+		pcbList[i]->process_code = (void *) i_table[i].stack_address;
 
-                pcbList[i]->next = NULL;
-                pcbList[i]->inbox->head = NULL;
-                pcbList[i]->inbox->tail = NULL;
-
-		printf("ready to enque the pcbs \n");
 		if (i <= 2){
 			rpq_enqueue(pcbList[i]);
 		}
 		else{
 			enqueue(i_process_queue,pcbList[i]);
 		}
-		printf("Saving current context \n");
-		if (setjmp(temp_buf) == 0){
-		printf("Saved current context \n");
-		
-			char *sp_top = pcbList[i]->stack+STACKSIZE-STACK_OFFSET;
-			printf("current pcb stack \n");
-			__asm__("movl %0,%%esp": "=m" (sp_top));
-			printf("setjumping \n");			
-			if (setjmp(pcbList[i]->jbdata)==0){
-				printf("long jumping back to initialization \n");
-				longjmp(temp_buf,1);
-			}
+		init_context_save(pcbList[i]);
+	}
+}
 
-			else{
-				void (*tmp_fn) ();
-				tmp_fn = (void *) current_process->stack;
-				tmp_fn();
-			}
+void init_context_save (pcb *tmp_pcb){
+	char* temp_sp = NULL;
+	pcb* temp = tmp_pcb;
+	if (setjmp(kernel_buf)==0){
+		temp_sp = temp->stack;
+		__asm__("movl %0,%%esp" :"=m" (temp_sp));
+		if (setjmp(temp->jbdata)==0){
+			longjmp(kernel_buf,1);
 		}
-        }
-	
+		else{
+			void (*tmp) ();
+			tmp = (void*) current_process->process_code;
+			tmp();
+		}
+	}
+}
+
+int init_msg_env (){
+	int i;	
 	Msg_Env* tempMsg;
+
+	//initialize envelopes for user processes
 	for(i = 0;i<N_MSG_ENV;i++){
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 		if(tempMsg == NULL){
@@ -192,7 +191,8 @@ int initialize_table(){
 		msg_enqueue_all(tempMsg);
 		msg_enqueue(free_envelopes,tempMsg);
 	}
-	
+
+	//initialize envelopes for iProcesses	
 	for(i = 0;i<N_I_MSG_ENV;i++){
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 		if(tempMsg == NULL){
@@ -205,6 +205,7 @@ int initialize_table(){
 	current_process = pcbList[0];
 	return 1;
 }
+
 
 
 void initialize_data_structures (){
@@ -235,10 +236,14 @@ void init (){
 	//initializes all the data structures
 	initialize_data_structures();
 	printf("data structures made \n");
-	//initializes all the pcbs.
 	initialize_table();
-	printf("table completed \n");
-	fflush(stdout);
+	printf("initialization table made \n");
+	init_pcb();
+	printf("all pcb initialized \n");
+	init_msg_env();
+	printf("all msg env initialized \n");
+
+
 	//handles all the signals
 	sigset(SIGINT,die);
 	sigset(SIGBUS,die);
