@@ -57,11 +57,12 @@ int enqueue(pcb_queue *Q, pcb *new_pcb){
 		return INVALID_QUEUE_ERROR;
 	if(new_pcb == NULL)
 		return INVALID_PCB_POINTER;
-		
+
 	if(empty_pcb_queue(Q)){												//if queue is currently empty head and tail point to same element
 		Q->head = new_pcb;
 		Q->tail = new_pcb;
 	}
+
 	else{
 		Q->tail->next = new_pcb;										//pcb who is currently is at end now points to the new pcb
 		Q->tail = new_pcb;												//tail points to new pcb
@@ -154,20 +155,30 @@ pcb* pcb_pointer (int desired_pcb){
 
 /************* here is where message envelope queue functions begin*******************/
 
-void initialize_msg_queue(msg_queue *Q){
+int initialize_msg_queue(msg_queue *Q){
 	if(Q == NULL)
-		return;
+		return 0;
 	Q->head = NULL;	//queue start with zero elements
 	Q->tail = NULL;
+	return 1;
 }
 
 int empty_msg_queue(msg_queue *Q){
-	if(Q == NULL)
+	printf("comparing queues \n");
+	if(Q == NULL){
+	printf("comparing queues 1 \n");
 		return INVALID_QUEUE_ERROR;
-	if (Q->head == NULL)
+	}
+
+	if (Q->head == NULL){
+	printf("comparing queues 2 \n");
 		return 1;	//queue is empty
-	else
+	}
+	
+	else{
+	printf("comparing queues 3 \n");
 		return 0;  //false queue is not empty
+	}
 }
 
 //add message envelopes to the queue which contains all envelopes used once
@@ -193,11 +204,11 @@ int msg_enqueue_all (Msg_Env *chain_mail){
 }
 
 int msg_enqueue(msg_queue *Q, Msg_Env *chain_mail){
+	printf("msg_enqueue \n");
 	if(Q == NULL)
 		return INVALID_QUEUE_ERROR;
 	if(chain_mail == NULL)
 		return INVALID_MSG_POINTER;
-
 	if(empty_msg_queue(Q)){										//if queue is currently empty head and tail point to same element
 		Q->head = chain_mail;
 		Q->tail = chain_mail;

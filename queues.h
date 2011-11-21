@@ -27,7 +27,7 @@ pcb *dequeue_selected_pcb(pcb_queue *Q, int desired_pcb);
 
 pcb *pcb_pointer(int desired_pcb);
 
-void initialize_msg_queue(msg_queue *Q);
+int initialize_msg_queue(msg_queue *Q);
 
 int empty_msg_queue(msg_queue *Q);
 

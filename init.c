@@ -179,9 +179,8 @@ void init_context_save (pcb *tmp_pcb){
 }
 
 int init_msg_env (){
-	int i;	
+	int i, debug;	
 	Msg_Env* tempMsg;
-
 	//initialize envelopes for user processes
 	for(i = 0;i<N_MSG_ENV;i++){
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
@@ -191,18 +190,28 @@ int init_msg_env (){
 		msg_enqueue_all(tempMsg);
 		msg_enqueue(free_envelopes,tempMsg);
 	}
+	printf("u_process msg created \n");
 
-	//initialize envelopes for iProcesses	
+	//initialize envelopes for iProcesses
 	for(i = 0;i<N_I_MSG_ENV;i++){
+		printf("creating msg envelope \n");
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
+
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;
+		}
+		
+		if(all_i_envelopes->head != NULL){
+			printf ("why the fuck did it change");
+		}
+		if (!i){
+			all_i_envelopes->head = NULL;	
 		}
 		msg_enqueue(all_i_envelopes,tempMsg);
 		msg_enqueue(free_i_envelopes,tempMsg);
 	}
-
-	current_process = pcbList[0];
+	printf("i_process msg created \n");
+	
 	return 1;
 }
 
@@ -230,9 +239,11 @@ void initialize_data_structures (){
 	initialize_msg_queue(free_envelopes);
 	initialize_msg_queue(all_i_envelopes);
 	initialize_msg_queue(free_i_envelopes);
+	
 }
 
 void init (){
+	int i;
 	//initializes all the data structures
 	initialize_data_structures();
 	printf("data structures made \n");
@@ -240,7 +251,7 @@ void init (){
 	printf("initialization table made \n");
 	init_pcb();
 	printf("all pcb initialized \n");
-	init_msg_env();
+	i = init_msg_env();
 	printf("all msg env initialized \n");
 
 
