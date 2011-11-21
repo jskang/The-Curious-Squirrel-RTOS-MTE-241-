@@ -69,55 +69,43 @@ void process_cci(){
 	MsgEnv *msg_env;
 	char msg_first_char[1];
 	char msg_second_char[1];
-	char msg_cmd[2];
+	char usr_cmd[2];
 	do{
 		msg_env = (Msg_Env*) k_receive_message();	// receive message.
+		
 		// extract first and second character
 		msg_first_char = msg_env->message[0];		
 		msg_second_char = msg_env->message[1];		
+	
+		strncpy(usr_cmd,msg_env->message,2);	// store the user command.
 		
-		if(msg_env->size < 12){
-		
-			switch(strncpy(msg_cmd,msg_env->message,2)){
+		if(msg_env->size< 12){
 			
-				case 's':
-					send_message(PID_PROCESS_A, msg_env);	// send message to process A
-					break;
-				
-				case 'ps':
-					request_process_status(msg_env);	// request process status (message envelope)
-					break;
-				
-				case 'c':
-					if(msg_env->size == 11){
-						send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
-					}
-					break;
-					
-				case 'cd':
+			if(strncmp(usr_cmd,"s",2) == 0){
+				send_message(PID_PROCESS_A, msg_env);	// send message to process A
+			}
+			else if(strncmp(usr_cmd,"ps",2) == 0){
+				request_process_status(msg_env);	// request process status (message envelope)			
+			}
+			else if(strncmp(usr_cmd,"c",2) == 0){
+				if(msg_env->size == 11){
 					send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
-					break;
-					
-				case 'ct':
-					send_mesasge(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
-					break;
-					
-				case 'b':
-					get_trace_buffer(msg_env);	
-					break;
-					
-				case 't':
-					terminate();	// terminate the process.
-					break;
-					
-				case 'n':
-					if(msg_env->size == 5){
-						change_priority(msg_env->message[4],msg_env->message[2]);	// change priority of process.
-					}
-					break;
-					
-				default:
-					break;	
+				}			
+			}
+			else if(strncmp(usr_cmd,"cd",2) == 0){
+				send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
+			}
+			else if(strncmp(usr_cmd,"ct",2) == 0){
+				send_mesasge(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
+			}
+			else if(strncmp(usr_cmd,"b",2) == 0){
+				get_trace_buffer(msg_env);				
+			}
+			else if(strncmp(usr_cmd,"t",2) == 0){
+				terminate();	// terminate the process.
+			}
+			else if(strncmp(usr_cmd,"n",2) == 0){
+				change_priority(msg_env->message[4],msg_env->message[2]);	// change priority of process.
 			}
 		}	
 	}while(1);
