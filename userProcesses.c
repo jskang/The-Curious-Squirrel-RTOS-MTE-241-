@@ -10,7 +10,7 @@ void process_a(){
 
 	do{
 		tmp_msg = request_msg_env();
-		tmp_msg->message_type(M_TYPE_DEFAULT);
+		tmp_msg->message_type = M_TYPE_DEFAULT;
 		tmp_msg->message[1] = num;
 		send_message(PID_PROCESS_B,tmp_msg);
 		num++;
@@ -23,8 +23,8 @@ void process_b(){
 	Msg_Env *tmp_msg;
 
 	do{
-		tmp_message = receive_message();
-		send(PID_PROCESS_C,tmp_msg);
+		tmp_msg = receive_message();
+		send_message(PID_PROCESS_C,tmp_msg);
 		release_processor();
 	}while(1);
 }
@@ -43,19 +43,19 @@ void process_c(){
 		}
 		
 		if ((tmp_msg->message[1]) % 20 == 0){
-			strcpy(message->data,"Process C\n");
-			message->message_type(M_TYPE_DEFAULT);
-			send_console_char(msg_type);
-			msg_type = receive_message();
-			while( temp_msg>message_type != M_TYPE_MSG_ACK){
+			strcpy(tmp_msg->message,"Process C\n");
+			tmp_msg->message_type = M_TYPE_DEFAULT;
+			send_console_char(tmp_msg);
+			tmp_msg = receive_message();
+			while( tmp_msg->message_type != M_TYPE_MSG_ACK){
 				enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
-				message = receive_message();
+				tmp_msg = receive_message();
 			}
 			request_delay(1000,M_TYPE_MSG_DELAY_BACK, tmp_msg); // 1000 = 10 seconds
 			tmp_msg = receive_message();
-			while( message->get_type() != M_TYPE_MSG_DELAY_BACK){
+			while(tmp_msg->message_type != M_TYPE_MSG_DELAY_BACK){
 				enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
-				tmp_msg = receive_receive();
+				tmp_msg = receive_message();
 			}
 		}
 		deallocate_msg_env(tmp_msg);
@@ -66,12 +66,12 @@ void process_c(){
 
 void process_cci(){
 	
-	MsgEnv *msg_env;
-	char msg_first_char[1];
-	char msg_second_char[1];
+	Msg_Env *msg_env;
+	char msg_first_char;
+	char msg_second_char;
 	char usr_cmd[2];
 	do{
-		msg_env = (Msg_Env*) k_receive_message();	// receive message.
+		msg_env = (Msg_Env*) receive_message();	// receive message.
 		
 		// extract first and second character
 		msg_first_char = msg_env->message[0];		
@@ -112,12 +112,12 @@ void process_cci(){
 }
 
 
-void process_clock(MsgEnv *msg_env){
+void process_clock(Msg_Env *msg_env){
 
 	extern k_second;
 	extern k_minute;
 	extern k_hour;
-	MsgEnv *msg_delay = request_msg_env();
+	Msg_Env *msg_delay = request_msg_env();
 	
 	do{
 
@@ -137,7 +137,7 @@ void process_clock(MsgEnv *msg_env){
 			if(msg_env->message_type == M_TYPE_WALL_CLOCK){  // display to CRT if true
 				
 				// send msg_envelope to crt.
-				k_send_console_chars(msg_env);
+				send_console_chars(msg_env);
 				
 			}
 			

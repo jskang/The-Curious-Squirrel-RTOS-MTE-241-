@@ -38,7 +38,7 @@ int send_console_chars(Msg_Env *message_envelope){
 
 Msg_Env* allocate_msg_env(){
 	atomic(ON);
-	Msg_Env temp;
+	Msg_Env *temp;
 	temp = k_allocate_msg_env ();
 	atomic(OFF);
 	return temp;

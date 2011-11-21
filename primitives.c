@@ -198,7 +198,7 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 	return 1;
 }
 
-int release_processor(){
+int k_release_processor(){
 	current_process->state = READY;		//only use when putting back intot he rpq
 	rpq_enqueue(current_process);
 	process_switch();
