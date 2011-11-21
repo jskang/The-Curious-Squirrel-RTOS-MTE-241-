@@ -30,34 +30,36 @@ void process_b(){
 }
 
 void process_c(){
-	Msg_Env *tmp_msg;
+	Msg_Env* tmp_msg;
+	msg_queue* local_msg_queue;
+	local_msg_queue = (msg_queue*) malloc(sizeof(msg_queue));
 
 	do{
 		// check for message on local queue first
-		message = local_dequeue;
+		tmp_msg = dequeue(local_msg_queue);
 
-		if (message == NULL){
-			message = receive_message();
+		if (tmp_msg == NULL){
+			tmp_msg = receive_message();
 		}
-
-		if ((message->) % 20 == 0){
+		
+		if ((tmp_msg->message[1]) % 20 == 0){
 			strcpy(message->data,"Process C\n");
-			message->message_type(MSG);
-			send_console_characters(message);
-			message = receive_message();
-			while( message->get_type() != MSG ){
-				local_enqueue(message);  // save message on the local queue
+			message->message_type(M_TYPE_DEFAULT);
+			send_console_char(msg_type);
+			msg_type = receive_message();
+			while( temp_msg>message_type != M_TYPE_MSG_ACK){
+				enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
 				message = receive_message();
 			}
-			request_delay(1000, WAKEUP, message); // 1000 = 10 seconds
-			message = receive_message();
-			while( message->get_type() != WAKEUP){
-				local_enqueue(message);  // save message on the local queue
-				message = receive();
+			request_delay(1000,M_TYPE_MSG_DELAY_BACK, tmp_msg); // 1000 = 10 seconds
+			tmp_msg = receive_message();
+			while( message->get_type() != M_TYPE_MSG_DELAY_BACK){
+				enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
+				tmp_msg = receive_receive();
 			}
 		}
-		release_msg_env(message);
-		process_switch();
+		deallocate_msg_env(tmp_msg);
+		release_processor();
 	}while(1);
 
 }
@@ -74,7 +76,7 @@ void process_cci(){
 		msg_first_char = msg_env->message[0];		
 		msg_second_char = msg_env->message[1];		
 		
-		if(msg_env->size< 12){
+		if(msg_env->size < 12){
 		
 			switch(strncpy(msg_cmd,msg_env->message,2)){
 			
