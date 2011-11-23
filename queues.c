@@ -302,18 +302,20 @@ int rpq_enqueue (pcb *ready_pcb){
 	if (ready_pcb ->state != READY)
 		return INVALID_PCB_STATE_ERROR;
 	
-		
+	ready_pcb->next= NULL;
 	if(empty_pcb_queue(priority_ready_queue[ready_pcb->priority])){		//if queue is currently empty head and tail point to same element
 		priority_ready_queue[ready_pcb->priority]->head = ready_pcb;
 		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;
+		printf("first element added\n");
 	}
 	else{
 		priority_ready_queue[ready_pcb->priority]->tail->next = ready_pcb;    //pcb who is currently is at end now points to the new pcb
 		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;   //tail points to new pcb
 		priority_ready_queue[ready_pcb->priority]->tail->next = NULL;
+		printf("another pcb added\n");
 	}
 	//ready_pcb->next = NULL;
-
+	print_rpq();
 	return 1;	
 
 }

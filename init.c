@@ -20,6 +20,7 @@ Comments:	Initializes everythang
 #include "iproc.h"
 #include "queues.h"
 #include "userProcesses.h"
+#include "testing_functions.h"
 
 int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
@@ -149,14 +150,15 @@ int init_pcb(){
                 pcbList[i]->priority = i_table[i].priority;
 		pcbList[i]->stack =(char*)(malloc(STACKSIZE)) + STACKSIZE - STACK_OFFSET;
 		pcbList[i]->process_code = i_table[i].stack_address;
-
-		if (i <= 2){
-			rpq_enqueue(pcbList[i]);
+		
+		if (i > 2){
+			rpq_enqueue(&pcbList[i]);
+			printf("i am here\n");
 		}
 		else{
-			enqueue(i_process_queue,pcbList[i]);
+			enqueue(&i_process_queue,&pcbList[i]);
 		}
-		init_context_save(pcbList[i]);
+		init_context_save(&pcbList[i]);
 	}
 	current_process = pcbList[4];
 }
@@ -244,7 +246,7 @@ void init (){
 	i = init_msg_env();
 	printf("all msg env initialized \n");
 
-
+	print_rpq();
 	//handles all the signals
 	sigset(SIGINT,die);
 	sigset(SIGBUS,die);
