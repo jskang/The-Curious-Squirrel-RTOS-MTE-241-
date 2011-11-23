@@ -164,19 +164,15 @@ int initialize_msg_queue(msg_queue *Q){
 }
 
 int empty_msg_queue(msg_queue *Q){
-	printf("comparing queues \n");
 	if(Q == NULL){
-	printf("comparing queues 1 \n");
 		return INVALID_QUEUE_ERROR;
 	}
 
 	if (Q->head == NULL){
-	printf("comparing queues 2 \n");
 		return 1;	//queue is empty
 	}
 	
 	else{
-	printf("comparing queues 3 \n");
 		return 0;  //false queue is not empty
 	}
 }
@@ -204,7 +200,6 @@ int msg_enqueue_all (Msg_Env *chain_mail){
 }
 
 int msg_enqueue(msg_queue *Q, Msg_Env *chain_mail){
-	printf("msg_enqueue \n");
 	if(Q == NULL)
 		return INVALID_QUEUE_ERROR;
 	if(chain_mail == NULL)

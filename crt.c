@@ -41,10 +41,11 @@ int main (int argc, char * argv[]){
 
 	in_mem_p = (iobuf*) mmap_ptr; // now we have a shared memory pointer to the CRT shared memory
 	in_mem_p->ok_flag = 0;
+	usleep(100000);
 
 	do{
 		kill(parent_pid, SIGUSR2);
-		usleep(10000);
+		usleep(100000);
 
 	    	if(in_mem_p->ok_flag == 1) { //if there is something to display, i.e. content in outdata[]
             		printf("\nOutput: %s\n\n", in_mem_p->indata);

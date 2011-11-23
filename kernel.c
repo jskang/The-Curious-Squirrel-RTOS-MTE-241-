@@ -40,7 +40,13 @@ iobuf *in_mem_p_kbd, *out_mem_p_crt;
 int main (void){
 
 	init();
-	printf("initialization completei \n");
+	printf("initialization complete \n");
+	pcb* first_process;
+	first_process = rpq_dequeue();
+	printf("first process selected \n");
+	printf("%d \n",first_process->pid);
+	longjmp(first_process->jbdata,1);
+	printf("should not reach here \n");
 	return EXIT_SUCCESS;
 
 }

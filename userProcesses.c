@@ -30,7 +30,7 @@ void process_b(){
 }
 
 void process_c(){
-	Msg_Env* tmp_msg;
+/*	Msg_Env* tmp_msg;
 	msg_queue* local_msg_queue;
 	local_msg_queue = (msg_queue*) malloc(sizeof(msg_queue));
 
@@ -61,7 +61,9 @@ void process_c(){
 		deallocate_msg_env(tmp_msg);
 		release_processor();
 	}while(1);
+*/
 
+	printf("hello you are in process C \n");
 }
 
 void process_cci(){

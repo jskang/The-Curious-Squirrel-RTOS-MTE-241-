@@ -86,7 +86,7 @@ Comments: Global variables and struct definitions for Initialization
 
 //Stacks
 #define STACKSIZE 16384
-#define STACK_OFFSET 8
+#define STACK_OFFSET 4
 
 /* Struct Definitions */
 typedef struct msg_trace{
@@ -140,7 +140,7 @@ typedef struct initialization_table{
      char pid;
      char state;
      char priority;
-     void **stack_address;
+     void *stack_address;
 }initialization_table;
 
 typedef struct msg_trace_buffer{

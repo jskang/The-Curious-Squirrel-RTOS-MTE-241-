@@ -1,4 +1,4 @@
-/************************************************************************************************
+/***********************************************************************************************
 Filename: 	init.c
 Author:		JinSung Kang
 Revision:	1.0
@@ -88,47 +88,47 @@ int initialize_table(){
         i_table[0].pid = PID_I_PROCESS_CRT;
         i_table[0].state = I_PROCESS;
         i_table[0].priority = 0;
-	i_table[0].stack_address=(void *) (kbd_i_process);
+	i_table[0].stack_address=(void *) kbd_i_process;
 
         i_table[1].pid = PID_I_PROCESS_KBD;
         i_table[1].state = I_PROCESS;
         i_table[1].priority = 0;
-	i_table[1].stack_address =(void *) (crt_i_process);
+	i_table[1].stack_address =(void *) crt_i_process;
 
         i_table[2].pid = PID_I_PROCESS_TIMER;
         i_table[2].state = I_PROCESS;
         i_table[2].priority = 0;
-	i_table[2].stack_address =(void *) (timer_i_process);
+	i_table[2].stack_address =(void *) timer_i_process;
 
 	i_table[3].pid = PID_PROCESS_A;
 	i_table[3].state = READY;
 	i_table[3].priority = 0;
-	i_table[3].stack_address =(void *) (process_a);
+	i_table[3].stack_address =(void *) process_a;
 	
 	i_table[4].pid = PID_PROCESS_B;
 	i_table[4].state = READY;
 	i_table[4].priority = 0;
-	i_table[4].stack_address =(void *) (process_b);
+	i_table[4].stack_address =(void *) process_b;
 
 	i_table[5].pid = PID_PROCESS_C;
 	i_table[5].state = READY;
 	i_table[5].priority = 0;
-	i_table[5].stack_address =(void *) (process_c);
+	i_table[5].stack_address =(void *) process_c;
 	
 	i_table[6].pid = PID_PROCESS_CCI;
 	i_table[6].state = READY;
 	i_table[6].priority = 0;
-	i_table[6].stack_address =(void *) (process_cci);
+	i_table[6].stack_address =(void *) process_cci;
 
 	i_table[7].pid = PID_PROCESS_CLOCK;
 	i_table[7].state = READY;
 	i_table[7].priority = 0;
-	i_table[7].stack_address =(void *) (process_clock);
+	i_table[7].stack_address =(void *) process_clock;
 	
 	i_table[8].pid = PID_PROCESS_NULL;
 	i_table[8].state = READY;
 	i_table[8].priority = 0;
-	i_table[8].stack_address =(void *) &(process_null);
+	i_table[8].stack_address =(void *) process_null;
 	
 }
 
@@ -143,13 +143,12 @@ int init_pcb(){
                         return INVALID_QUEUE_ERROR;
                 }
 
-		initialize_pcb(pcbList[i]);
 		
                 pcbList[i]->pid = i_table[i].pid;
                 pcbList[i]->state = i_table[i].state;
                 pcbList[i]->priority = i_table[i].priority;
-		pcbList[i]->stack = ((char *)malloc(STACKSIZE))+STACKSIZE-STACK_OFFSET;
-		pcbList[i]->process_code = (void *) i_table[i].stack_address;
+		pcbList[i]->stack =(char*)(malloc(STACKSIZE)) + STACKSIZE - STACK_OFFSET;
+		pcbList[i]->process_code = i_table[i].stack_address;
 
 		if (i <= 2){
 			rpq_enqueue(pcbList[i]);
@@ -159,13 +158,14 @@ int init_pcb(){
 		}
 		init_context_save(pcbList[i]);
 	}
+	current_process = pcbList[4];
 }
 
 void init_context_save (pcb *tmp_pcb){
 	char* temp_sp = NULL;
 	pcb* temp = tmp_pcb;
 	if (setjmp(kernel_buf)==0){
-		temp_sp = temp->stack;
+		temp_sp = (void *) temp->stack;
 		__asm__("movl %0,%%esp" :"=m" (temp_sp));
 		if (setjmp(temp->jbdata)==0){
 			longjmp(kernel_buf,1);
@@ -182,7 +182,7 @@ int init_msg_env (){
 	int i, debug;	
 	Msg_Env* tempMsg;
 	//initialize envelopes for user processes
-	for(i = 0;i<N_MSG_ENV;i++){
+	for(i = 0;i < N_MSG_ENV; i++){
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;
@@ -190,28 +190,19 @@ int init_msg_env (){
 		msg_enqueue_all(tempMsg);
 		msg_enqueue(free_envelopes,tempMsg);
 	}
-	printf("u_process msg created \n");
-
+	
+	initialize_msg_queue(all_i_envelopes);
 	//initialize envelopes for iProcesses
-	for(i = 0;i<N_I_MSG_ENV;i++){
-		printf("creating msg envelope \n");
+	for(i = 0; i < N_I_MSG_ENV; i++){
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;
 		}
 		
-		if(all_i_envelopes->head != NULL){
-			printf ("why the fuck did it change");
-		}
-		if (!i){
-			all_i_envelopes->head = NULL;	
-		}
 		msg_enqueue(all_i_envelopes,tempMsg);
 		msg_enqueue(free_i_envelopes,tempMsg);
 	}
-	printf("i_process msg created \n");
-	
 	return 1;
 }
 
@@ -239,7 +230,6 @@ void initialize_data_structures (){
 	initialize_msg_queue(free_envelopes);
 	initialize_msg_queue(all_i_envelopes);
 	initialize_msg_queue(free_i_envelopes);
-	
 }
 
 void init (){
@@ -285,7 +275,6 @@ void init (){
 		exit(0);
 	}
 	
-
 	//truncate the filesisze the the size of the buffer
 	kbd_status = ftruncate(kbd_fid,bufsize);
 	crt_status = ftruncate(crt_fid,bufsize);
@@ -302,7 +291,6 @@ void init (){
 	
 	kbd_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,kbd_fid,(off_t) 0);
         crt_mmap = mmap((caddr_t) 0, bufsize, PROT_READ | PROT_WRITE, MAP_SHARED,crt_fid,(off_t) 0);
-
         
         if (kbd_mmap == MAP_FAILED){
                 printf("Parent's memory map has failed, about to quit!\n");
@@ -323,6 +311,7 @@ void init (){
 	//send an argument to the child
 	char childarg1_kbd[20], childarg2_kbd[20];
 	char childarg1_crt[20], childarg2_crt[20];
+	getchar();
 
 	int mypid = getpid();
 	
@@ -351,7 +340,7 @@ void init (){
 			cleanup();
 			exit(1);
 		}
-	}	
+	}
 	sleep(1);
 
 	printf("\nType something followed by end of line and it will be echoed \n\n");
