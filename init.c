@@ -177,6 +177,7 @@ void init_context_save (pcb *tmp_pcb){
 			void (*tmp) ();
 			tmp = (void*) current_process->process_code;
 			tmp();
+			printf("we have a problem\n");
 		}
 	}
 }
@@ -185,7 +186,7 @@ int init_msg_env (){
 	int i, debug;	
 	Msg_Env* tempMsg;
 	//initialize envelopes for user processes
-	for(i = 0;i < N_MSG_ENV; i++){
+	for(i = 0;i < 1; i++){//N_MSG_ENV
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;

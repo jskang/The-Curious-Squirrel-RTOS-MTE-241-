@@ -232,7 +232,7 @@ Msg_Env *msg_dequeue(msg_queue *Q){
 		Q->head = Q->head->next;
 		
 		if(Q->head == NULL)
-			Q->tail =NULL;										//if the last item is being dequeued
+			Q->tail = NULL;										//if the last item is being dequeued
 		
 		front->next = NULL;
 		return front;
@@ -360,7 +360,7 @@ int enqueue_msg_trace(Msg_Env *message){
 	if(message==NULL)
 		return INVALID_MSG_POINTER;
 	
-	message_buffer->messages[message_buffer->entry_element ]->sender_PID= message->sender_id;
+	message_buffer->messages[message_buffer->entry_element]->sender_PID= message->sender_id;
 	message_buffer->messages[message_buffer->entry_element]->receiver_PID = message->owner_id;				//receiver id
 	message_buffer->messages[message_buffer->entry_element]->time_stamp = message->time_stamp;		
 	message_buffer->messages[message_buffer->entry_element]->m_type = message->message_type;

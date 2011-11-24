@@ -24,15 +24,15 @@ Msg_Env *k_allocate_msg_env ();														//good but need to check with proce
 
 int k_deallocate_msg_env ( Msg_Env *message_envelope );								//good
 
-int k_request_process_status( Msg_Env * message_envelope );
+int k_request_process_status( Msg_Env * message_envelope );							//probably good
 
-int k_terminate( );
+int k_terminate( );	
 
-int k_change_priority(int new_priority, int target_process_id);
+int k_change_priority(int new_priority, int target_process_id);							//probably good
 
 int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope);
 
-int k_get_trace_buffers( Msg_Env * message_envelope);
+int k_get_trace_buffers( Msg_Env * message_envelope);								//good
 
 int k_release_processor();
 

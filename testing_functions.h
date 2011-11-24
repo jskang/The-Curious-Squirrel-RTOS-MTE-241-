@@ -33,3 +33,5 @@ void print_message(Msg_Env *message);
 void print_trace_buffer();
 	
 void print_trace_buffer_msg(Msg_Env *message);
+
+void print_rps(Msg_Env *message);
