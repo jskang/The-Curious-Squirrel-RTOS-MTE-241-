@@ -216,10 +216,10 @@ void process_switch(){
 
 void context_switch(pcb* next_process){
 printf("in context switch next_process->pid== %i\n",next_process->pid);
-	setjmp(current_process->jbdata);
+	if(setjmp(current_process->jbdata)==0){
 		current_process = next_process;
-	longjmp(next_process->jbdata,1);
-	
+		longjmp(next_process->jbdata,1);
+	}	
 	//current_process = next_process;	//note they have both been dequeued by this point
 
 }
