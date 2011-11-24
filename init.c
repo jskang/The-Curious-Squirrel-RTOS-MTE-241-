@@ -193,18 +193,6 @@ int init_msg_env (){
 		msg_enqueue(free_envelopes,tempMsg);
 	}
 	
-	initialize_msg_queue(all_i_envelopes);
-	//initialize envelopes for iProcesses
-	for(i = 0; i < N_I_MSG_ENV; i++){
-		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
-
-		if(tempMsg == NULL){
-			return INVALID_MSG_POINTER;
-		}
-		
-		msg_enqueue(all_i_envelopes,tempMsg);
-		msg_enqueue(free_i_envelopes,tempMsg);
-	}
 	return 1;
 }
 
@@ -221,8 +209,6 @@ void initialize_data_structures (){
 
 	all_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
-	all_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
-	free_i_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 
 	initialize_queue(i_process_queue);
 	initialize_queue(blocked_message_envelope);
@@ -230,8 +216,7 @@ void initialize_data_structures (){
 
 	initialize_msg_queue(all_envelopes);
 	initialize_msg_queue(free_envelopes);
-	initialize_msg_queue(all_i_envelopes);
-	initialize_msg_queue(free_i_envelopes);
+
 }
 
 void init (){

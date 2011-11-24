@@ -99,7 +99,7 @@ typedef struct msg_trace{
 // PCB Struct
 typedef struct pcb{
      struct pcb *next;            
-     char pid;
+     int pid;
      char state;            
      char priority;            
      struct msg_queue *inbox;        
@@ -160,8 +160,6 @@ extern pcb_queue *i_process_queue;
 
 extern msg_queue *all_envelopes;
 extern msg_queue *free_envelopes;
-extern msg_queue *all_i_envelopes;
-extern msg_queue *free_i_envelopes;
 
 extern pcb *pcbList[TEMP_NUM_PROCESS];
 extern long number_messages_sent;
