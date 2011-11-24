@@ -32,7 +32,6 @@ int initialize_msg_queue(msg_queue *Q);
 int empty_msg_queue(msg_queue *Q);
 
 int msg_enqueue_all (Msg_Env *chain_mail);  //used to add Msg_Envs to the queue which contains all Msg_Env
-int msg_enqueue_all_i (Msg_Env *chain_mail);
 
 int msg_enqueue(msg_queue *Q, Msg_Env *chain_mail);
 

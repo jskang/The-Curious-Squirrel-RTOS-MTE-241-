@@ -90,10 +90,10 @@ Comments: Global variables and struct definitions for Initialization
 
 /* Struct Definitions */
 typedef struct msg_trace{
-     char sender_PID;
-     char receiver_PID;
-     char time_stamp;
-     char m_type;
+     int sender_PID;
+     int receiver_PID;
+     int time_stamp;
+     int m_type;
 }msg_trace;
 
 // PCB Struct

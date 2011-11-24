@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "queues.h"
+
 int initialize_pcb(pcb *to_be_initialized){
 	if(to_be_initialized == NULL)
 		return INVALID_PCB_POINTER;
@@ -359,10 +360,10 @@ int enqueue_msg_trace(Msg_Env *message){
 	if(message==NULL)
 		return INVALID_MSG_POINTER;
 	
-	message_buffer->messages[message_buffer->entry_element *4]->sender_PID= message->sender_id;
-	message_buffer->messages[message_buffer->entry_element *4]->receiver_PID = message->owner_id;				//receiver id
-	message_buffer->messages[message_buffer->entry_element *4]->time_stamp = message->time_stamp;		
-	message_buffer->messages[message_buffer->entry_element *4]->m_type = message->message_type;
+	message_buffer->messages[message_buffer->entry_element ]->sender_PID= message->sender_id;
+	message_buffer->messages[message_buffer->entry_element]->receiver_PID = message->owner_id;				//receiver id
+	message_buffer->messages[message_buffer->entry_element]->time_stamp = message->time_stamp;		
+	message_buffer->messages[message_buffer->entry_element]->m_type = message->message_type;
 	
 	message_buffer->entry_element+=1;
 	number_messages_sent +=1;

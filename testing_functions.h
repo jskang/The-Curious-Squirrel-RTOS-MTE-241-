@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "queues.h"
-#include "rtx.h"
 
 void print_pcb_queue(pcb_queue *Q);
 
@@ -31,4 +30,6 @@ void print_all_pcb_inbox();
 
 void print_message(Msg_Env *message);
 
-void print_rpq();
+void print_trace_buffer();
+	
+void print_trace_buffer_msg(Msg_Env *message);

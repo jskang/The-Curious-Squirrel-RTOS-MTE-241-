@@ -7,7 +7,7 @@
  *
  */
 
-#include "testing_functions.h"
+#include "testing functions.h"
 
 void print_pcb(pcb *to_print){
 	if(to_print == NULL)
@@ -25,18 +25,20 @@ void print_pcb(pcb *to_print){
 
 void print_pcb_queue(pcb_queue *Q){
 	
-	pcb *current = Q->head;
+	pcb *current_pcb = Q->head;
 	
-	if(current == NULL)
+	if(current_pcb == NULL)
 		printf("pcb_queue == NULL\n");
 	
-	while(current != NULL){
-		print_pcb(current);
-		current= current->next;
+	while(current_pcb != NULL){
+		print_pcb(current_pcb);
+		current_pcb = current_pcb->next;
 	}
 }
 
 void print_all_pcb_queue(){
+	
+	
 	int i;
 	for(i=0;i<9;i++)
 		print_pcb(pcbList[i]);
@@ -50,7 +52,7 @@ void print_msg(Msg_Env *to_print){
 		printf("sender_id --> %i\n",to_print->sender_id);
 		printf("time_stamp --> %i\n",to_print->time_stamp);
 		printf("message_type --> %i\n",to_print->message_type);
-		printf("flag --> %i\n\n",to_print->message_type);
+		printf("flag --> %i\n\n",to_print->flag);
 	}
 	
 	
@@ -110,7 +112,7 @@ void print_message(Msg_Env *message){
 	if (message == NULL)
 		return;
 	int i;
-	if(message->message_type == M_TYPE_REQ_PROCESS_STATUS){
+	if(message->flag == M_TYPE_REQ_PROCESS_STATUS){
 		printf("Now printing request process status\n");
 		for (i=0; i<message->size;i++){
 			printf("----PCB------\n");
@@ -119,6 +121,28 @@ void print_message(Msg_Env *message){
 			printf("priority --> %i\n\n",message->message[i*3 +2]);		
 		}
 	}
+
+	
 }
 
+
+void print_trace_buffer_msg(Msg_Env *message){
+	if(message == NULL){
+		printf("message for trace buffer is NULL");
+		return;
+	}
+	printf("the trace buffer message conatins the following content\n");
+	int i;
+	for(i=0;i<(message->size/4);i++){
+		printf("Message %i:\n",i);
+		printf("---------------------------------\n");
+		printf("sender id:%i\n",message->message[i*4]);
+		printf("receiver id:%i\n",message->message[i*4 +1]);
+		printf("time stamp%i\n",message->message[i*4 +2]);
+		printf("m_type:%i\n",message->message[i*4 +3]);
+	}
+	return;
+	
+	
+}
 	
