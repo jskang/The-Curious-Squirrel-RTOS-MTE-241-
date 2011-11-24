@@ -170,6 +170,8 @@ extern int k_minute;
 extern int k_hour;
 extern msg_trace_buffer *message_buffer;
 
+extern int wall_clock_flag = 0;
+
 //io buffer global variable
 extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
 #endif
