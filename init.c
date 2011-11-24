@@ -152,13 +152,13 @@ int init_pcb(){
 		pcbList[i]->process_code = i_table[i].stack_address;
 		
 		if (i > 2){
-			rpq_enqueue(&pcbList[i]);
+			rpq_enqueue(pcbList[i]);
 			printf("i am here\n");
 		}
 		else{
-			enqueue(&i_process_queue,&pcbList[i]);
+			enqueue(i_process_queue,pcbList[i]);
 		}
-		init_context_save(&pcbList[i]);
+		init_context_save(pcbList[i]);
 	}
 	current_process = pcbList[4];
 }
