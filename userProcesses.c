@@ -8,6 +8,8 @@ void process_a(){
 printf("------------------------at process a-------------------\n");
 	Msg_Env *tmp_msg;
 	static int num = 0;
+	tmp_msg = receieve_message();
+	deallocate_msg_env(tmp_msg);
 
 	do{
 		tmp_msg = allocate_msg_env();
