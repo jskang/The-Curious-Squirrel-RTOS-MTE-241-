@@ -100,8 +100,8 @@ typedef struct msg_trace{
 typedef struct pcb{
      struct pcb *next;            
      int pid;
-     char state;            
-     char priority;            
+     int state;            
+     int priority;            
      struct msg_queue *inbox;        
      jmp_buf jbdata;
      int stacksize;
@@ -160,6 +160,7 @@ extern pcb_queue *i_process_queue;
 
 extern msg_queue *all_envelopes;
 extern msg_queue *free_envelopes;
+
 
 extern pcb *pcbList[TEMP_NUM_PROCESS];
 extern long number_messages_sent;

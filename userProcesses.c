@@ -5,6 +5,7 @@
 #include "userAPI.h"
 
 void process_a(){
+/*
 	Msg_Env *tmp_msg;
 	static int num = 0;
 
@@ -16,17 +17,21 @@ void process_a(){
 		num++;
 		release_processor();
 	}while (1);
-
+*/
+	printf("------------------------at process a-------------------\n");
+	release_processor();
 }
 
 void process_b(){
-	Msg_Env *tmp_msg;
+	/*Msg_Env *tmp_msg;
 
 	do{
 		tmp_msg = receive_message();
 		send_message(PID_PROCESS_C,tmp_msg);
 		release_processor();
-	}while(1);
+	}while(1);*/
+	printf("*****************************at process b************************\n");
+	release_processor();
 }
 
 void process_c(){
@@ -63,7 +68,8 @@ void process_c(){
 	}while(1);
 */
 
-	printf("hello you are in process C \n");
+	printf("########################at process c################################\n");
+	release_processor();
 }
 
 void process_cci(){

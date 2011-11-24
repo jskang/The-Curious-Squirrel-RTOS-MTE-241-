@@ -23,6 +23,8 @@ pcb_queue *i_process_queue;
 
 msg_queue *all_envelopes;
 msg_queue *free_envelopes;
+msg_queue *all_i_envelopes;
+msg_queue *free_i_envelopes;
 
 long number_messages_sent;
 long time_since_init;
@@ -40,10 +42,10 @@ int main (void){
 	init();
 	printf("initialization complete \n");
 	pcb* first_process;
-	printf("selecting first process \n");
 	first_process = rpq_dequeue();
 	printf("first process selected \n");
 	printf("%d \n",first_process->pid);
+	current_process = first_process;
 	longjmp(first_process->jbdata,1);
 	printf("should not reach here \n");
 	return EXIT_SUCCESS;

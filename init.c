@@ -153,14 +153,14 @@ int init_pcb(){
 		
 		if (i > 2){
 			rpq_enqueue(pcbList[i]);
-			printf("i am here\n");
 		}
 		else{
 			enqueue(i_process_queue,pcbList[i]);
 		}
 		init_context_save(pcbList[i]);
 	}
-	current_process = pcbList[4];
+	current_process = pcbList[3];
+	return 1;
 }
 
 void init_context_save (pcb *tmp_pcb){
@@ -173,6 +173,7 @@ void init_context_save (pcb *tmp_pcb){
 			longjmp(kernel_buf,1);
 		}
 		else{
+			printf("first time current process %i\n",current_process->pid);
 			void (*tmp) ();
 			tmp = (void*) current_process->process_code;
 			tmp();
@@ -192,8 +193,6 @@ int init_msg_env (){
 		msg_enqueue_all(tempMsg);
 		msg_enqueue(free_envelopes,tempMsg);
 	}
-	
-	return 1;
 }
 
 
@@ -216,7 +215,6 @@ void initialize_data_structures (){
 
 	initialize_msg_queue(all_envelopes);
 	initialize_msg_queue(free_envelopes);
-
 }
 
 void init (){

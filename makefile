@@ -51,8 +51,10 @@ userProcesses.o: userProcesses.c
 userAPI.o: userAPI.c
 	$(CC) $(CFLAGS) userAPI.c
 
-testing_functions.o: testing_functions.c
+testing_functions.o:testing_functions.c
 	$(CC) $(CFLAGS) testing_functions.c
+
+
 #clean
 clean:
 	rm *.o rtx keyboard crt *_mmap

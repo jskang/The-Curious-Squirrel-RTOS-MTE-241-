@@ -208,17 +208,18 @@ int k_release_processor(){
 void process_switch(){
 	pcb* next_process; 
 	next_process = rpq_dequeue();	//highest priority process in the ready process queue 
-	
+	printf("in process switch next_process->pid== %i\n",next_process->pid);
 	atomic(ON);
 	context_switch(next_process);
 	atomic (OFF); 
 }
 
 void context_switch(pcb* next_process){
-
+printf("in context switch next_process->pid== %i\n",next_process->pid);
 	setjmp(current_process->jbdata);
+		current_process = next_process;
 	longjmp(next_process->jbdata,1);
 	
-	current_process = next_process;	//note they have both been dequeued by this point
+	//current_process = next_process;	//note they have both been dequeued by this point
 
 }
