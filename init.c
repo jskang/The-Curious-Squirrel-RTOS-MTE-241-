@@ -156,9 +156,9 @@ int init_pcb(){
 			printf("i am here\n");
 		}
 		else{
-			enqueue(&i_process_queue,&pcbList[i]);
+			enqueue(i_process_queue,pcbList[i]);
 		}
-		init_context_save(&pcbList[i]);
+		init_context_save(pcbList[i]);
 	}
 	current_process = pcbList[4];
 }
