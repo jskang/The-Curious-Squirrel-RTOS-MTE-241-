@@ -8,7 +8,7 @@ void process_a(){
 printf("------------------------at process a-------------------\n");
 	Msg_Env *tmp_msg;
 	static int num = 0;
-	tmp_msg = receieve_message();
+	tmp_msg = receive_message();
 	deallocate_msg_env(tmp_msg);
 
 	do{
