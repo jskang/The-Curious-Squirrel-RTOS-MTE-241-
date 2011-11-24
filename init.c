@@ -130,7 +130,7 @@ int initialize_table(){
 	i_table[8].state = READY;
 	i_table[8].priority = 0;
 	i_table[8].stack_address =(void *) process_null;
-	
+	return 1;
 }
 
 int init_pcb(){
@@ -151,7 +151,7 @@ int init_pcb(){
 		pcbList[i]->stack =(char*)(malloc(STACKSIZE)) + STACKSIZE - STACK_OFFSET;
 		pcbList[i]->process_code = i_table[i].stack_address;
 		
-		if (i > 2){
+		if (i > 2 && i <6){
 			rpq_enqueue(pcbList[i]);
 		}
 		else{
@@ -193,6 +193,7 @@ int init_msg_env (){
 		msg_enqueue_all(tempMsg);
 		msg_enqueue(free_envelopes,tempMsg);
 	}
+return 1;
 }
 
 
@@ -215,6 +216,11 @@ void initialize_data_structures (){
 
 	initialize_msg_queue(all_envelopes);
 	initialize_msg_queue(free_envelopes);
+
+	//initializing the trace buffer
+	message_buffer= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
+	initialize_msg_trace(message_buffer);
+
 }
 
 void init (){

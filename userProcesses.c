@@ -5,33 +5,37 @@
 #include "userAPI.h"
 
 void process_a(){
-/*
+printf("------------------------at process a-------------------\n");
 	Msg_Env *tmp_msg;
 	static int num = 0;
 
 	do{
 		tmp_msg = allocate_msg_env();
+		print_msg(tmp_msg);
+		printf("made it past allocate_msg_env\n");
 		tmp_msg->message_type = M_TYPE_DEFAULT;
 		tmp_msg->message[1] = num;
 		send_message(PID_PROCESS_B,tmp_msg);
+		printf("made it past send message              message now looks like:\n");
+		print_msg(tmp_msg);
 		num++;
 		release_processor();
 	}while (1);
-*/
-	printf("------------------------at process a-------------------\n");
-	release_processor();
+
+
 }
 
 void process_b(){
-	/*Msg_Env *tmp_msg;
-
+	Msg_Env *tmp_msg;
+printf("*****************************at process b************************\n");
+print_pcb(current_process);
 	do{
 		tmp_msg = receive_message();
+		printf("received a message\n");
+		print_msg(tmp_msg);
 		send_message(PID_PROCESS_C,tmp_msg);
 		release_processor();
-	}while(1);*/
-	printf("*****************************at process b************************\n");
-	release_processor();
+	}while(1);	
 }
 
 void process_c(){
@@ -69,6 +73,7 @@ void process_c(){
 */
 
 	printf("########################at process c################################\n");
+	print_rpq();
 	release_processor();
 }
 

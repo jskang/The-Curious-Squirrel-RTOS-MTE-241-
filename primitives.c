@@ -9,9 +9,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "rtx.h"
 #include "primitives.h"
+#include "queues.h"
 #include "atomic.h"
-
 
 int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 	if (msg_envelope == NULL){
@@ -44,8 +45,8 @@ int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 Msg_Env* k_receive_message(){
 
 	if(current_process ->inbox->head == NULL){
-		current_process->state = 3;				//sets state to blocked on receive
-		enqueue(blocked_message_receive, current_process);		// adds to blocked on receive queue
+		current_process->state = 3;	//sets state to blocked on receive
+		enqueue(blocked_message_receive, current_process);	// adds to blocked on receive queue
 		//process_switch();
 	}
 
@@ -76,12 +77,12 @@ int k_send_console_chars(Msg_Env *message_envelope){
 	return 1;
 }
 
-Msg_Env *k_allocate_msg_env(){
+Msg_Env *k_allocate_msg_env (){
 	while(empty_msg_queue(free_envelopes) == 1){								//while there are no free envelopes available
 	//if(empty_msg_queue(free_envelopes)==1 && current_process->state!=BLOCKED_ON_RESOURCE){
 			current_process->state= BLOCKED_ON_RESOURCE;
 			enqueue(blocked_message_envelope, current_process);					//adds this process to blocked on resource queue
-			process_switch();													//when this process eventually runs again it will start here
+			//process_switch();													//when this process eventually runs again it will start here
 	    }																		//exits loop once there is an envelope available for process
 
 	
@@ -116,7 +117,7 @@ int k_request_process_status( Msg_Env *message_envelope ){
 		i+=3;														//jumps to the next area for pcb info
 	}
 
-	message_envelope->flag = M_TYPE_REQ_PROCESS_STATUS ;			//sets the flag on envelope
+	message_envelope->message_type = M_TYPE_REQ_PROCESS_STATUS ;			//sets the flag on envelope
 	k_send_message(PID_I_PROCESS_CRT, message_envelope);				//sends message to crt to be displayed on screen
 	return 1;
 }
@@ -151,12 +152,12 @@ int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
 		return INVALID_MESSAGE_PTR_ERROR;
 	//how are we doing wake up codes?
 	current_process->state = SLEEP;
-	if (enqueue(blocked_on_sleep,current_process) != 1)				//if enqueing fails
+	if (enqueue(sleep_queue,current_process) != 1)				//if enqueing fails
 		return -1;
 	
-	message_envelope->flag= M_TYPE_MSG_DELAY;	
+	message_envelope->message_type= M_TYPE_MSG_DELAY;	
 	message_envelope->message[0] = time_delay;
-	message_envelope->message[1] = wakeup_code;						//i_timer should know how to respond to this
+	message_envelope->message[1] = wakeup_code;	//i_timer should know how to respond to this
 	
 	if(k_send_message(PID_I_PROCESS_TIMER, message_envelope) != 1)
 		return -1;
@@ -170,9 +171,9 @@ int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
 int k_get_trace_buffers( Msg_Env * message_envelope){
 	if(message_envelope == NULL)
 		return INVALID_MESSAGE_PTR_ERROR;
-	message_envelope->flag = M_TYPE_MESSAGE_TRACE ;
+	message_envelope->message_type = M_TYPE_MESSAGE_TRACE ;
 	
-	int i;
+	char i;
 	
 	if (number_messages_sent <= 16){
 		for (i=0;i<number_messages_sent;i++){
@@ -181,7 +182,7 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 			message_envelope->message[4*i +2]= message_buffer->messages[i]->time_stamp;
 			message_envelope->message[4*i +3]= message_buffer->messages[i]->m_type;
 		}
-		message_envelope->size=4*number_messages_sent;
+		message_envelope->size=16*number_messages_sent;
 	}
 	else{
 		int position = message_buffer->entry_element;												//where we start reading from
@@ -197,26 +198,28 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 	return 1;
 }
 
-int release_processor(){
-	current_process->state = READY;								//only use when putting back intot he rpq
+int k_release_processor(){
+	current_process->state = READY;		//only use when putting back intot he rpq
 	rpq_enqueue(current_process);
 	process_switch();
+	return 1;
 }
 
 void process_switch(){
-
-		pcb* next_process; 
-		next_process = rpq_dequeue();							//highest priority process in the ready process queue 
-		
-		atomic(on);
-		context_switch(next_process);
-		atomic (off); 
+	pcb* next_process; 
+	next_process = rpq_dequeue();	//highest priority process in the ready process queue 
+	printf("in process switch next_process->pid== %i\n",next_process->pid);
+	atomic(ON);
+	context_switch(next_process);
+	atomic (OFF); 
 }
 
 void context_switch(pcb* next_process){
+printf("in context switch next_process->pid== %i\n",next_process->pid);
 	setjmp(current_process->jbdata);
+		current_process = next_process;
 	longjmp(next_process->jbdata,1);
 	
-	current_process = next_process;							//note they have both been dequeued by this point
+	//current_process = next_process;	//note they have both been dequeued by this point
 
 }

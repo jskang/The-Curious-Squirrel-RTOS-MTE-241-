@@ -7,7 +7,7 @@
  *
  */
 
-#include "testing functions.h"
+#include "testing_functions.h"
 
 void print_pcb(pcb *to_print){
 	if(to_print == NULL)
@@ -52,7 +52,7 @@ void print_msg(Msg_Env *to_print){
 		printf("sender_id --> %i\n",to_print->sender_id);
 		printf("time_stamp --> %i\n",to_print->time_stamp);
 		printf("message_type --> %i\n",to_print->message_type);
-		printf("flag --> %i\n\n",to_print->flag);
+		//printf("flag --> %i\n\n",to_print->flag);
 	}
 	
 	
@@ -112,7 +112,7 @@ void print_message(Msg_Env *message){
 	if (message == NULL)
 		return;
 	int i;
-	if(message->flag == M_TYPE_REQ_PROCESS_STATUS){
+	if(message->message_type == M_TYPE_REQ_PROCESS_STATUS){
 		printf("Now printing request process status\n");
 		for (i=0; i<message->size;i++){
 			printf("----PCB------\n");

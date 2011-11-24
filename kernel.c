@@ -23,8 +23,7 @@ pcb_queue *i_process_queue;
 
 msg_queue *all_envelopes;
 msg_queue *free_envelopes;
-msg_queue *all_i_envelopes;
-msg_queue *free_i_envelopes;
+
 
 long number_messages_sent;
 long time_since_init;
