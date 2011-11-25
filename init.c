@@ -159,7 +159,6 @@ int init_pcb(){
 		}
 		init_context_save(pcbList[i]);
 	}
-	current_process = pcbList[3];
 	return 1;
 }
 
@@ -193,7 +192,7 @@ int init_msg_env (){
 		msg_enqueue_all(tempMsg);
 		msg_enqueue(free_envelopes,tempMsg);
 	}
-return 1;
+	return 1;
 }
 
 
@@ -227,6 +226,7 @@ void init (){
 	int i;
 	//initializes all the data structures
 	initialize_data_structures();
+	printf("initialized data structures");	
 	initialize_table();
 	init_pcb();
 	i = init_msg_env();
@@ -247,7 +247,9 @@ void init (){
 	sigset(SIGUSR2,crt_i_process);
 	sigset(SIGALRM,timer_i_process);
 
-	ualarm(100000, 100000);	
+	//alarm sleeps for the first two seconds to prevent the signals interrupting init
+	ualarm(2000000, 100000);	
+	
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
 	crt_fid = open(sfilename_crt, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
@@ -298,7 +300,6 @@ void init (){
 	//send an argument to the child
 	char childarg1_kbd[20], childarg2_kbd[20];
 	char childarg1_crt[20], childarg2_crt[20];
-	getchar();
 
 	int mypid = getpid();
 	
@@ -307,7 +308,7 @@ void init (){
 
 	sprintf(childarg1_crt,"%d",mypid);
 	sprintf(childarg2_crt,"%d",crt_fid);
-
+	
 	kbd_pid = fork();
 
 	if (kbd_pid == 0){
@@ -328,7 +329,6 @@ void init (){
 			exit(1);
 		}
 	}
-	sleep(1);
-
+	
 	printf("\nType something followed by end of line and it will be echoed \n\n");
 }
