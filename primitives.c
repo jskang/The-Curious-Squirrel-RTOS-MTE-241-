@@ -50,9 +50,9 @@ Msg_Env* k_receive_message(){
 		current_process->state = BLOCKED_ON_RECEIVE;	//sets state to blocked on receive
 		enqueue(blocked_message_receive, current_process);	// adds to blocked on receive queue
 		process_switch();
+		message_envelope = msg_dequeue(current_process->inbox);
 	}
-	else
-		enqueue_msg_trace(message_envelope);
+	enqueue_msg_trace(message_envelope);
 	return message_envelope;
 }
 
