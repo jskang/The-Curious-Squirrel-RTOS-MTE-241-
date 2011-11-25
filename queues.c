@@ -39,7 +39,7 @@ void initialize_queue(pcb_queue *Q){
 	if(Q == NULL)
 		return;
 	
-  	Q->head = NULL;														//queue start with zero elements
+  	Q->head = NULL;							//queue start with zero elements
 	Q->tail = NULL;
 }
 
@@ -307,7 +307,6 @@ int rpq_enqueue (pcb *ready_pcb){
 	if(empty_pcb_queue(priority_ready_queue[ready_pcb->priority])){		//if queue is currently empty head and tail point to same element
 		priority_ready_queue[ready_pcb->priority]->head = ready_pcb;
 		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;
-		printf("first element added\n");
 	}
 	else{
 		priority_ready_queue[ready_pcb->priority]->tail->next = ready_pcb;    //pcb who is currently is at end now points to the new pcb

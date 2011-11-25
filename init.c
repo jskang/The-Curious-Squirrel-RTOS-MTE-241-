@@ -128,7 +128,7 @@ int initialize_table(){
 	
 	i_table[8].pid = PID_PROCESS_NULL;
 	i_table[8].state = READY;
-	i_table[8].priority = 0;
+	i_table[8].priority = 3;
 	i_table[8].stack_address =(void *) process_null;
 	return 1;
 }
@@ -151,7 +151,7 @@ int init_pcb(){
 		pcbList[i]->stack =(char*)(malloc(STACKSIZE)) + STACKSIZE - STACK_OFFSET;
 		pcbList[i]->process_code = i_table[i].stack_address;
 		
-		if (i > 2 && i <6){
+		if ((i > 2 && i <6)|| i==8){
 			rpq_enqueue(pcbList[i]);
 		}
 		else{
@@ -173,7 +173,6 @@ void init_context_save (pcb *tmp_pcb){
 			longjmp(kernel_buf,1);
 		}
 		else{
-			printf("first time current process %i\n",current_process->pid);
 			void (*tmp) ();
 			tmp = (void*) current_process->process_code;
 			tmp();
@@ -228,15 +227,11 @@ void init (){
 	int i;
 	//initializes all the data structures
 	initialize_data_structures();
-	printf("data structures made \n");
 	initialize_table();
-	printf("initialization table made \n");
 	init_pcb();
-	printf("all pcb initialized \n");
 	i = init_msg_env();
-	printf("all msg env initialized \n");
 
-	print_rpq();
+
 	//handles all the signals
 	sigset(SIGINT,die);
 	sigset(SIGBUS,die);

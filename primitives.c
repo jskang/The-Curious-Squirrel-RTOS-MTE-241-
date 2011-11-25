@@ -50,8 +50,6 @@ Msg_Env* k_receive_message(){
 		current_process->state = BLOCKED_ON_RECEIVE;	//sets state to blocked on receive
 		enqueue(blocked_message_receive, current_process);	// adds to blocked on receive queue
 		process_switch();
-		printf("made it to process switch for b\n");
-		getchar();
 	}
 	else
 		enqueue_msg_trace(message_envelope);
@@ -76,25 +74,16 @@ int k_send_console_chars(Msg_Env *message_envelope){
 }
 
 Msg_Env *k_allocate_msg_env (){
-	printf("\n\nis free envelopes empty? %i\n\n",empty_msg_queue(free_envelopes));
-		if(free_envelopes->head == NULL)
-		     printf("msg_queue == NULL\n");
 	while(empty_msg_queue(free_envelopes) == 1){				//while there are no free envelopes available
 
 			current_process->state= BLOCKED_ON_RESOURCE;
 			enqueue(blocked_message_envelope, current_process);	//adds this process to blocked on resource queue
 			process_switch();					//when this process eventually runs again it will start here
-	    		printf("made it to process switch for a\n");
-			getchar();
 		}									//exits loop once there is an envelope available for process
 
 	
 	
 	Msg_Env *message_envelope = msg_dequeue(free_envelopes);
-	printf("$$$$$$$$$$$$$free envelopes$$$$$$$$$$$$$$$$$\n");
-		if(free_envelopes->head == NULL)
-		     printf("msg_queue == NULL\n");
-	print_msg_queue(free_envelopes);
 	return message_envelope;
 }
 
@@ -114,18 +103,21 @@ int k_deallocate_msg_env ( Msg_Env *message_envelope ){					//make sure when usi
 
 
 int k_request_process_status( Msg_Env *message_envelope ){
+	
 	if (message_envelope == NULL)
 		return INVALID_MESSAGE_PTR_ERROR;
 	int i=0;
+
 	for(i=0;i<9;i++){
 		message_envelope-> message[i*3]=pcbList[i]->pid;
 		message_envelope-> message[i*3+1]=pcbList[i]->state;
 		message_envelope-> message[i*3+2]=pcbList[i]->priority;
-		i+=3;														//jumps to the next area for pcb info
+											//jumps to the next area for pcb info
 	}
-	print_rps(message_envelope);
+
+
 	message_envelope->message_type = M_TYPE_REQ_PROCESS_STATUS ;			//sets the flag on envelope
-	//k_send_message(PID_I_PROCESS_CRT, message_envelope);				//sends message to crt to be displayed on screen
+	k_send_message(PID_I_PROCESS_CRT, message_envelope);				//sends message to crt to be displayed on screen
 	return 1;
 }
 

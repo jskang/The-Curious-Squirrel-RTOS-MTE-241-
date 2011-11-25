@@ -55,7 +55,7 @@ int deallocate_msg_env (Msg_Env *message_envelope){
 int request_process_status (Msg_Env *message_envelope){
 	atomic(ON);
 	int i;
-	i = k_deallocate_msg_env(message_envelope);
+	i = k_request_process_status(message_envelope);
 	atomic(OFF);
 	return i;
 }

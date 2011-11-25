@@ -150,9 +150,9 @@ void print_rps(Msg_Env *message){//print results from request process status
 	int i;
 	printf("Process Status gives the following:\n");
 	for (i=0;i<9;i++){
-		printf("PID-> %c\n",message->message[i*3]);
-		printf("State-> %c\n",message->message[i*3 +1]);
-		printf("Priority-> %c\n",message->message[i*3+2]);	
+		printf("PID-> %i\n",message->message[i*3]);
+		printf("State-> %i\n",message->message[i*3 +1]);
+		printf("Priority-> %i\n",message->message[i*3+2]);	
 	}
 
 }

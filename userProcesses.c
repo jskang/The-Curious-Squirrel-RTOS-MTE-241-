@@ -5,43 +5,41 @@
 #include "userAPI.h"
 
 void process_a(){
-printf("------------------------at process a-------------------\n");
+
 	Msg_Env *tmp_msg;
 	static int num = 0;
-	tmp_msg = receive_message();
-	deallocate_msg_env(tmp_msg);
 
-	do{
+	while (1){
+		printf("------------------------at process a-------------------\n");
 		tmp_msg = allocate_msg_env();
-		print_msg(tmp_msg);
-		printf("made it past allocate_msg_env\n");
 		tmp_msg->message_type = M_TYPE_DEFAULT;
 		tmp_msg->message[1] = num;
 		send_message(PID_PROCESS_B,tmp_msg);
-		printf("made it past send message              message now looks like:\n");
-		print_msg(tmp_msg);
+
 		num++;
 		release_processor();
-	}while (1);
+	}
 
 
 }
 
 void process_b(){
 	Msg_Env *tmp_msg;
-printf("*****************************at process b************************\n");
-print_pcb(current_process);
+
 	do{
+
+		printf("*****************************at process b************************\n");
+
 		tmp_msg = receive_message();
-		printf("received a message\n");
-		print_msg(tmp_msg);
 		send_message(PID_PROCESS_C,tmp_msg);
 		release_processor();
 	}while(1);	
 }
 
 void process_c(){
-/*	Msg_Env* tmp_msg;
+	printf("########################at process c################################\n");
+while(1){
+	Msg_Env* tmp_msg;
 	msg_queue* local_msg_queue;
 	local_msg_queue = (msg_queue*) malloc(sizeof(msg_queue));
 
@@ -72,11 +70,11 @@ void process_c(){
 		deallocate_msg_env(tmp_msg);
 		release_processor();
 	}while(1);
-*/
 
-	printf("########################at process c################################\n");
-	print_rpq();
+
+	getchar();
 	release_processor();
+}
 }
 
 void process_cci(){
@@ -166,7 +164,7 @@ void process_clock(Msg_Env *msg_env){
 void process_null(){
 
 	do{
-		process_switch();
+		release_processor();
 	}while(1);
 
 }
