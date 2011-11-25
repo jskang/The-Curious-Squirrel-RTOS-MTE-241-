@@ -74,6 +74,7 @@ int main (int argc, char * argv[]){
 		else {
 			in_mem_p->indata[buf_index] = '\0';
 			in_mem_p->ok_flag = 1;  //set ready status bit
+			in_mem_p->length = buf_index;
 			kill(parent_pid,SIGUSR1); //send a signal to parent	
 			buf_index = 0;  // for now, just restart
 			while(in_mem_p->ok_flag == 1){
