@@ -7,7 +7,6 @@
 #include "primitives.h"
 
 void kbd_i_process (){	
-	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
 	current_process =(pcb*) pcb_pointer(PID_I_PROCESS_KBD);
@@ -44,20 +43,30 @@ void kbd_i_process (){
 	
 	current_process = temp_pcb;
 	current_process->state = RUNNING; 
-	atomic(OFF);
 }
 
 
 void crt_i_process(){
 
-	atomic(ON);
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process; 
-	current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT); 			
+	current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT);	
+	static Msg_Env* out_message;
+	static flag = 0;
 	// Check if flag from crt u-process is true.
 	
 	if(out_mem_p_crt->ok_flag == 0){
 		//printf("flag is on \n");
+		if (flag != 0 && out_message != NULL){
+			strcpy(out_message->message,"");
+			out_message->size = 0;
+
+			k_send_message(out_message->sender_id,out_message);
+			out_message ==NULL;
+			flag = 0;
+
+
+		}
 		if(current_process->inbox->head != NULL){	
 			Msg_Env *out_message;
 			// Receive and store the message into message envelope.
@@ -68,23 +77,15 @@ void crt_i_process(){
 			out_mem_p_crt->length = out_message->size;
 			out_mem_p_crt->ok_flag = 1;
 			
-			// Send acknowledgement message.
-			out_message->message_type =  M_TYPE_MSG_ACK;
-			strcpy(out_message->message,"");
-			out_message->size =0;
-			//out->message->flag = 
-			k_send_message(out_message->sender_id,out_message);
-				
+			flag = 1;	
 		}
 	}
 	current_process = temp_pcb;
 	current_process->state = RUNNING; 
-	atomic(OFF);
 }
 
 void timer_i_process(){
 	
-	atomic(ON); // Turn atomic on.
 	// Save state of original process and switch to current process.
 	current_process->state = INTERRUPTED;
 	pcb *temp_pcb = current_process;
@@ -115,5 +116,4 @@ void timer_i_process(){
 	// Return the back to the previous process.
 	current_process = temp_pcb;
 	current_process->state = RUNNING;
-	atomic(OFF);
 }
