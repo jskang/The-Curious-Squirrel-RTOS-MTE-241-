@@ -7,7 +7,7 @@
  *
  */
 
-#include "testing functions.h"
+#include "testing_functions.h"
 
 void print_pcb(pcb *to_print){
 	if(to_print == NULL)
