@@ -171,6 +171,8 @@ extern msg_trace_buffer *message_buffer;
 
 extern int wall_clock_flag;
 
+extern int atomic_flag;
+
 //io buffer global variable
 extern iobuf *in_mem_p_kbd, *out_mem_p_crt;
 #endif
