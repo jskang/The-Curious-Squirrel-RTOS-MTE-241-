@@ -20,7 +20,7 @@ pcb_queue *blocked_message_envelope;
 pcb_queue *blocked_message_receive;
 pcb_queue *i_process_queue;
 
-char atomic_flag = 0;
+int atomic_flag = 0;
 
 int wall_clock_flag = 0;
 msg_queue *all_envelopes;
