@@ -221,7 +221,7 @@ void process_clock(){
 	
 	do{		
 		printf("Attempting to request delay\n");
-		request_delay(10,M_TYPE_MSG_DELAY,msg_delay); // request delay message	
+		request_delay(10,M_TYPE_MSG_DELAY_BACK,msg_delay); // request delay message	
 		printf("Request delayed\n");		
 		msg_delay = receive_message();	// receive messages from timer_i_process 		
 		if(msg_delay != NULL){
