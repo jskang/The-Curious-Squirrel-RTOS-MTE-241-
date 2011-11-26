@@ -89,6 +89,7 @@ Msg_Env *k_allocate_msg_env (){
 	
 	
 	Msg_Env *message_envelope = msg_dequeue(free_envelopes);
+	message_envelope->sender_id = current_process->pid;
 	return message_envelope;
 }
 

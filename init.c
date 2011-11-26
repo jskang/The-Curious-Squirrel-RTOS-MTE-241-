@@ -205,7 +205,7 @@ void initialize_data_structures (){
 	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
 	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
 	
-
+	timer_queue = (msg_queue*)(malloc(sizeof(msg_queue)));
 	all_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 
@@ -213,6 +213,7 @@ void initialize_data_structures (){
 	initialize_queue(blocked_message_envelope);
 	initialize_queue(blocked_message_receive);
 
+	initialize_msg_queue(timer_queue);
 	initialize_msg_queue(all_envelopes);
 	initialize_msg_queue(free_envelopes);
 
