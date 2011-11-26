@@ -88,34 +88,42 @@ void crt_i_process(){
 
 void timer_i_process(){
 	if (current_process != NULL){
-	// Save state of original process and switch to current process.
+		// Save state of original process and switch to current process.
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process;
 		current_process =  (pcb*)pcb_pointer(PID_I_PROCESS_CRT);
-	
-		time_since_init++;
-		Msg_Env *msg_env = (Msg_Env*) k_receive_message();
 		
-		if (msg_env == NULL){
+		Msg_Env *msg_env;
+		msg_queue *local_Q;
+		initialize_msg_queue(local_Q);
+
+		time_since_init++;
+		
+		while((msg_env = (Msg_Env*) k_receive_message()) != NULL){
+			msg_enqueue(local_Q, msg_env);
+		}	
+		
+		if (local_Q->head == NULL){
 			printf("there is no message \n");
 		}
+		
+		Msg_Env *temp_msg = local_Q->head;
 
-		while(msg_env != NULL){
+		while(temp_msg!= NULL){
 		// decrement the counters in the received messages.
-			msg_env->time_stamp--;	
-		
-			if(msg_env->time_stamp == 0){    //What does the 0 mean here?
-		
-			// send the message flag back to the delayed process		
-				k_send_message(msg_env->sender_id,msg_env);
+			temp_msg->time_stamp--;	
+			 
+			if(temp_msg->time_stamp == 0){    //What does the 0 mean here?
+				msg_dequeue(local_Q);	// Dequeue from local queue.		
+				// send the message flag back to the delayed process		
+				k_send_message(temp_msg->sender_id,temp_msg);
 			
-			// Am I missing something here? 
+				// Am I missing something here? 
 			
-			// set the flag to M_TYPE_MSG_DELAY_BACK
-				msg_env->message_type = M_TYPE_MSG_DELAY_BACK;
-			
+				// set the flag to M_TYPE_MSG_DELAY_BACK
+				temp_msg->message_type = M_TYPE_MSG_DELAY_BACK;
 			}
-			msg_env = msg_env->next;
+			temp_msg = temp_msg->next;
 		}	
 		// Return the back to the previous process.
 		current_process = temp_pcb;
