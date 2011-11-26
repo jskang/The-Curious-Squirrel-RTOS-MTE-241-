@@ -25,6 +25,7 @@ int atomic_flag = 0;
 int wall_clock_flag = 0;
 msg_queue *all_envelopes;
 msg_queue *free_envelopes;
+msg_queue *timer_queue;
 
 long number_messages_sent;
 long time_since_init;
