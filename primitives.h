@@ -30,7 +30,7 @@ int k_terminate( );
 
 int k_change_priority(int new_priority, int target_process_id);							//probably good
 
-int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope);
+int k_request_delay(int time_delay,char wakeup_code,Msg_Env *message_envelope);
 
 int k_get_trace_buffers( Msg_Env * message_envelope);								//good
 

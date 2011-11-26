@@ -150,7 +150,7 @@ int k_change_priority(int new_priority, int target_process_id){
 	return 1;
 }
 
-int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
+int k_request_delay(int time_delay,char wakeup_code,Msg_Env *message_envelope){
 	if (time_delay <= 0)
 		return INVALID_TIME_DELAY;
 	if(message_envelope == NULL)
@@ -159,10 +159,8 @@ int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
 
 	
 	message_envelope->message_type= M_TYPE_MSG_DELAY;	
-	message_envelope->message[0] = time_delay;
+	message_envelope->time_stamp = time_delay;
 	message_envelope->message[1] = wakeup_code;	//i_timer should know how to respond to this
-	printf("Attempting to send message from request delay to timer i process\n");
-	printf("WHY THE FUCK !!!!");
 	if(k_send_message(PID_I_PROCESS_TIMER, message_envelope) != 1){
 		return -1;
 	}

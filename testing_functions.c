@@ -7,7 +7,7 @@
  *
  */
 
-#include "testing_functions.h"
+#include "testing functions.h"
 
 void print_pcb(pcb *to_print){
 	if(to_print == NULL)
@@ -52,6 +52,7 @@ void print_msg(Msg_Env *to_print){
 		printf("sender_id --> %i\n",to_print->sender_id);
 		printf("time_stamp --> %i\n",to_print->time_stamp);
 		printf("message_type --> %i\n",to_print->message_type);
+		printf("Message[0] -> %i\n",to_print->message[0]);
 		//printf("flag --> %i\n\n",to_print->flag);
 	}
 	
