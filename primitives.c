@@ -161,11 +161,9 @@ int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
 	message_envelope->message_type= M_TYPE_MSG_DELAY;	
 	message_envelope->message[0] = time_delay;
 	message_envelope->message[1] = wakeup_code;	//i_timer should know how to respond to this
-	
+	printf("Attempting to send message from request delay to timer i process\n");
 	if(k_send_message(PID_I_PROCESS_TIMER, message_envelope) != 1)
 		return -1;
-	
-	process_switch();
 	return 1;
 	
 }
