@@ -28,16 +28,14 @@ int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 		receiver = dequeue_selected_pcb(blocked_message_receive,dest_process_id);
 		receiver->state = READY;
 		rpq_enqueue(receiver);				//adds process to ready process queue
-		
 	}
 
 	
 	msg_envelope->sender_id = msg_envelope->owner_id; 	//owner id becomes sender id
 	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
 	msg_enqueue(receiver->inbox, msg_envelope);		//adds envelope to the pcbs inbox
-	
-
-
+	print_msg_queue(pcbList[PID_I_PROCESS_TIMER]->inbox);
+	printf("message is being senti \n");	
 	enqueue_msg_trace(msg_envelope);
 	
 	return 1;
@@ -46,6 +44,7 @@ int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 Msg_Env* k_receive_message(){
 
 	Msg_Env *message_envelope = msg_dequeue(current_process->inbox);
+
 	if(message_envelope == NULL && (current_process->pid == PID_I_PROCESS_CRT ||current_process->pid ==PID_I_PROCESS_KBD ||current_process->pid == PID_I_PROCESS_TIMER))
 		return NULL;
 
@@ -57,6 +56,7 @@ Msg_Env* k_receive_message(){
 		message_envelope = msg_dequeue(current_process->inbox);
 	}
 	enqueue_msg_trace(message_envelope);
+
 	return message_envelope;
 }
 
@@ -162,12 +162,13 @@ int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
 	message_envelope->message[0] = time_delay;
 	message_envelope->message[1] = wakeup_code;	//i_timer should know how to respond to this
 	printf("Attempting to send message from request delay to timer i process\n");
-	if(k_send_message(PID_I_PROCESS_TIMER, message_envelope) != 1)
+	printf("WHY THE FUCK !!!!");
+	if(k_send_message(PID_I_PROCESS_TIMER, message_envelope) != 1){
 		return -1;
-	return 1;
-	
-}
+	}
 
+	return 1;
+}
 
 int k_get_trace_buffers( Msg_Env * message_envelope){
 	if(message_envelope == NULL)
@@ -215,6 +216,7 @@ void process_switch(){
 }
 
 void context_switch(pcb* next_process){
+
 	if(setjmp(current_process->jbdata)==0){
 		current_process = next_process;
 		longjmp(next_process->jbdata,1);
