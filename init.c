@@ -26,6 +26,7 @@ int kbd_pid, crt_pid;
 caddr_t kbd_mmap, crt_mmap;
 int bufsize = BUFFERSIZE;
 int kbd_fid, crt_fid, kbd_status , crt_status;
+int wall_clock_flag = 0;
 jmp_buf kernel_buf;
 initialization_table i_table[N_TOTAL_PCB];
 
