@@ -48,13 +48,13 @@ void process_c(){
 			send_console_chars(tmp_msg);
 			tmp_msg = receive_message();
 			while( tmp_msg->message_type != M_TYPE_MSG_ACK){
-				enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
+				msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
 				tmp_msg = receive_message();
 			}
 			request_delay(1000,M_TYPE_MSG_DELAY_BACK, tmp_msg); // 1000 = 10 seconds
 			tmp_msg = receive_message();
 			while(tmp_msg->message_type != M_TYPE_MSG_DELAY_BACK){
-				enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
+				msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
 				tmp_msg = receive_message();
 			}
 		}
@@ -255,7 +255,7 @@ void process_clock(){
 void process_null(){
 
 	do{
-		process_switch();
+		release_processor();
 	}while(1);
 
 }

@@ -28,6 +28,7 @@ int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 		receiver = dequeue_selected_pcb(blocked_message_receive,dest_process_id);
 		receiver->state = READY;
 		rpq_enqueue(receiver);				//adds process to ready process queue
+		
 	}
 
 	
@@ -45,8 +46,11 @@ int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 Msg_Env* k_receive_message(){
 
 	Msg_Env *message_envelope = msg_dequeue(current_process->inbox);
+	if(message_envelope == NULL && (current_process->pid == PID_I_PROCESS_CRT ||current_process->pid ==PID_I_PROCESS_KBD ||current_process->pid == PID_I_PROCESS_TIMER))
+		return NULL;
 
-	if(current_process ->inbox->head == NULL && message_envelope == NULL){
+
+	if(message_envelope == NULL){
 		current_process->state = BLOCKED_ON_RECEIVE;	//sets state to blocked on receive
 		enqueue(blocked_message_receive, current_process);	// adds to blocked on receive queue
 		process_switch();
@@ -70,6 +74,7 @@ int k_send_console_chars(Msg_Env *message_envelope){
 	/*if(message_envelope->flag == 3
 	   return  INVALID_MESSAGE_TYPE*/
 	k_send_message(PID_I_PROCESS_CRT ,message_envelope);					// sends message to crt(6) 
+	crt_i_process();	
 	return 1;
 }
 
