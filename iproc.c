@@ -93,38 +93,36 @@ void timer_i_process(){
 		pcb *temp_pcb = current_process;
 		current_process =  (pcb*)pcb_pointer(PID_I_PROCESS_CRT);
 		
-		Msg_Env *msg_env;
-		msg_queue *local_Q;
-		initialize_msg_queue(local_Q);
+		Msg_Env *temp_msg;
 
 		time_since_init++;
 		
-		while((msg_env = (Msg_Env*) k_receive_message()) != NULL){
-			msg_enqueue(local_Q, msg_env);
+		while((temp_msg = (Msg_Env*) k_receive_message()) != NULL){
+			msg_enqueue(timer_queue, temp_msg);
 		}	
-		
-		if (local_Q->head == NULL){
+
+		/***debug******/	
+		if (timer_queue->head == NULL){
 			printf("there is no message \n");
 		}
 		
-		Msg_Env *temp_msg = local_Q->head;
+		temp_msg = timer_queue->head;
 
 		while(temp_msg!= NULL){
 		// decrement the counters in the received messages.
 			temp_msg->time_stamp--;	
-			 
-			if(temp_msg->time_stamp == 0){    //What does the 0 mean here?
-				msg_dequeue(local_Q);	// Dequeue from local queue.		
-				// send the message flag back to the delayed process		
-				k_send_message(temp_msg->sender_id,temp_msg);
-			
-				// Am I missing something here? 
-			
-				// set the flag to M_TYPE_MSG_DELAY_BACK
-				temp_msg->message_type = M_TYPE_MSG_DELAY_BACK;
-			}
 			temp_msg = temp_msg->next;
-		}	
+		}
+
+		temp_msg= timer_queue->head;
+
+		while(temp_msg->time_stamp <= 0){
+			temp_msg = msg_dequeue(timer_queue);	// Dequeue from local queue.		
+			temp_msg->message_type = temp_msg->message[0];
+			k_send_message(temp_msg->sender_id,temp_msg);
+			temp_msg=timer_queue->head;
+		}
+					
 		// Return the back to the previous process.
 		current_process = temp_pcb;
 		current_process->state = RUNNING;
