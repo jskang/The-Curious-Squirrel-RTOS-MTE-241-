@@ -21,6 +21,7 @@ pcb_queue *blocked_message_receive;
 pcb_queue *sleep_queue;
 pcb_queue *i_process_queue;
 
+int wall_clock_flag = 0;
 msg_queue *all_envelopes;
 msg_queue *free_envelopes;
 
