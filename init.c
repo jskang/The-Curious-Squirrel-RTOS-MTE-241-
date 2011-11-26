@@ -248,7 +248,7 @@ void init (){
 	sigset(SIGALRM,timer_i_process);
 
 	//alarm sleeps for the first two seconds to prevent the signals interrupting init
-	ualarm(2000000, 100000);	
+	ualarm(100000, 100000);	
 	
 	//create a file for shared memory
 	kbd_fid = open(sfilename_kbd, O_RDWR | O_CREAT | O_EXCL, (mode_t) 0755);
