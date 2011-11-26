@@ -156,9 +156,7 @@ int k_request_delay(char time_delay,char wakeup_code,Msg_Env *message_envelope){
 	if(message_envelope == NULL)
 		return INVALID_MESSAGE_PTR_ERROR;
 	//how are we doing wake up codes?
-	current_process->state = SLEEP;
-	if (enqueue(sleep_queue,current_process) != 1)				//if enqueing fails
-		return -1;
+
 	
 	message_envelope->message_type= M_TYPE_MSG_DELAY;	
 	message_envelope->message[0] = time_delay;

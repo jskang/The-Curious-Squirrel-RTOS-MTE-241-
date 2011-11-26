@@ -18,7 +18,6 @@ pcb *current_process; //global variables
 pcb_queue *priority_ready_queue[4];
 pcb_queue *blocked_message_envelope;
 pcb_queue *blocked_message_receive;
-pcb_queue *sleep_queue;
 pcb_queue *i_process_queue;
 
 int wall_clock_flag = 0;

@@ -155,7 +155,6 @@ extern pcb *current_process; //global variables
 extern pcb_queue *priority_ready_queue[4];  
 extern pcb_queue *blocked_message_envelope;
 extern pcb_queue *blocked_message_receive;
-extern pcb_queue *sleep_queue;
 extern pcb_queue *i_process_queue;
 
 extern msg_queue *all_envelopes;
