@@ -4,8 +4,6 @@
 #include "userProcesses.h"
 #include "userAPI.h"
 
-wall_clock_flag = 0;
-
 void process_a(){
 	Msg_Env *tmp_msg;
 	static int num = 0;
@@ -76,7 +74,7 @@ void process_cci(){
 	char msg_second_char;
 	char usr_cmd[2];
 	while(1){
-/*
+
 		//get_console_chars(msg_env);
 		printf("we are here 1\n");
 		//msg_env = (Msg_Env*) receive_message();	// receive message.
@@ -92,7 +90,6 @@ void process_cci(){
 		msg_env->message[7] = ':';
 		msg_env->message[8] = '5';
 		msg_env->message[9] = '5';
-*/
 
 		//printf("%s",msg_env->message);
 		printf("we are here 2\n");
@@ -140,7 +137,7 @@ void process_cci(){
 							printf("Got the correct time\n");
 							k_second = ss;
 							k_minute = mm;
-							k_hour = hh;						
+							k_hour = hh;
 							send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 					}			
 				}
@@ -218,137 +215,39 @@ void process_clock(){
 	
 	Msg_Env *msg_delay = allocate_msg_env();
 	
-	Msg_Env *msg_env = current_process->inbox->head;
+	Msg_Env *output_msg = allocate_msg_env();	
 	
-	static char hour_buf[3];
-	static char min_buf[3];
-	static char sec_buf[2];
-	printf("Getting here\n");
+	printf("Message envelopes have been allocated.\n");
 	
-		
-	/*char message[10] = "c 13:34:55";
-	strcpy(msg_env->message,message);		
-	printf("Geting past strcpy");
-	/*	
-	int i = 0;
-	printf("Message: ");
-	while(msg_env->message[i] != NULL)
-		printf("%s\n",msg_env->message[i]);
-	*/
-
-
-
-/*	if (current_process->inbox->head !=NULL){
-		printf("msg_env is NOT null\n");
-		//input in the message of the form c hh:mm:ss<cr>
-						    // c space between here
-		int h1 = atoi(current_process->inbox->message[2]);
-		int h2 = atoi(msg_env->message[3]); // colon between here
-		int m1 = atoi(msg_env->message[5]);
-		int m2 = atoi(msg_env->message[6]); // colon between here
-		int s1 = atoi(msg_env->message[8]);
-		int s2 = atoi(msg_env->message[9]);
-		printf("Getting past atoi");	
-		// now we're dealing with hhmmss
-		// we know the time is legal from the cci
-
-		k_second = 10*s1+s2;
-		k_minute = 10*m1+m2;
-		k_hour   = 10*h1+h2;
-	
-	}*/
-	Msg_Env *temp_msg;
-	do{
-		request_delay(10,M_TYPE_MSG_DELAY,msg_delay); 	// send envelope using request delay message	
-		temp_msg = receive_message();				// receive messages from timer_i_process 		
+	do{		
+		printf("Attempting to request delay\n");
+		request_delay(10,M_TYPE_MSG_DELAY,msg_delay); // request delay message	
+		printf("Request delayed\n");		
+		msg_delay = receive_message();	// receive messages from timer_i_process 		
 		if(msg_delay != NULL){
-			printf("getting here\n");
-//------------------------why do we check if the msg_env is null here?
+			printf("Returning back after 1 second delay.\n");
 
-
-			// bhavik's time algorithm ******************************************************
-
-			k_second++; 	// increment by one k_second
+			k_second++; 				// increment by one k_second
 			k_second = (k_second++)%60;
 			if(k_second == 0) {			// check to increment k_minute 
 				k_minute = (k_minute++)%60;
-				if (k_minute == 0) {			// check to increment k_hour
+				if (k_minute == 0) {		// check to increment k_hour
 					k_hour = (k_hour++)%60;
 				}	
 			} 
 
-			// end bhavik's time algorithm **************************************************
-
-
-			
-			// prepare to send to crt
-			
-			// we need output here that takes the h m and s and puts it in an envelope 
-
-			if(k_hour<10)
-				sprintf(hour_buf, "0%d:", k_hour);
-			else
-				sprintf(hour_buf, "%d:", k_hour);
-			if(k_minute<10)
-				sprintf(hour_buf, "0%d:", k_minute);
-			else
-				sprintf(hour_buf, "%d:", k_minute);
-			if(k_second<10)
-				sprintf(hour_buf, "0%d", k_second);
-			else
-				sprintf(hour_buf, "%d", k_second);
-
-			//load up the time into the message envelope
-
-			msg_env->message[0] = hour_buf[1];
-			msg_env->message[1] = hour_buf[2];
-			msg_env->message[2] = hour_buf[3];
-			msg_env->message[3] = min_buf[0];
-			msg_env->message[4] = min_buf[1];
-			msg_env->message[5] = min_buf[2];
-			msg_env->message[6] = sec_buf[0];
-			msg_env->message[7] = sec_buf[1];
-
-			/*
-
-			int cnt = 0;
-			for (cnt; cnt <3; cnt++){
-				msg_env->message[cnt] = hour_buf[cnt];
-			}
-			cnt=3;
-			for (cnt; cnt <6; cnt++){
-				msg_env->message[cnt] = min_buf[cnt];
-			}
-			cnt=6;
-			for (cnt; cnt <8; cnt++){
-				msg_env->message[cnt] = sec_buf[cnt];
-			}
-
-			*/
-			
-			msg_env->message[8] = "\n";
-			
-			// message envelope now contains 
-			//
-			// [0] -> h	
-			// [1] -> h
-			// [2] -> :
-			// [3] -> m
-			// [4] -> m
-			// [5] -> :
-			// [6] -> s
-			// [7] -> s
-			// [8] -> \n
-			//
-
-			if(msg_env->message_type == M_TYPE_WALL_CLOCK){  // display to CRT if true
-				
-				// send msg_envelope to crt.
-				// check if wall_clock_flag allows output
-//-------------------------------- if (wall_clock_flag)
-					send_console_chars(msg_env);				
+			if(msg_delay->message_type == M_TYPE_WALL_CLOCK){  // display to CRT if true
+				printf("Message type: WALL CLOCK\n");
+				output_msg->size = sprintf(output_msg->message,"%d:%d:%d",k_hour,k_minute,k_second);				
+				printf("Message stored in output_msg.\n");
+				if (wall_clock_flag){	// check to display on console
+					send_console_chars(output_msg);
+				}				
 			}			
-		}		
+		}
+		// Where do I deallocate the message envelopes?
+		deallocate_msg_env(msg_delay);
+		deallocate_msg_env(output_msg);	
 		release_processor();
 	}while(1);
 }
