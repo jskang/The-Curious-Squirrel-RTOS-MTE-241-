@@ -157,6 +157,7 @@ extern pcb_queue *blocked_message_envelope;
 extern pcb_queue *blocked_message_receive;
 extern pcb_queue *i_process_queue;
 
+extern msg_queue *timer_queue;
 extern msg_queue *all_envelopes;
 extern msg_queue *free_envelopes;
 
@@ -170,7 +171,6 @@ extern int k_hour;
 extern msg_trace_buffer *message_buffer;
 
 extern int wall_clock_flag;
-
 extern int atomic_flag;
 
 //io buffer global variable
