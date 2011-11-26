@@ -188,8 +188,8 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 		message_envelope->size=16*number_messages_sent;
 	}
 	else{
-		int position = message_buffer->entry_element;												//where we start reading from
-		for (i=0;i<16;i++){																			//loops 16 times
+		int position = message_buffer->entry_element;						//where we start reading from
+		for (i=0;i<16;i++){									//loops 16 times
 			message_envelope->message[4*i] = message_buffer->messages[position%16]->sender_PID;
 			message_envelope->message[4*i +1]= message_buffer->messages[position%16]->receiver_PID;
 			message_envelope->message[4*i +2]= message_buffer->messages[position%16]->time_stamp;

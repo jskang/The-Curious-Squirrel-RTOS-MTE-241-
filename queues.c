@@ -205,15 +205,62 @@ int msg_enqueue(msg_queue *Q, Msg_Env *chain_mail){
 		return INVALID_QUEUE_ERROR;
 	if(chain_mail == NULL)
 		return INVALID_MSG_POINTER;
-	if(empty_msg_queue(Q)){										//if queue is currently empty head and tail point to same element
+	
+	if(chain_mail->message_type == M_TYPE_MSG_DELAY){
+		Msg_Env *previous_message, *current_message;
+		
+		if(Q->head == NULL){										//if the queue is empty
+			Q->head = chain_mail;
+			Q->tail = chain_mail;
+		}
+		
+		else if(Q->head->next == NULL || Q->head->message[0] < chain_mail->message[0]){								//if there is one element in queue
+			if(Q->head->message[0] <= chain_mail->message[0]){
+				Q->head->next = chain_mail;
+				Q->tail= chain_mail;
+				chain_mail->next = NULL;
+			}
+			else{
+				chain_mail->next = Q->head;
+				Q->head = chain_mail;
+				Q->tail = chain_mail->next;
+			}
+			
+		}
+		else if(Q->tail->message[0] < chain_mail->message[0]){
+			Q->tail->next= chain_mail;
+			Q->tail = chain_mail;
+		}
+		else{
+			current_message= Q->head->next;
+			previous_message = Q->head;
+			while(current_message != NULL){
+				if(chain_mail->message[0] > current_message->message[0]){
+					previous_message = current_message;
+					current_message=current_message->next;
+				}
+				else{
+					chain_mail->next = current_message;
+					previous_message->next = chain_mail;
+				}
+				
+					
+					
+			
+				}
+			}			
+		
+		
+	}
+	if(empty_msg_queue(Q)){					//if queue is currently empty head and tail point to same element
 		Q->head = chain_mail;
 		Q->tail = chain_mail;
 	}
 	
 	else{
 		chain_mail->next = NULL;
-		Q->tail->next = chain_mail;								//message envelope who is currently is at end now points to the new message envelope
-		Q->tail = chain_mail;									//tail points to new message envelope
+		Q->tail->next = chain_mail;		//message envelope who is currently is at end now points to the new message envelope
+		Q->tail = chain_mail;			//tail points to new message envelope
 	}
 	
 	chain_mail->next=NULL;
