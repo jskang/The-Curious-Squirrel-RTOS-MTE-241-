@@ -88,10 +88,11 @@ void crt_i_process(){
 
 void timer_i_process(){
 	if (current_process != NULL){
+		printf("hello\n");
 		// Save state of original process and switch to current process.
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process;
-		current_process =  (pcb*)pcb_pointer(PID_I_PROCESS_CRT);
+		current_process =  (pcb*)pcb_pointer(PID_I_PROCESS_TIMER);
 		
 		Msg_Env *temp_msg;
 
@@ -116,13 +117,17 @@ void timer_i_process(){
 
 		temp_msg= timer_queue->head;
 
-		while(temp_msg->time_stamp <= 0){
-			temp_msg = msg_dequeue(timer_queue);	// Dequeue from local queue.		
-			temp_msg->message_type = temp_msg->message[0];
-			k_send_message(temp_msg->sender_id,temp_msg);
-			temp_msg=timer_queue->head;
-		}
-					
+		if(temp_msg != NULL){				//prevent segmentation error 
+			while(temp_msg->time_stamp <= 0){
+				temp_msg = msg_dequeue(timer_queue);	// Dequeue from local queue.		
+				temp_msg->message_type = temp_msg->message[0];
+				k_send_message(temp_msg->sender_id,temp_msg);
+				temp_msg=timer_queue->head;
+				if (temp_msg == NULL){
+					break;
+				}
+			}	
+		}			
 		// Return the back to the previous process.
 		current_process = temp_pcb;
 		current_process->state = RUNNING;

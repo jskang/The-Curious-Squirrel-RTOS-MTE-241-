@@ -35,7 +35,7 @@ int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
 	msg_enqueue(receiver->inbox, msg_envelope);		//adds envelope to the pcbs inbox
 	print_msg_queue(pcbList[PID_I_PROCESS_TIMER]->inbox);
-	printf("message is being senti \n");	
+	printf("message is being sent \n");	
 	enqueue_msg_trace(msg_envelope);
 	
 	return 1;
@@ -89,7 +89,7 @@ Msg_Env *k_allocate_msg_env (){
 	
 	
 	Msg_Env *message_envelope = msg_dequeue(free_envelopes);
-	message_envelope->sender_id = current_process->pid;
+	message_envelope->owner_id = current_process->pid;
 	return message_envelope;
 }
 
