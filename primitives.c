@@ -158,7 +158,7 @@ int k_terminate( ){
 	free(free_envelopes);
 
 	cleanup();
-	exit(0);	
+	exit(1);	
 	return 1;
 }
 
