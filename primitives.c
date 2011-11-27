@@ -127,6 +127,37 @@ int k_request_process_status( Msg_Env *message_envelope ){
 
 
 int k_terminate( ){
+	int i;
+	Msg_Env* temp_msg;
+	for (i = 0; i <9; i++){
+		free(pcbList[i]->inbox);
+		free(pcbList[i]);
+		free(pcbList);
+	}
+
+	for (i = 0; i < 4; i++){
+		free(priority_ready_queue[i]);
+		free(priority_ready_queue);
+	}
+	
+	temp_msg = msg_dequeue(all_envelopes);
+
+	do{
+		free(temp_msg);
+		temp_msg = msg_dequeue(all_envelopes);
+
+	}while(temp_msg != NULL);
+
+	free(blocked_message_envelope);
+	free(blocked_message_receive);
+	free(i_process_queue);
+
+	free(timer_queue);
+	free(all_envelopes);
+	free(free_envelopes);
+
+	cleanup();
+	exit(0);	
 	return 1;
 }
 
