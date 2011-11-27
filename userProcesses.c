@@ -212,14 +212,12 @@ void process_cci(){
 void process_clock(){
 
 	printf("ENTERING WALL CLOCK...\n");
+		
+
+	do{	
+		Msg_Env *msg_delay = allocate_msg_env();
 	
-	Msg_Env *msg_delay = allocate_msg_env();
-	
-	Msg_Env *output_msg = allocate_msg_env();	
-	
-	printf("Message envelopes have been allocated.\n");
-	
-	do{		
+		Msg_Env *output_msg = allocate_msg_env();	
 		printf("Attempting to request delay\n");
 		request_delay(10,M_TYPE_MSG_DELAY_BACK,msg_delay); // request delay message	
 		printf("Request delayed\n");		
