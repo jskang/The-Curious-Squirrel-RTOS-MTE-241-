@@ -170,27 +170,54 @@ int k_request_delay(int time_delay,char wakeup_code,Msg_Env *message_envelope){
 int k_get_trace_buffers( Msg_Env * message_envelope){
 	if(message_envelope == NULL)
 		return INVALID_MESSAGE_PTR_ERROR;
-	message_envelope->message_type = M_TYPE_MESSAGE_TRACE ;
 	
+	message_envelope->message_type = M_TYPE_MESSAGE_TRACE ;
+	char *temp_string[73];	// Added random numer for now.
 	char i;
 	
 	if (number_messages_sent <= 16){
+		sprintf(message_envelope->message,"-- Sent Messages -- \n");
+		sprintf(temp_string, "Message ID     Sender ID     Receiver ID     Time Stamp     Message Type\n");		
+
+		strcat(message_envelope->message,temp_string);
+
 		for (i=0;i<number_messages_sent;i++){
 			message_envelope->message[4*i] = message_buffer->messages[i]->sender_PID;
 			message_envelope->message[4*i +1]= message_buffer->messages[i]->receiver_PID;
 			message_envelope->message[4*i +2]= message_buffer->messages[i]->time_stamp;
 			message_envelope->message[4*i +3]= message_buffer->messages[i]->m_type;
+
+			sprintf(temp_string,"%6d%14d%16d%15d%13d\n",i,
+					message_buffer->messages[i]->sender_PID,
+					message_buffer->messages[i]->receiver_PID,
+					message_buffer->messages[i]->time_stamp,
+					message_buffer->messages[i]->m_type);
+			strcat(message_envelope->message,temp_string);
 		}
 		message_envelope->size=16*number_messages_sent;
 	}
 	else{
-		int position = message_buffer->entry_element;						//where we start reading from
-		for (i=0;i<16;i++){									//loops 16 times
+		int position = message_buffer->entry_element;		//where we start reading from
+
+		sprintf(temp_msg,"-- Received Messages -- \n");
+		strcat(message_envelope->message,temp_msg);
+		sprintf(temp_string, "Message ID     Sender ID     Receiver ID     Time Stamp     Message Type\n");		
+
+		strcat(message_envelope->message,temp_string);
+
+		for (i=0;i<16;i++){					//loops 16 times
 			message_envelope->message[4*i] = message_buffer->messages[position%16]->sender_PID;
 			message_envelope->message[4*i +1]= message_buffer->messages[position%16]->receiver_PID;
 			message_envelope->message[4*i +2]= message_buffer->messages[position%16]->time_stamp;
 			message_envelope->message[4*i +3]= message_buffer->messages[position%16]->m_type;
 			position+=1;
+
+			sprintf(temp_string,"%6d%14d%16d%15d%13d\n",i,
+			message_buffer->messages[i]->sender_PID,
+			message_buffer->messages[i]->receiver_PID,
+			message_buffer->messages[i]->time_stamp,
+			message_buffer->messages[i]->m_type);
+			strcat(message_envelope->message,temp_string);
 		}		
 		message_envelope->size=64;
 	}
