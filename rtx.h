@@ -169,7 +169,8 @@ extern long time_since_init;
 extern int k_second;
 extern int k_minute;
 extern int k_hour;
-extern msg_trace_buffer *message_buffer;
+extern msg_trace_buffer *message_buffer_send;
+extern msg_trace_buffer *message_buffer_receive;
 
 extern int wall_clock_flag;
 extern int atomic_flag;

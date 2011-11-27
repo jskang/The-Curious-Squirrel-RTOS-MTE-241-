@@ -209,6 +209,10 @@ void initialize_data_structures (){
 	all_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
 
+
+	message_buffer_send= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
+	message_buffer_receive= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
+
 	initialize_queue(i_process_queue);
 	initialize_queue(blocked_message_envelope);
 	initialize_queue(blocked_message_receive);
@@ -218,8 +222,8 @@ void initialize_data_structures (){
 	initialize_msg_queue(free_envelopes);
 
 	//initializing the trace buffer
-	message_buffer= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
-	initialize_msg_trace(message_buffer);
+	initialize_msg_trace(message_buffer_send);
+	initialize_msg_trace(message_buffer_receive);
 
 }
 
