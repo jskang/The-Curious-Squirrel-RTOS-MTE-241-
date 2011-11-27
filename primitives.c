@@ -34,7 +34,7 @@ int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 	msg_envelope->sender_id = msg_envelope->owner_id; 	//owner id becomes sender id
 	msg_envelope->owner_id = dest_process_id;		//destination process is now the owner
 	msg_enqueue(receiver->inbox, msg_envelope);		//adds envelope to the pcbs inbox	
-	enqueue_msg_trace(msg_envelope);
+	enqueue_msg_trace(message_buffer_send,msg_envelope);
 	
 	return 1;
 }
@@ -53,7 +53,7 @@ Msg_Env* k_receive_message(){
 		process_switch();
 		message_envelope = msg_dequeue(current_process->inbox);
 	}
-	enqueue_msg_trace(message_envelope);
+	enqueue_msg_trace(message_buffer_receive,message_envelope);
 
 	return message_envelope;
 }
