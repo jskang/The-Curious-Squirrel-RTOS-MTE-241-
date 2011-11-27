@@ -12,6 +12,7 @@
 #include "rtx.h"
 #include "init.h"
 #include "userProcesses.h"
+#include "primitives.h"
 
 pcb *current_process; //global variables
 
@@ -29,9 +30,9 @@ msg_queue *timer_queue;
 
 long number_messages_sent;
 long time_since_init;
-int k_second;
-int k_minute;
-int k_hour;
+int k_second = 0;
+int k_minute = 0;
+int k_hour = 0;
 
 msg_trace_buffer *message_buffer_send;
 msg_trace_buffer *message_buffer_receive;
@@ -45,12 +46,11 @@ int main (void){
 	init();
 	printf("initialization complete \n");
 	pcb* first_process;
-	first_process = rpq_dequeue();
+	first_process =(pcb*) rpq_dequeue();
 	printf("first process selected \n");
 	printf("%d \n",first_process->pid);
 	current_process = first_process;
 	longjmp(first_process->jbdata,1);
 	printf("should not reach here \n");
 	return EXIT_SUCCESS;
-
 }

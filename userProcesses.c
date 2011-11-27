@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "rtx.h"
 #include "userProcesses.h"
 #include "userAPI.h"
@@ -36,7 +38,7 @@ void process_c(){
 
 	do{
 		// check for message on local queue first
-		tmp_msg = dequeue(local_msg_queue);
+		tmp_msg =(Msg_Env*) msg_dequeue(local_msg_queue);
 
 		if (tmp_msg == NULL){
 			tmp_msg = receive_message();
@@ -51,7 +53,7 @@ void process_c(){
 				msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
 				tmp_msg = receive_message();
 			}
-			request_delay(1000,M_TYPE_MSG_DELAY_BACK, tmp_msg); // 1000 = 10 seconds
+			request_delay(100, M_TYPE_MSG_DELAY_BACK, tmp_msg); // 1000 = 10 seconds
 			tmp_msg = receive_message();
 			while(tmp_msg->message_type != M_TYPE_MSG_DELAY_BACK){
 				msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
@@ -67,8 +69,6 @@ void process_c(){
 void process_cci(){
 
 	Msg_Env *msg_env;                // allocates output message
-	char msg_first_char;
-	char msg_second_char;
 	char usr_cmd[2];
 	while(1){
 
@@ -98,7 +98,7 @@ void process_cci(){
 		get_console_chars(msg_env);
 		do{
 			msg_env = receive_message();
-			if (msg_env != M_TYPE_CONSOLE_INPUT){
+			if (msg_env->message_type != M_TYPE_CONSOLE_INPUT){
 				deallocate_msg_env(msg_env);
 			}
 		

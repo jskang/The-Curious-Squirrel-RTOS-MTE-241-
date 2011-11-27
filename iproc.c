@@ -53,7 +53,7 @@ void crt_i_process(){
 		pcb *temp_pcb = current_process; 
 		current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT);	
 		static Msg_Env* out_message;
-		static flag = 0;
+		static int flag = 0;
 		// Check if flag from crt u-process is true.
 	
 		if(out_mem_p_crt->ok_flag == 0){
@@ -63,7 +63,7 @@ void crt_i_process(){
 				out_message->size = 0;
 				out_message->message_type = M_TYPE_MSG_ACK;
 				k_send_message(out_message->sender_id,out_message);
-				out_message ==NULL;
+				out_message =NULL;
 				flag = 0;
 	
 			}

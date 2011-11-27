@@ -6,14 +6,17 @@ Date:		November 6, 2011
 Comments:	Initializes everythang
 **********************************************************************************************/
 
-#include <stdlib.h>
 #include <signal.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/shm.h>
+#include <setjmp.h>
 
 #include "rtx.h"
 #include "kbcrt.h"
@@ -133,6 +136,24 @@ int initialize_table(){
 	return 1;
 }
 
+void init_context_save (pcb *tmp_pcb){
+	char* temp_sp = NULL;
+	pcb* temp = tmp_pcb;
+	if (setjmp(kernel_buf)==0){
+		temp_sp = (void *) temp->stack;
+		__asm__("movl %0,%%esp" :"=m" (temp_sp));
+		if (setjmp(temp->jbdata)==0){
+			longjmp(kernel_buf,1);
+		}
+		else{
+			void (*tmp) ();
+			tmp = (void*) current_process->process_code;
+			tmp();
+			printf("we have a problem\n");
+		}
+	}
+}
+
 int init_pcb(){
 	int i;
        
@@ -162,26 +183,8 @@ int init_pcb(){
 	return 1;
 }
 
-void init_context_save (pcb *tmp_pcb){
-	char* temp_sp = NULL;
-	pcb* temp = tmp_pcb;
-	if (setjmp(kernel_buf)==0){
-		temp_sp = (void *) temp->stack;
-		__asm__("movl %0,%%esp" :"=m" (temp_sp));
-		if (setjmp(temp->jbdata)==0){
-			longjmp(kernel_buf,1);
-		}
-		else{
-			void (*tmp) ();
-			tmp = (void*) current_process->process_code;
-			tmp();
-			printf("we have a problem\n");
-		}
-	}
-}
-
 int init_msg_env (){
-	int i, debug;	
+	int i;
 	Msg_Env* tempMsg;
 	//initialize envelopes for user processes
 	for(i = 0;i < 5; i++){//N_MSG_ENV
@@ -228,14 +231,12 @@ void initialize_data_structures (){
 }
 
 void init (){
-	int i;
 	//initializes all the data structures
 	initialize_data_structures();
 	printf("initialized data structures");	
 	initialize_table();
 	init_pcb();
-	i = init_msg_env();
-
+	init_msg_env();
 
 	//handles all the signals
 	sigset(SIGINT,die);

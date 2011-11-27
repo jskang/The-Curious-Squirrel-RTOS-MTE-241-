@@ -9,10 +9,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "rtx.h"
 #include "primitives.h"
 #include "queues.h"
 #include "atomic.h"
+#include "iproc.h"
+#include "init.h"
 
 int k_send_message(char dest_process_id, Msg_Env *msg_envelope){
 	if (msg_envelope == NULL){
@@ -132,12 +135,10 @@ int k_terminate( ){
 	for (i = 0; i <9; i++){
 		free(pcbList[i]->inbox);
 		free(pcbList[i]);
-		free(pcbList);
 	}
 
 	for (i = 0; i < 4; i++){
 		free(priority_ready_queue[i]);
-		free(priority_ready_queue);
 	}
 	
 	temp_msg = msg_dequeue(all_envelopes);
@@ -162,9 +163,10 @@ int k_terminate( ){
 }
 
 int k_change_priority(int new_priority, int target_process_id){
-	if (target_process_id>9 || target_process_id<0)
+	if (target_process_id > 9 || target_process_id < 0)
 		return INVALID_PID_ERROR;
-	if (new_priority <0 || new_priority>2)								//2 as 3 is reserved for null process
+
+	if (new_priority < 0 || new_priority > 2)								//2 as 3 is reserved for null process
 		return INVALID_PRIORITY_ERROR;
 
 	pcb *process = pcb_pointer(target_process_id);						
@@ -203,15 +205,15 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 		return INVALID_MESSAGE_PTR_ERROR;
 	
 	message_envelope->message_type = M_TYPE_MESSAGE_TRACE ;
-	char *temp_string[73];	// Added random numer for now.
+	char temp_string[73];	// Added random numer for now.
 	int i;
 	
-	sprintf(message_envelope->message,"-- Sent Messages -- \n");
-	sprintf(temp_string, "Message ID     Sender ID     Receiver ID     Time Stamp     Message Type\n");		
-
+	strcpy(message_envelope->message,"-- Sent Messages -- \n");
+	strcpy(temp_string, "Message ID     Sender ID     Receiver ID     Time Stamp     Message Type\n");		
 	strcat(message_envelope->message,temp_string);
+
 	for (i = 0; i < 16; i++){
-		sprintf(temp_string,"%6d%14d%16d%15d%13d\n",i,
+		sprintf(temp_string,"%6d%14d%16d%15ld%13d\n",i,
 		message_buffer_send->messages[i]->sender_PID,
 		message_buffer_send->messages[i]->receiver_PID,
 		message_buffer_send->messages[i]->time_stamp,
@@ -219,13 +221,13 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 		strcat(message_envelope->message,temp_string);
 	}
 
-	sprintf(temp_string,"-- Received Messages -- \n");
+	strcpy(temp_string,"-- Received Messages -- \n");
 	strcat(message_envelope->message,temp_string);
-	sprintf(temp_string, "Message ID     Sender ID     Receiver ID     Time Stamp     Message Type\n");		
+	strcpy(temp_string, "Message ID     Sender ID     Receiver ID     Time Stamp     Message Type\n");		
 	strcat(message_envelope->message,temp_string);
 
 	for (i = 0; i < 16; i++){					//loops 16 times
-		sprintf(temp_string,"%6d%14d%16d%15d%13d\n",i,
+		sprintf(temp_string,"%6d%14d%16d%15ld%13d\n",i,
 		message_buffer_receive->messages[i]->sender_PID,
 		message_buffer_receive->messages[i]->receiver_PID,
 		message_buffer_receive->messages[i]->time_stamp,
