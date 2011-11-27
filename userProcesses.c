@@ -66,8 +66,6 @@ void process_c(){
 
 void process_cci(){
 
-	printf("we are in CCI \n");
-
 	Msg_Env *msg_env;                // allocates output message
 	char msg_first_char;
 	char msg_second_char;
@@ -98,49 +96,47 @@ void process_cci(){
 		//msg_second_char = msg_env->message[1];	*/
 		msg_env = allocate_msg_env();	 	
 		get_console_chars(msg_env);
-		msg_env = receive_message();
+		do{
+			msg_env = receive_message();
+			if (msg_env != M_TYPE_CONSOLE_INPUT){
+				deallocate_msg_env(msg_env);
+			}
+		
+		}while (msg_env->message_type != M_TYPE_CONSOLE_INPUT); 
 		//print_msg(msg_env);
 		strncpy(usr_cmd,msg_env->message,2);	// store the user command.
 		
 		if(msg_env->size < 12){
-			printf("getting here okay.\n");
 			if(strncmp(usr_cmd,"s",2) == 0){
-				if (send_message(PID_PROCESS_A, msg_env))// send message to process A
-					printf("Message Sent to Process A\n");
+				msg_env->message_type= M_TYPE_COMMANDS;
+				send_message(PID_PROCESS_A, msg_env);
 			}
 			else if(strncmp(usr_cmd,"ps",2) == 0){
-				//this portion should display the status of all the processes 
-				//wint i=0;
-				//printf("-----------------------------------");
-				//for (i;i<10;i++){                               //loop through the processes
-					//printf("%i \n",pcbList[i]->state);	
-					printf("Requesting Status\n");	 
-					request_process_status(msg_env);	// request process status (message envelope)
-					if (request_process_status(msg_env))
-						printf("Status Requested\n");	
-				//}		
-				//printf("-----------------------------------");
+				request_process_status(msg_env);	// request process status (message envelope)
+				msg_env->message_type = M_TYPE_REQ_PROCESS_STATUS; 	
+				send_console_chars(msg_env);
 			}
 			else if(strncmp(usr_cmd,"c ",2) == 0){
-
-				printf("Inside the CCI WallClock\n");
 				if(msg_env->size == 10){
 					// having a size of eleven means c (1) space (2) hh:mm:ss (7) enter (1) - > 11 total
 					int hh, mm, ss;
 					char c1, c2;
 					if((sscanf(msg_env->message, "%*s %d %c %d %c %d", &hh, &c1, &mm, &c2, &ss)) == 5){
 						// check for valid time	
-						if ((hh > 23) || (ss > 59) || (mm > 59) || (c1 != ':') || (c2 != ':'))
-							printf("Invalid Time\n");
+						if ((hh > 23) || (ss > 59) || (mm > 59) || (c1 != ':') || (c2 != ':')){
+							strcpy(msg_env->message,"Invalid Time\n");
+							msg_env->message_type = M_TYPE_COMMANDS;
+							send_console_chars(msg_env);
+						}
 						else{ 
-							printf("Got the correct time\n");
 							k_second = ss;
 							k_minute = mm;
 							k_hour = hh;
+							deallocate_msg_env(msg_env);
 						}			
 					}
 				}
-				deallocate_msg_env(msg_env);
+
 			}
 			else if(strncmp(usr_cmd,"cd",2) == 0){
 				
@@ -149,20 +145,19 @@ void process_cci(){
 				deallocate_msg_env(msg_env);
 			}
 			else if(strncmp(usr_cmd,"ct",2) == 0){
-				printf("in ct/n");
-				// this should turn off the wall clock 
 				// set wall_clock_flag to zero denying the output of the wall clock
 				wall_clock_flag = 0;
 				deallocate_msg_env(msg_env);
 				// again we should be able to run this without the bottom line
 				// send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 			}
-			else if(strncmp(usr_cmd,"b ",2) == 0){
-
+			else if(strncmp(usr_cmd,"b",2) == 0){
 				//display contents of trace display buffer
-				get_trace_buffers(msg_env);				
+				get_trace_buffers(msg_env);
+				msg_env->message_type = M_TYPE_MESSAGE_TRACE;
+				send_console_chars(msg_env);
 			}
-			else if(strncmp(usr_cmd,"t ",2) == 0){
+			else if(strncmp(usr_cmd,"t",2) == 0){
 
 				//terminate the fuck out of everything 
 				//release all resources acquired from linux
@@ -175,30 +170,36 @@ void process_cci(){
 				//we can't edit the NULL process
 				//The arguments must be verified to ensure a valid process_id and priority level is given.
 				if (msg_env->message[2] < 0 || msg_env->message[2] >3 || msg_env->message[4] < 0 || msg_env->message[4]>8 ){
-					printf("Illegal Priority level");
-					//break; //this will break the while loop
+					strcpy(msg_env->message,"Invalid priority");
+                                        msg_env->message_type = M_TYPE_COMMANDS;
+                                        send_console_chars(msg_env);
 				}
 				else if(current_process == NULL){
-					printf("Trying to Edit NULL Process");
+					strcpy(msg_env->message,"Trying to change the priority of NULL PROCESS");
+                                        msg_env->message_type = M_TYPE_COMMANDS;
+                                        send_console_chars(msg_env);
 					//break; //this will break the while loop
 				}
 				else{ 
 					int pChange = change_priority(msg_env->message[2],msg_env->message[4]);	// change priority of process.
-					if (pChange)
-						printf("Priority Changed to %i",msg_env->message[2]);
-					else	
-						printf("Priority could not be changed");
+					if (pChange){
+						sprintf(msg_env->message,"Priority Changed to %i",msg_env->message[2]);
+						msg_env->message_type = M_TYPE_COMMANDS;
+						send_console_chars(msg_env);
+ 					}
+					else{
+						strcpy(msg_env->message,"Priority could not be changed");
+						msg_env->message_type = M_TYPE_COMMANDS;
+						send_console_chars(msg_env);
+					}
 				}
 			}
-			else if (strncmp(usr_cmd,"xx",2) == 0){
-				// this is a debugging test	
-				printf("We are in the CCI test case");
 
+			else{
+				strcpy(msg_env->message,"Command Not Recognized\n");
+				msg_env->message_type = M_TYPE_COMMANDS;
+				send_console_chars(msg_env);
 			}
-			else {
-				printf("Command Not Recognized");
-				deallocate_msg_env(msg_env);
-				}
 				
 		}	
 		release_processor();
@@ -206,9 +207,6 @@ void process_cci(){
 }
 
 void process_clock(){
-
-	printf("ENTERING WALL CLOCK...\n");
-		
 
 	do{	
 		Msg_Env *msg_delay = allocate_msg_env();

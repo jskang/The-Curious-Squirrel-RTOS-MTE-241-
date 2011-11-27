@@ -34,6 +34,7 @@ Comments: Global variables and struct definitions for Initialization
 #define M_TYPE_WALL_CLOCK 8
 #define M_TYPE_WALL_CLOCK_SET 9
 #define M_TYPE_MSG_ACK 10
+#define M_TYPE_COMMANDS 11
 
 // Global variables
 #define N_TOTAL_PCB 9

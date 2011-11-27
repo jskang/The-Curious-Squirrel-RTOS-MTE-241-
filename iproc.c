@@ -11,10 +11,8 @@ void kbd_i_process (){
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process;
 		current_process =(pcb*) pcb_pointer(PID_I_PROCESS_KBD);
-		printf("HELLO \n");
 		if (in_mem_p_kbd->ok_flag == 1){
 			if (current_process->inbox->head != NULL){
-				printf ("We have a message form get console char\n");
 			//message envelope that points to the message
 				Msg_Env *in_message = NULL;
 		
@@ -33,7 +31,7 @@ void kbd_i_process (){
 				in_message->size = in_mem_p_kbd->length;
 			
 
-				in_message->message_type =  M_TYPE_MSG_ACK;
+				in_message->message_type =  M_TYPE_CONSOLE_INPUT;
 				k_send_message(in_message->sender_id,in_message);
 
 			//reset the buffer
@@ -63,7 +61,7 @@ void crt_i_process(){
 			if (flag != 0 && out_message != NULL){
 				strcpy(out_message->message,"");
 				out_message->size = 0;
-
+				out_message->message_type = M_TYPE_MSG_ACK;
 				k_send_message(out_message->sender_id,out_message);
 				out_message ==NULL;
 				flag = 0;
