@@ -403,39 +403,38 @@ int initialize_msg_trace(msg_trace_buffer *trace){
 		return INVALID_TRACE_PTR;
 	int i;
 	for(i=0; i<16;i++){
-		message_buffer->messages[i]=(msg_trace*)malloc(sizeof(struct msg_trace));
-
+		trace->messages[i]=(msg_trace*)malloc(sizeof(struct msg_trace));
+		trace->messages[i]->sender_PID = -1;
+		trace->messages[i]->receiver_PID = -1;
+		trace->messages[i]->time_stamp = -1;
+		trace->messages[i]->m_type = -1;
 	}
-	trace->entry_element = 0;
+
 	return 1;
 }
 
 
-int enqueue_msg_trace(Msg_Env *message){
+int enqueue_msg_trace(msg_trace_buffer *trace ,Msg_Env *message){
+	int i;
 	if(message==NULL)
 		return INVALID_MSG_POINTER;
-	
-	message_buffer->messages[message_buffer->entry_element]->sender_PID= message->sender_id;
-	message_buffer->messages[message_buffer->entry_element]->receiver_PID = message->owner_id;				//receiver id
-	message_buffer->messages[message_buffer->entry_element]->time_stamp = message->time_stamp;		
-	message_buffer->messages[message_buffer->entry_element]->m_type = message->message_type;
-	
-	message_buffer->entry_element+=1;
-	number_messages_sent +=1;
-	
-	if(message_buffer->entry_element == 16){																//if the entry element has reached the end it needs to
-		message_buffer->entry_element=0;																	//go back to the first element of the array
+
+	//shifts all the data field up one space if it is full	
+	if (trace->entry_element > 15){
+		for (i = 1; i < 16; i++){
+			trace->messages[i-1] = trace->messages[i];
+		}
+		//set the entry_element so that it saves it to the last space.
+		trace->entry_element = 15;
 	}
+
+	trace->messages[trace->entry_element]->sender_PID= message->sender_id;
+	trace->messages[trace->entry_element]->receiver_PID = message->owner_id;				//receiver id
+	trace->messages[trace->entry_element]->time_stamp = time_since_init;	
+	trace->messages[trace->entry_element]->m_type = message->message_type;
 	
-	
+	trace->entry_element+=1;
+	number_messages_sent +=1;
 	
 	return 1;
 }
-
-
-
-
-
-
-
-

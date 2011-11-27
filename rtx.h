@@ -93,7 +93,7 @@ Comments: Global variables and struct definitions for Initialization
 typedef struct msg_trace{
      int sender_PID;
      int receiver_PID;
-     int time_stamp;
+     long time_stamp;
      int m_type;
 }msg_trace;
 

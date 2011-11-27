@@ -32,7 +32,9 @@ long time_since_init;
 int k_second;
 int k_minute;
 int k_hour;
-msg_trace_buffer *message_buffer;
+
+msg_trace_buffer *message_buffer_send;
+msg_trace_buffer *message_buffer_receive;
 
 pcb* pcbList[TEMP_NUM_PROCESS];
 
