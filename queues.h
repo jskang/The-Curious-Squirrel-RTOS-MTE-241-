@@ -49,5 +49,5 @@ pcb* rpq_dequeue_specific_pcb (pcb *desired_pcb);
 
 int initialize_msg_trace(msg_trace_buffer *trace);
 
-int enqueue_msg_trace(Msg_Env *message);
+int enqueue_msg_trace(msg_trace_buffer *trace, Msg_Env *message);
 
