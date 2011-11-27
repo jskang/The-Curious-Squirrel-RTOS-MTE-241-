@@ -151,7 +151,7 @@ int init_pcb(){
 		pcbList[i]->stack =(char*)(malloc(STACKSIZE)) + STACKSIZE - STACK_OFFSET;
 		pcbList[i]->process_code = i_table[i].stack_address;
 		
-		if (i>6){
+		if (i>5){
 			rpq_enqueue(pcbList[i]);
 		}
 		else{
@@ -184,7 +184,7 @@ int init_msg_env (){
 	int i, debug;	
 	Msg_Env* tempMsg;
 	//initialize envelopes for user processes
-	for(i = 0;i < 7; i++){//N_MSG_ENV
+	for(i = 0;i < 5; i++){//N_MSG_ENV
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;

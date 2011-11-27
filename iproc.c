@@ -6,14 +6,15 @@
 #include "atomic.h"
 #include "primitives.h"
 
-void kbd_i_process (){	
+void kbd_i_process (){
 	if (current_process != NULL){
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process;
 		current_process =(pcb*) pcb_pointer(PID_I_PROCESS_KBD);
+		printf("HELLO \n");
 		if (in_mem_p_kbd->ok_flag == 1){
 			if (current_process->inbox->head != NULL){
-		
+				printf ("We have a message form get console char\n");
 			//message envelope that points to the message
 				Msg_Env *in_message = NULL;
 		
@@ -49,7 +50,7 @@ void kbd_i_process (){
 
 
 void crt_i_process(){
-	if (current_process == NULL){
+	if (current_process != NULL){
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process; 
 		current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT);	
@@ -88,7 +89,7 @@ void crt_i_process(){
 
 void timer_i_process(){
 	if (current_process != NULL){
-		printf("hello\n");
+		//printf("hello\n");
 		// Save state of original process and switch to current process.
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process;
@@ -102,10 +103,7 @@ void timer_i_process(){
 			msg_enqueue(timer_queue, temp_msg);
 		}	
 
-		/***debug******/	
-		if (timer_queue->head == NULL){
-			printf("there is no message \n");
-		}
+
 		
 		temp_msg = timer_queue->head;
 

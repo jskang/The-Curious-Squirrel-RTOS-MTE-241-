@@ -22,7 +22,7 @@ pcb_queue *i_process_queue;
 
 int atomic_flag = 0;
 
-int wall_clock_flag = 0;
+int wall_clock_flag = 1;
 msg_queue *all_envelopes;
 msg_queue *free_envelopes;
 msg_queue *timer_queue;
