@@ -114,12 +114,16 @@ int k_request_process_status( Msg_Env *message_envelope ){
 	if (message_envelope == NULL)
 		return INVALID_MESSAGE_PTR_ERROR;
 	int i=0;
-
+	char temp_string[27];	// Added random numer for now.
+	strcpy(message_envelope->message, "PID     State     Priority\n");
+	strcpy(temp_string,"---     -----     --------\n");
+	strcat(message_envelope->message,temp_string);		
 	for(i=0;i<9;i++){
-		message_envelope-> message[i*3]=pcbList[i]->pid;
-		message_envelope-> message[i*3+1]=pcbList[i]->state;
-		message_envelope-> message[i*3+2]=pcbList[i]->priority;
-											//jumps to the next area for pcb info
+		sprintf(temp_string,"%2d%9d%12d\n",
+					pcbList[i]->pid,
+					pcbList[i]->state,
+					pcbList[i]->priority);
+		strcat(message_envelope->message,temp_string);
 	}
 
 
@@ -213,7 +217,7 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 	strcat(message_envelope->message,temp_string);
 
 	for (i = 0; i < 16; i++){
-		sprintf(temp_string,"%6d%14d%16d%15ld%13d\n",i,
+		sprintf(temp_string,"%6d%14d%16d%15ld%16d\n",(i+1),
 		message_buffer_send->messages[i]->sender_PID,
 		message_buffer_send->messages[i]->receiver_PID,
 		message_buffer_send->messages[i]->time_stamp,
@@ -227,7 +231,7 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 	strcat(message_envelope->message,temp_string);
 
 	for (i = 0; i < 16; i++){					//loops 16 times
-		sprintf(temp_string,"%6d%14d%16d%15ld%13d\n",i,
+		sprintf(temp_string,"%6d%14d%16d%15ld%16d\n",(i+1),
 		message_buffer_receive->messages[i]->sender_PID,
 		message_buffer_receive->messages[i]->receiver_PID,
 		message_buffer_receive->messages[i]->time_stamp,
