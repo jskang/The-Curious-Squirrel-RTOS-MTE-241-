@@ -36,18 +36,18 @@ int send_console_chars(Msg_Env *message_envelope){
 	return i;
 }
 
-Msg_Env* allocate_msg_env(){
+Msg_Env* request_msg_env(){
 	atomic(ON);
 	Msg_Env *temp;
-	temp = k_allocate_msg_env ();
+	temp = k_request_msg_env ();
 	atomic(OFF);
 	return temp;
 }
 
-int deallocate_msg_env (Msg_Env *message_envelope){
+int release_msg_env (Msg_Env *message_envelope){
 	atomic(ON);
 	int i;
-	i = k_deallocate_msg_env(message_envelope);
+	i = k_release_msg_env(message_envelope);
 	atomic(OFF);
 	return i;
 }

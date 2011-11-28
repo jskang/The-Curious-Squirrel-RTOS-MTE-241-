@@ -7,11 +7,14 @@
 #include "userAPI.h"
 
 void process_a(){
+	printf("PROCESS A \n");
 	Msg_Env *tmp_msg;
 	static int num = 0;
+	tmp_msg = receive_message();
+	release_msg_env(tmp_msg);
 
 	do{
-		tmp_msg = allocate_msg_env();
+		tmp_msg = request_msg_env();
 		tmp_msg->message_type = M_TYPE_DEFAULT;
 		tmp_msg->message[1] = num;
 		send_message(PID_PROCESS_B,tmp_msg);
@@ -22,6 +25,7 @@ void process_a(){
 }
 
 void process_b(){
+	printf("PROCESS B \n");
 	Msg_Env *tmp_msg;
 
 	do{
@@ -32,6 +36,7 @@ void process_b(){
 }
 
 void process_c(){
+	printf("PROCESS C \n");
 	Msg_Env* tmp_msg;
 	msg_queue* local_msg_queue;
 	local_msg_queue = (msg_queue*) malloc(sizeof(msg_queue));
@@ -60,7 +65,7 @@ void process_c(){
 				tmp_msg = receive_message();
 			}
 		}
-		deallocate_msg_env(tmp_msg);
+		release_msg_env(tmp_msg);
 		release_processor();
 	}while(1);
 
@@ -74,8 +79,8 @@ void process_cci(){
 
 	while(1){
 
-		msg_env = allocate_msg_env();
-		out_env = allocate_msg_env();
+		msg_env = request_msg_env();
+		out_env = request_msg_env();
 		
 		out_env->message_type = M_TYPE_COMMANDS;	
 		strcpy(out_env->message,"CCI: ");
@@ -85,7 +90,7 @@ void process_cci(){
 		do{
 			msg_env = receive_message();
 			if (msg_env->message_type != M_TYPE_CONSOLE_INPUT){
-				deallocate_msg_env(msg_env);
+				release_msg_env(msg_env);
 			}
 		
 		}while (msg_env->message_type != M_TYPE_CONSOLE_INPUT); 
@@ -117,7 +122,7 @@ void process_cci(){
 							k_second = ss;
 							k_minute = mm;
 							k_hour = hh;
-							deallocate_msg_env(msg_env);
+							release_msg_env(msg_env);
 						}			
 					}
 				}
@@ -127,12 +132,12 @@ void process_cci(){
 				
 				// set wall_clock_flag to one permitting the output of the wall clock
 				wall_clock_flag = 1;
-				deallocate_msg_env(msg_env);
+				release_msg_env(msg_env);
 			}
 			else if(strncmp(usr_cmd,"ct",2) == 0){
 				// set wall_clock_flag to zero denying the output of the wall clock
 				wall_clock_flag = 0;
-				deallocate_msg_env(msg_env);
+				release_msg_env(msg_env);
 				// again we should be able to run this without the bottom line
 				// send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 			}
@@ -142,7 +147,7 @@ void process_cci(){
 				msg_env->message_type = M_TYPE_MESSAGE_TRACE;
 				send_console_chars(msg_env);
 				msg_env = receive_message();
-				deallocate_msg_env(msg_env);
+				release_msg_env(msg_env);
 			}
 			else if(strncmp(usr_cmd,"t",2) == 0){
 
@@ -201,15 +206,15 @@ void process_cci(){
 void process_clock(){
 
 	do{	
-		Msg_Env *msg_delay = allocate_msg_env();
+		Msg_Env *msg_delay = request_msg_env();
 	
-		Msg_Env *output_msg = allocate_msg_env();	
+		Msg_Env *output_msg = request_msg_env();	
 		request_delay(10,M_TYPE_MSG_DELAY_BACK,msg_delay); // request delay message	
 		
 		while(msg_delay->message_type != M_TYPE_MSG_DELAY_BACK)	{	
 			msg_delay = receive_message();	// receive messages from timer_i_process 		
 			if(msg_delay ->message_type == M_TYPE_MSG_ACK){
-				deallocate_msg_env(msg_delay);
+				release_msg_env(msg_delay);
 			}
 		}
 
@@ -231,8 +236,8 @@ void process_clock(){
 			}			
 		}
 		// Where do I deallocate the message envelopes?
-		deallocate_msg_env(msg_delay);
-		deallocate_msg_env(output_msg);	
+		release_msg_env(msg_delay);
+		release_msg_env(output_msg);	
 		release_processor();
 	}while(1);
 }

@@ -20,9 +20,9 @@ int k_get_console_chars(Msg_Env *message_envelope );								//good
 
 int k_send_console_chars(Msg_Env *message_envelope );								//good
 
-Msg_Env *k_allocate_msg_env ();														//good but need to check with process switching
+Msg_Env *k_request_msg_env ();														//good but need to check with process switching
 
-int k_deallocate_msg_env ( Msg_Env *message_envelope );								//good
+int k_release_msg_env ( Msg_Env *message_envelope );								//good
 
 int k_request_process_status( Msg_Env * message_envelope );							//probably good
 

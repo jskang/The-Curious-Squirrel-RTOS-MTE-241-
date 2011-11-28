@@ -79,7 +79,7 @@ int k_send_console_chars(Msg_Env *message_envelope){
 	return 1;
 }
 
-Msg_Env *k_allocate_msg_env (){
+Msg_Env *k_request_msg_env (){
 	while(empty_msg_queue(free_envelopes) == 1){				//while there are no free envelopes available
 
 			current_process->state= BLOCKED_ON_RESOURCE;
@@ -99,7 +99,7 @@ Msg_Env *k_allocate_msg_env (){
 	return message_envelope;
 }
 
-int k_deallocate_msg_env ( Msg_Env *message_envelope ){					//make sure when using this that the pcb no longer owns msg_env
+int k_release_msg_env ( Msg_Env *message_envelope ){					//make sure when using this that the pcb no longer owns msg_env
 	if (message_envelope == NULL)
 		return INVALID_MESSAGE_PTR_ERROR;
 	if(empty_pcb_queue(blocked_message_envelope)==0)						//if there is an process blocked on resource

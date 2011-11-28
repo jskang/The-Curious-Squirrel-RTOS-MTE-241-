@@ -105,18 +105,18 @@ int initialize_table(){
 	i_table[2].stack_address =(void *) timer_i_process;
 
 	i_table[3].pid = PID_PROCESS_A;
-	i_table[3].state = READY;
-	i_table[3].priority = 0;
+	i_table[3].state = BLOCKED_ON_RECEIVE;
+	i_table[3].priority = 2;
 	i_table[3].stack_address =(void *) process_a;
 	
 	i_table[4].pid = PID_PROCESS_B;
 	i_table[4].state = READY;
-	i_table[4].priority = 0;
+	i_table[4].priority = 2;
 	i_table[4].stack_address =(void *) process_b;
 
 	i_table[5].pid = PID_PROCESS_C;
 	i_table[5].state = READY;
-	i_table[5].priority = 0;
+	i_table[5].priority = 2;
 	i_table[5].stack_address =(void *) process_c;
 	
 	i_table[6].pid = PID_PROCESS_CCI;
@@ -172,8 +172,11 @@ int init_pcb(){
 		pcbList[i]->stack =(char*)(malloc(STACKSIZE)) + STACKSIZE - STACK_OFFSET;
 		pcbList[i]->process_code = i_table[i].stack_address;
 		
-		if (i>5){
+		if ( i > 3 ){
 			rpq_enqueue(pcbList[i]);
+		}
+		else if(i == 3){
+			enqueue(blocked_message_receive,pcbList[i]);
 		}
 		else{
 			enqueue(i_process_queue,pcbList[i]);
@@ -187,7 +190,7 @@ int init_msg_env (){
 	int i;
 	Msg_Env* tempMsg;
 	//initialize envelopes for user processes
-	for(i = 0;i < 7; i++){//N_MSG_ENV
+	for(i = 0;i < N_MSG_ENV; i++){//N_MSG_ENV
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;
