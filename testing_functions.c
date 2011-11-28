@@ -166,10 +166,10 @@ int number_of_messages(pcb *to_print){
 	int i=0;
 	Msg_Env *Q = to_print->inbox->head;
 	while(Q != NULL){
-		i++;
+		i+=1;
 		Q=Q->next;
 	}
-	return 1;
+	return i;
 	
 }
 
@@ -178,10 +178,10 @@ int number_of_messages_2(msg_queue *to_print){
 	int i=0;
 	Msg_Env *Q = to_print->head;
 	while(Q != NULL){
-		i++;
+		i+=1;
 		Q=Q->next;
 	}
-	return 1;
+	return i;
 	
 }
 
