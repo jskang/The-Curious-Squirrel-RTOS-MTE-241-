@@ -5,6 +5,8 @@
 #include "iproc.h"
 #include "atomic.h"
 #include "primitives.h"
+static int flag = 0;
+static Msg_Env *out_message;
 
 void kbd_i_process (){
 	if (current_process != NULL){
@@ -52,32 +54,28 @@ void crt_i_process(){
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process; 
 		current_process = (pcb*)pcb_pointer(PID_I_PROCESS_CRT);	
-		static Msg_Env* out_message;
-		static int flag = 0;
 		// Check if flag from crt u-process is true.
-	
+
 		if(out_mem_p_crt->ok_flag == 0){
-			//printf("flag is on \n");
 			if (flag != 0 && out_message != NULL){
+				flag = 0;
 				strcpy(out_message->message,"");
-				out_message->size = 0;
 				out_message->message_type = M_TYPE_MSG_ACK;
+				out_message->size = 0;
 				k_send_message(out_message->sender_id,out_message);
 				out_message =NULL;
-				flag = 0;
-	
 			}
-			if(current_process->inbox->head != NULL){	
-				Msg_Env *out_message;
+
+			if(current_process->inbox->head != NULL && flag == 0 ){	
 				// Receive and store the message into message envelope.
 				out_message =(Msg_Env*) k_receive_message();
 				// Need to dequeue message form the message queue.
-			
-				strcpy(out_mem_p_crt->indata, out_message->message);
-				out_mem_p_crt->length = out_message->size;
-				out_mem_p_crt->ok_flag = 1;
-			
-				flag = 1;	
+				if (out_message != NULL){
+					strcpy(out_mem_p_crt->indata, out_message->message);
+					out_mem_p_crt->length = out_message->size;
+					out_mem_p_crt->ok_flag = 1;
+					flag = 1;
+				}
 			}
 		}
 		current_process = temp_pcb;

@@ -45,12 +45,12 @@ int main (int argc, char * argv[]){
 
 	do{
 	    	if(in_mem_p->ok_flag == 1) { //if there is something to display, i.e. content in outdata[]
-            		printf("output: %s", in_mem_p->indata);
+	    		printf("output: %s", in_mem_p->indata);
 			fflush(stdout);
                 	strcpy(in_mem_p->indata,"");
 			in_mem_p->length = 0;
-			in_mem_p->ok_flag = 0;
 			kill(parent_pid, SIGUSR2);
+			in_mem_p->ok_flag = 0;
         	}
 	}while(1);
 }

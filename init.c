@@ -187,7 +187,7 @@ int init_msg_env (){
 	int i;
 	Msg_Env* tempMsg;
 	//initialize envelopes for user processes
-	for(i = 0;i < 5; i++){//N_MSG_ENV
+	for(i = 0;i < 7; i++){//N_MSG_ENV
 		tempMsg = (Msg_Env*)malloc(sizeof(Msg_Env));
 		if(tempMsg == NULL){
 			return INVALID_MSG_POINTER;
@@ -335,6 +335,6 @@ void init (){
 			exit(1);
 		}
 	}
-	
+	sleep(1);	
 	printf("\nType something followed by end of line and it will be echoed \n\n");
 }

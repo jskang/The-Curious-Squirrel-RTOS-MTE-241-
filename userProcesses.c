@@ -69,33 +69,20 @@ void process_c(){
 void process_cci(){
 
 	Msg_Env *msg_env;                // allocates output message
+	Msg_Env *out_env;
 	char usr_cmd[2];
+
 	while(1){
 
-		/*//get_console_chars(msg_env);
-		//printf("we are here 1\n");
-		//msg_env = (Msg_Env*) receive_message();	// receive message.
 		msg_env = allocate_msg_env();
-		msg_env->size = 10;
-		msg_env->message[0] = 'c';
-		msg_env->message[1] = ' ';
-		msg_env->message[2] = '1';
-		msg_env->message[3] = '2';
-		msg_env->message[4] = ':';
-		msg_env->message[5] = '4';
-		msg_env->message[6] = '7';
-		msg_env->message[7] = ':';
-		msg_env->message[8] = '5';
-		msg_env->message[9] = '5';
-
-		//printf("%s",msg_env->message);
-		printf("we are here 2\n");
+		out_env = allocate_msg_env();
 		
-		// extract first and second character
-		//msg_first_char = msg_env->message[0];		
-		//msg_second_char = msg_env->message[1];	*/
-		msg_env = allocate_msg_env();	 	
+		out_env->message_type = M_TYPE_COMMANDS;	
+		strcpy(out_env->message,"CCI: ");
+		send_console_chars(out_env);
+
 		get_console_chars(msg_env);
+
 		do{
 			msg_env = receive_message();
 			if (msg_env->message_type != M_TYPE_CONSOLE_INPUT){
@@ -201,6 +188,11 @@ void process_cci(){
 				send_console_chars(msg_env);
 			}
 				
+		}
+		else{
+			strcpy(msg_env->message, "Command Not Recognized \n");
+			msg_env->message_type=M_TYPE_COMMANDS;
+			send_console_chars(msg_env);
 		}	
 		release_processor();
 	}

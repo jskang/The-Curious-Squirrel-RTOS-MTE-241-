@@ -74,7 +74,7 @@ int k_send_console_chars(Msg_Env *message_envelope){
 		return INVALID_MESSAGE_PTR_ERROR;									//INVALID_MESSAGE_PTR_ERROR
 	/*if(message_envelope->flag == 3
 	   return  INVALID_MESSAGE_TYPE*/
-	k_send_message(PID_I_PROCESS_CRT ,message_envelope);					// sends message to crt(6) 
+	k_send_message(PID_I_PROCESS_CRT ,message_envelope);	// sends message to crt(6) 
 	crt_i_process();	
 	return 1;
 }
