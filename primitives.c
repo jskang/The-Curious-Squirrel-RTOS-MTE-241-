@@ -90,6 +90,11 @@ Msg_Env *k_allocate_msg_env (){
 	
 	
 	Msg_Env *message_envelope = msg_dequeue(free_envelopes);
+	strcpy(message_envelope->message,"");
+	message_envelope->message_type = M_TYPE_EMPTY;
+	message_envelope->size = 0;
+	message_envelope->time_stamp = 0;
+	message_envelope->sender_id = 0;
 	message_envelope->owner_id = current_process->pid;
 	return message_envelope;
 }
@@ -128,7 +133,6 @@ int k_request_process_status( Msg_Env *message_envelope ){
 
 
 	message_envelope->message_type = M_TYPE_REQ_PROCESS_STATUS ;			//sets the flag on envelope
-	k_send_message(PID_I_PROCESS_CRT, message_envelope);				//sends message to crt to be displayed on screen
 	return 1;
 }
 
@@ -209,7 +213,7 @@ int k_get_trace_buffers( Msg_Env * message_envelope){
 		return INVALID_MESSAGE_PTR_ERROR;
 	
 	message_envelope->message_type = M_TYPE_MESSAGE_TRACE ;
-	char temp_string[73];	// Added random numer for now.
+	char temp_string[74];	// Added random numer for now.
 	int i;
 	
 	strcpy(message_envelope->message,"-- Sent Messages -- \n");

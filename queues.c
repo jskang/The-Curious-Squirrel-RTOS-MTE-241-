@@ -422,7 +422,10 @@ int enqueue_msg_trace(msg_trace_buffer *trace ,Msg_Env *message){
 	//shifts all the data field up one space if it is full	
 	if (trace->entry_element > 15){
 		for (i = 1; i < 16; i++){
-			trace->messages[i-1] = trace->messages[i];
+			trace->messages[i-1]->sender_PID = trace->messages[i]->sender_PID;
+			trace->messages[i-1]->receiver_PID = trace->messages[i]->receiver_PID;
+			trace->messages[i-1]->time_stamp = trace->messages[i]->time_stamp;
+			trace->messages[i-1]->m_type = trace->messages[i]->m_type;
 		}
 		//set the entry_element so that it saves it to the last space.
 		trace->entry_element = 15;

@@ -9,8 +9,8 @@
 #include <stdlib.h>
 
 /* Define constants*/
-#define BUFFERSIZE 1024
-#define MAXCHAR 512
+#define BUFFERSIZE 5000
+#define MAXCHAR 2450 
 
 /* Define structures */
 typedef struct{

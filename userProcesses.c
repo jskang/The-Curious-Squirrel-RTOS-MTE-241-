@@ -82,7 +82,6 @@ void process_cci(){
 		send_console_chars(out_env);
 
 		get_console_chars(msg_env);
-
 		do{
 			msg_env = receive_message();
 			if (msg_env->message_type != M_TYPE_CONSOLE_INPUT){
@@ -90,7 +89,6 @@ void process_cci(){
 			}
 		
 		}while (msg_env->message_type != M_TYPE_CONSOLE_INPUT); 
-		//print_msg(msg_env);
 		strncpy(usr_cmd,msg_env->message,2);	// store the user command.
 		
 		if(msg_env->size < 12){
@@ -143,6 +141,8 @@ void process_cci(){
 				get_trace_buffers(msg_env);
 				msg_env->message_type = M_TYPE_MESSAGE_TRACE;
 				send_console_chars(msg_env);
+				msg_env = receive_message();
+				deallocate_msg_env(msg_env);
 			}
 			else if(strncmp(usr_cmd,"t",2) == 0){
 

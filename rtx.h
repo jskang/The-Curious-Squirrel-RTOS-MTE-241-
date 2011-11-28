@@ -40,7 +40,7 @@ Comments: Global variables and struct definitions for Initialization
 #define N_TOTAL_PCB 9
 #define N_MSG_ENV 30
 #define N_I_MSG_ENV 30
-#define MESSAGE_SIZE 129
+#define MESSAGE_SIZE 2450
 #define TEMP_NUM_PROCESS 3
 
 // Process IDs
