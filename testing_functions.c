@@ -17,6 +17,7 @@ void print_pcb(pcb *to_print){
 		printf("pid --> %i\n",to_print->pid);
 		printf("state --> %i\n",to_print->state);
 		printf("priority --> %i\n\n",to_print->priority);
+		printf("Number of Msg_env in inbox: %i\n",number_of_messages(to_print));
 	}
 		
 		
@@ -53,6 +54,7 @@ void print_msg(Msg_Env *to_print){
 		printf("time_stamp --> %i\n",to_print->time_stamp);
 		printf("message_type --> %i\n",to_print->message_type);
 		printf("Message[0] -> %i\n",to_print->message[0]);
+		
 		//printf("flag --> %i\n\n",to_print->flag);
 	}
 	
@@ -88,6 +90,7 @@ void print_msg_all_queue(){
 		print_msg (current_msg);
 		current_msg = current_msg->env_all;
 	}
+	
 }
 
 
@@ -156,4 +159,16 @@ void print_rps(Msg_Env *message){//print results from request process status
 		printf("Priority-> %i\n",message->message[i*3+2]);	
 	}
 
+}
+
+
+int number_of_messages(pcb *to_print){
+	int i=0;
+	Msg_Env *Q = to_print->inbox->head;
+	while(Q != NULL){
+		i++;
+		Q=Q->next;
+	}
+	return 1;
+	
 }
