@@ -172,3 +172,16 @@ int number_of_messages(pcb *to_print){
 	return 1;
 	
 }
+
+
+int number_of_messages_2(msg_queue *to_print){
+	int i=0;
+	Msg_Env *Q = to_print->head;
+	while(Q != NULL){
+		i++;
+		Q=Q->next;
+	}
+	return 1;
+	
+}
+
