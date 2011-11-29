@@ -24,12 +24,7 @@ void kbd_i_process (){
 			//copy the buffer to the message and send it
 			
 				strcpy(in_message->message, in_mem_p_kbd->indata);
-			/*int i;
-			for(i=0;i<in_message->size;i++){
-				in_message->message[i]=in_mem_p_kbd->indata[i];
-			}*/
-			//in_message->message[0]= 'h';
-			//printf("actual message --> %s\n\n",in_message->message[0]);
+
 				in_message->size = in_mem_p_kbd->length;
 			
 

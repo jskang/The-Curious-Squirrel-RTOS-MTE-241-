@@ -42,7 +42,6 @@ void process_c(){
 	local_msg_queue = (msg_queue*) malloc(sizeof(msg_queue));
 
 	do{
-		printf("feq: %d, processc: %d, local: %d \n",number_of_messages_2(free_envelopes),number_of_messages(current_process),number_of_messages_2(local_msg_queue));
 		// check for message on local queue first
 		tmp_msg =(Msg_Env*) msg_dequeue(local_msg_queue);
 
@@ -57,7 +56,6 @@ void process_c(){
 				send_console_chars(tmp_msg);
 				tmp_msg = receive_message();
 				while( tmp_msg->message_type != M_TYPE_MSG_ACK){
-					printf("putting it on the local message queue \n");
 					msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
 					tmp_msg = receive_message();
 				}
@@ -69,9 +67,7 @@ void process_c(){
 				}
 			}
 		}
-		else{
-			release_msg_env(tmp_msg);
-		}
+		release_msg_env(tmp_msg);
 		release_processor();
 	}while(1);
 
@@ -81,36 +77,33 @@ void process_cci(){
 
 	Msg_Env *msg_env;                // allocates output message
 	Msg_Env *out_env;
+	Msg_Env *send;
 	char usr_cmd[2];
-
+	out_env = request_msg_env();
+	msg_env = request_msg_env();
 	while(1){
-
-		msg_env = request_msg_env();
-		out_env = request_msg_env();
 		
 		out_env->message_type = M_TYPE_COMMANDS;	
 		strcpy(out_env->message,"CCI: ");
 		send_console_chars(out_env);
-
+		out_env = receive_message();
 		get_console_chars(msg_env);
-		do{
-			msg_env = receive_message();
-			if (msg_env->message_type != M_TYPE_CONSOLE_INPUT){
-				release_msg_env(msg_env);
-			}
-		
-		}while (msg_env->message_type != M_TYPE_CONSOLE_INPUT); 
+		msg_env = receive_message();
+	
 		strncpy(usr_cmd,msg_env->message,2);	// store the user command.
 		
 		if(msg_env->size < 12){
 			if(strncmp(usr_cmd,"s",2) == 0){
-				msg_env->message_type= M_TYPE_COMMANDS;
-				send_message(PID_PROCESS_A, msg_env);
+				send = request_msg_env();
+				send->message_type= M_TYPE_COMMANDS;
+				send_message(PID_PROCESS_A, send);
+				send = NULL;
 			}
 			else if(strncmp(usr_cmd,"ps",2) == 0){
-				request_process_status(msg_env);	// request process status (message envelope)
-				msg_env->message_type = M_TYPE_REQ_PROCESS_STATUS; 	
-				send_console_chars(msg_env);
+				request_process_status(out_env);	// request process status (message envelope)
+				out_env->message_type = M_TYPE_REQ_PROCESS_STATUS; 	
+				send_console_chars(out_env);
+				out_env = receive_message();
 			}
 			else if(strncmp(usr_cmd,"c ",2) == 0){
 				if(msg_env->size == 10){
@@ -119,16 +112,16 @@ void process_cci(){
 					char c1, c2;
 					if((sscanf(msg_env->message, "%*s %d %c %d %c %d", &hh, &c1, &mm, &c2, &ss)) == 5){
 						// check for valid time	
-						if ((hh > 23) || (ss > 59) || (mm > 59) || (c1 != ':') || (c2 != ':')){
-							strcpy(msg_env->message,"Invalid Time\n");
-							msg_env->message_type = M_TYPE_COMMANDS;
-							send_console_chars(msg_env);
-						}
-						else{ 
+						if ((hh <= 23) && (ss <= 59) && (mm <= 59) && (c1 == ':') && (c2 == ':')){
 							k_second = ss;
 							k_minute = mm;
 							k_hour = hh;
-							release_msg_env(msg_env);
+						}
+						else{ 
+							strcpy(out_env->message,"Invalid Time\n");
+							out_env->message_type = M_TYPE_COMMANDS;
+							send_console_chars(out_env);
+							out_env = receive_message();
 						}			
 					}
 				}
@@ -138,80 +131,79 @@ void process_cci(){
 				
 				// set wall_clock_flag to one permitting the output of the wall clock
 				wall_clock_flag = 1;
-				release_msg_env(msg_env);
 			}
 			else if(strncmp(usr_cmd,"ct",2) == 0){
 				// set wall_clock_flag to zero denying the output of the wall clock
 				wall_clock_flag = 0;
-				release_msg_env(msg_env);
 				// again we should be able to run this without the bottom line
-				// send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 			}
 			else if(strncmp(usr_cmd,"b",2) == 0){
 				//display contents of trace display buffer
-				get_trace_buffers(msg_env);
-				msg_env->message_type = M_TYPE_MESSAGE_TRACE;
-				send_console_chars(msg_env);
-				msg_env = receive_message();
-				release_msg_env(msg_env);
+				get_trace_buffers(out_env);
+				out_env->message_type = M_TYPE_MESSAGE_TRACE;
+				send_console_chars(out_env);
+				out_env = receive_message();
 			}
 			else if(strncmp(usr_cmd,"hi",2) == 0){
 				
 				print_number_messages();
-				release_msg_env(msg_env);
 
 			}
 			else if(strncmp(usr_cmd,"t",2) == 0){
 
-				//terminate the fuck out of everything 
 				//release all resources acquired from linux
 				terminate();	// terminate the process.
 			}
 			else if(strncmp(usr_cmd,"n ",2) == 0){
-				// get the new priority list
+				int new_priority, process_id;
+				if(sscanf(msg_env->message, "%*s %d %d", &new_priority, &process_id) == 2){
+					
+ 					if((new_priority >= 0 && new_priority <= 3) && (process_id >= 3 && process_id <= 7)){
 
-				//check if the process is a NULL process
-				//we can't edit the NULL process
-				//The arguments must be verified to ensure a valid process_id and priority level is given.
-				if (msg_env->message[2] < 0 || msg_env->message[2] >3 || msg_env->message[4] < 0 || msg_env->message[4]>8 ){
-					strcpy(msg_env->message,"Invalid priority");
-                                        msg_env->message_type = M_TYPE_COMMANDS;
-                                        send_console_chars(msg_env);
-				}
-				else if(current_process == NULL){
-					strcpy(msg_env->message,"Trying to change the priority of NULL PROCESS");
-                                        msg_env->message_type = M_TYPE_COMMANDS;
-                                        send_console_chars(msg_env);
-					//break; //this will break the while loop
-				}
-				else{ 
-					int pChange = change_priority(msg_env->message[2],msg_env->message[4]);	// change priority of process.
-					if (pChange){
-						sprintf(msg_env->message,"Priority Changed to %i",msg_env->message[2]);
-						msg_env->message_type = M_TYPE_COMMANDS;
-						send_console_chars(msg_env);
- 					}
-					else{
-						strcpy(msg_env->message,"Priority could not be changed");
-						msg_env->message_type = M_TYPE_COMMANDS;
-						send_console_chars(msg_env);
+						int pChange = change_priority(new_priority,process_id);	// change priority of process.
+
+						if (pChange){
+							sprintf(out_env->message,"Priority Changed to %i\n",new_priority);
+							out_env->message_type = M_TYPE_COMMANDS;
+							send_console_chars(out_env);
+							out_env = receive_message();
+							
+	 					}
+						else{
+							strcpy(out_env->message,"Priority could not be changed\n");
+							out_env->message_type = M_TYPE_COMMANDS;
+							send_console_chars(out_env);
+							out_env = receive_message();
+						}
+					}
+					else if (process_id == PID_PROCESS_NULL){
+						strcpy(out_env->message,"Cannot change the priority of NULL PROCESS\n");
+			        		out_env->message_type = M_TYPE_COMMANDS;
+					        send_console_chars(out_env);
+						out_env = receive_message();
+					}
+					else if (process_id == PID_I_PROCESS_CRT || process_id == PID_I_PROCESS_KBD || process_id == PID_I_PROCESS_TIMER){
+						strcpy(out_env->message,"Cannot change the priority of I-Process\n");
+					        out_env->message_type = M_TYPE_COMMANDS;
+		        			send_console_chars(out_env);
+						out_env = receive_message();
+					}
+					else{ 
+						strcpy(out_env->message,"Invalid Input\n");
+					        out_env->message_type = M_TYPE_COMMANDS;
+					        send_console_chars(out_env);
+						out_env = receive_message();
 					}
 				}
-			}
-
+			}		
 			else{
-				strcpy(msg_env->message,"Command Not Recognized\n");
-				msg_env->message_type = M_TYPE_COMMANDS;
-				send_console_chars(msg_env);
-			}
-				
+				strcpy(out_env->message, "Command Not Recognized \n");
+				out_env->message_type=M_TYPE_COMMANDS;
+				send_console_chars(out_env);
+				out_env = receive_message();
+			}	
+			release_processor();
 		}
-		else{
-			strcpy(msg_env->message, "Command Not Recognized \n");
-			msg_env->message_type=M_TYPE_COMMANDS;
-			send_console_chars(msg_env);
-		}	
-		release_processor();
 	}
 }
 
@@ -221,14 +213,14 @@ void process_clock(){
 	Msg_Env *output_msg = request_msg_env();	
 
 	do{	
+		
 		request_delay(10,M_TYPE_MSG_DELAY_BACK,msg_delay); // request delay message	
-
 		do{
-			msg_delay = receive_message();	// receive messages from timer_i_process 		
-			if(msg_delay ->message_type == M_TYPE_MSG_ACK){
+			msg_delay = receive_message();
+			if (msg_delay->message_type == M_TYPE_MSG_ACK){
 				output_msg = msg_delay;
 			}
-		}while(msg_delay->message_type != M_TYPE_MSG_DELAY_BACK);
+		} while(msg_delay->message_type != M_TYPE_MSG_DELAY_BACK);
 
 		if(msg_delay != NULL){
 
@@ -243,7 +235,6 @@ void process_clock(){
 			
 			if (wall_clock_flag){	// check to display on console
 				output_msg->size = sprintf(output_msg->message,"%02d:%02d:%02d\n",k_hour,k_minute,k_second);
-				//printf("%d:%d:%d\n",k_hour,k_minute,k_second);		
 				send_console_chars(output_msg);
 			}			
 		}
