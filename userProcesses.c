@@ -234,7 +234,7 @@ void process_clock(){
 
 			
 			if (wall_clock_flag){	// check to display on console
-				output_msg->size = sprintf(output_msg->message,"%02d:%02d:%02d\n",k_hour,k_minute,k_second);
+				output_msg->size = sprintf(output_msg->message,"\033[s\033[80;80H\033[33m%02d:%02d:%02d\033[0m\033[u",k_hour,k_minute,k_second);
 				send_console_chars(output_msg);
 			}			
 		}
