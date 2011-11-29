@@ -155,6 +155,12 @@ void process_cci(){
 				msg_env = receive_message();
 				release_msg_env(msg_env);
 			}
+			else if(strncmp(usr_cmd,"hi",2) == 0){
+				
+				print_number_messages();
+				release_msg_env(msg_env);
+
+			}
 			else if(strncmp(usr_cmd,"t",2) == 0){
 
 				//terminate the fuck out of everything 
@@ -211,18 +217,18 @@ void process_cci(){
 
 void process_clock(){
 
+	Msg_Env *msg_delay = request_msg_env();
+	Msg_Env *output_msg = request_msg_env();	
+
 	do{	
-		Msg_Env *msg_delay = request_msg_env();
-	
-		Msg_Env *output_msg = request_msg_env();	
 		request_delay(10,M_TYPE_MSG_DELAY_BACK,msg_delay); // request delay message	
-		
-		while(msg_delay->message_type != M_TYPE_MSG_DELAY_BACK)	{	
+
+		do{
 			msg_delay = receive_message();	// receive messages from timer_i_process 		
 			if(msg_delay ->message_type == M_TYPE_MSG_ACK){
-				release_msg_env(msg_delay);
+				output_msg = msg_delay;
 			}
-		}
+		}while(msg_delay->message_type != M_TYPE_MSG_DELAY_BACK);
 
 		if(msg_delay != NULL){
 
@@ -242,8 +248,6 @@ void process_clock(){
 			}			
 		}
 		// Where do I deallocate the message envelopes?
-		release_msg_env(msg_delay);
-		release_msg_env(output_msg);	
 		release_processor();
 	}while(1);
 }

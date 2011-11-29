@@ -185,3 +185,10 @@ int number_of_messages_2(msg_queue *to_print){
 	
 }
 
+void print_number_messages(){
+	int i;
+	printf("Number of Free Envelopes: %d\n",number_of_messages_2(free_envelopes));
+	for (i = 0; i < 9; i++){
+		printf("process: %d, messages: %d\n",i,number_of_messages(pcbList[i]));
+	}
+}

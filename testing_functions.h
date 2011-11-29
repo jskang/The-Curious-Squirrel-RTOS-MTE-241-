@@ -39,3 +39,5 @@ void print_rps(Msg_Env *message);
 int number_of_messages(pcb *to_print);
 
 int number_of_messages_2(msg_queue *to_print);
+
+void print_number_messages(void);
