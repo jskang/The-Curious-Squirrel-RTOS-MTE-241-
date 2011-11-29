@@ -145,7 +145,6 @@ void process_cci(){
 				wall_clock_flag = 0;
 				release_msg_env(msg_env);
 				// again we should be able to run this without the bottom line
-				// send_message(PID_PROCESS_CLOCK, msg_env);	// send message to clock process
 			}
 			else if(strncmp(usr_cmd,"b",2) == 0){
 				//display contents of trace display buffer
@@ -164,12 +163,7 @@ void process_cci(){
 				int new_priority, process_id;
 				if(sscanf(msg_env->message, "%*s %d %d", &new_priority, &process_id) == 2){
 					
-					if (process_id == PID_PROCESS_NULL){
-						strcpy(msg_env->message,"Cannot change the priority of NULL PROCESS\n");
-		        msg_env->message_type = M_TYPE_COMMANDS;
-		        send_console_chars(msg_env);
-					}
-					else if((new_priority >= 0 && new_priority <= 3) && (process_id >= 0 && process_id <= 7)){
+ 					if((new_priority >= 0 && new_priority <= 3) && (process_id >= 3 && process_id <= 7)){
 
 						int pChange = change_priority(new_priority,process_id);	// change priority of process.
 
@@ -184,6 +178,16 @@ void process_cci(){
 							msg_env->message_type = M_TYPE_COMMANDS;
 							send_console_chars(msg_env);
 						}
+					}
+					else if (process_id == PID_PROCESS_NULL){
+						strcpy(msg_env->message,"Cannot change the priority of NULL PROCESS\n");
+		        msg_env->message_type = M_TYPE_COMMANDS;
+		        send_console_chars(msg_env);
+					}
+					else if (process_id == PID_I_PROCESS_CRT || process_id == PID_I_PROCESS_KBD || process_id == PID_I_PROCESS_TIMER){
+						strcpy(msg_env->message,"Cannot change the priority of I-Process\n");
+		        msg_env->message_type = M_TYPE_COMMANDS;
+		        send_console_chars(msg_env);
 					}
 					else{ 
 						strcpy(msg_env->message,"Invalid Input\n");
@@ -230,11 +234,9 @@ void process_clock(){
 			
 			if (wall_clock_flag){	// check to display on console
 				output_msg->size = sprintf(output_msg->message,"%02d:%02d:%02d\n",k_hour,k_minute,k_second);
-				//printf("%d:%d:%d\n",k_hour,k_minute,k_second);		
 				send_console_chars(output_msg);
 			}			
 		}
-		// Where do I deallocate the message envelopes?
 		release_msg_env(msg_delay);
 		release_msg_env(output_msg);	
 		release_processor();
