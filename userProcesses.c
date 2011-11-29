@@ -119,16 +119,16 @@ void process_cci(){
 					char c1, c2;
 					if((sscanf(msg_env->message, "%*s %d %c %d %c %d", &hh, &c1, &mm, &c2, &ss)) == 5){
 						// check for valid time	
-						if ((hh > 23) || (ss > 59) || (mm > 59) || (c1 != ':') || (c2 != ':')){
-							strcpy(msg_env->message,"Invalid Time\n");
-							msg_env->message_type = M_TYPE_COMMANDS;
-							send_console_chars(msg_env);
-						}
-						else{ 
+						if ((hh <= 23) && (ss <= 59) && (mm <= 59) && (c1 == ':') && (c2 == ':')){
 							k_second = ss;
 							k_minute = mm;
 							k_hour = hh;
 							release_msg_env(msg_env);
+						}
+						else{ 
+							strcpy(msg_env->message,"Invalid Time\n");
+							msg_env->message_type = M_TYPE_COMMANDS;
+							send_console_chars(msg_env);
 						}			
 					}
 				}
@@ -157,55 +157,48 @@ void process_cci(){
 			}
 			else if(strncmp(usr_cmd,"t",2) == 0){
 
-				//terminate the fuck out of everything 
 				//release all resources acquired from linux
 				terminate();	// terminate the process.
 			}
 			else if(strncmp(usr_cmd,"n ",2) == 0){
-				// get the new priority list
+				int new_priority, process_id;
+				if(sscanf(msg_env->message, "%*s %d %d", &new_priority, &process_id) == 2){
+					
+					if (process_id == PID_PROCESS_NULL){
+						strcpy(msg_env->message,"Cannot change the priority of NULL PROCESS\n");
+		        msg_env->message_type = M_TYPE_COMMANDS;
+		        send_console_chars(msg_env);
+					}
+					else if((new_priority >= 0 && new_priority <= 3) && (process_id >= 0 && process_id <= 7)){
 
-				//check if the process is a NULL process
-				//we can't edit the NULL process
-				//The arguments must be verified to ensure a valid process_id and priority level is given.
-				if (msg_env->message[2] < 0 || msg_env->message[2] >3 || msg_env->message[4] < 0 || msg_env->message[4]>8 ){
-					strcpy(msg_env->message,"Invalid priority");
-                                        msg_env->message_type = M_TYPE_COMMANDS;
-                                        send_console_chars(msg_env);
-				}
-				else if(current_process == NULL){
-					strcpy(msg_env->message,"Trying to change the priority of NULL PROCESS");
-                                        msg_env->message_type = M_TYPE_COMMANDS;
-                                        send_console_chars(msg_env);
-					//break; //this will break the while loop
-				}
-				else{ 
-					int pChange = change_priority(msg_env->message[2],msg_env->message[4]);	// change priority of process.
-					if (pChange){
-						sprintf(msg_env->message,"Priority Changed to %i",msg_env->message[2]);
-						msg_env->message_type = M_TYPE_COMMANDS;
-						send_console_chars(msg_env);
- 					}
-					else{
-						strcpy(msg_env->message,"Priority could not be changed");
-						msg_env->message_type = M_TYPE_COMMANDS;
-						send_console_chars(msg_env);
+						int pChange = change_priority(new_priority,process_id);	// change priority of process.
+
+						if (pChange){
+							sprintf(msg_env->message,"Priority Changed to %i\n",new_priority);
+							msg_env->message_type = M_TYPE_COMMANDS;
+							send_console_chars(msg_env);
+							
+	 					}
+						else{
+							strcpy(msg_env->message,"Priority could not be changed\n");
+							msg_env->message_type = M_TYPE_COMMANDS;
+							send_console_chars(msg_env);
+						}
+					}
+					else{ 
+						strcpy(msg_env->message,"Invalid Input\n");
+		        msg_env->message_type = M_TYPE_COMMANDS;
+		        send_console_chars(msg_env);
 					}
 				}
-			}
-
+			}		
 			else{
-				strcpy(msg_env->message,"Command Not Recognized\n");
-				msg_env->message_type = M_TYPE_COMMANDS;
+				strcpy(msg_env->message, "Command Not Recognized \n");
+				msg_env->message_type=M_TYPE_COMMANDS;
 				send_console_chars(msg_env);
-			}
-				
+			}	
+			release_processor();
 		}
-		else{
-			strcpy(msg_env->message, "Command Not Recognized \n");
-			msg_env->message_type=M_TYPE_COMMANDS;
-			send_console_chars(msg_env);
-		}	
-		release_processor();
 	}
 }
 
