@@ -32,7 +32,7 @@ Comments: Global variables and struct definitions for Initialization
 #define M_TYPE_MSG_DELAY 6
 #define M_TYPE_MSG_DELAY_BACK 7
 #define M_TYPE_WALL_CLOCK 8
-#define M_TYPE_WALL_CLOCK_SET 9
+#define M_TYPE_COUNT_REPORT 9
 #define M_TYPE_MSG_ACK 10
 #define M_TYPE_COMMANDS 11
 

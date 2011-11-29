@@ -15,7 +15,7 @@ void process_a(){
 
 	do{
 		tmp_msg = request_msg_env();
-		tmp_msg->message_type = M_TYPE_DEFAULT;
+		tmp_msg->message_type = M_TYPE_COUNT_REPORT;
 		tmp_msg->message[1] = num;
 		send_message(PID_PROCESS_B,tmp_msg);
 		num++;
@@ -42,30 +42,36 @@ void process_c(){
 	local_msg_queue = (msg_queue*) malloc(sizeof(msg_queue));
 
 	do{
+		printf("feq: %d, processc: %d, local: %d \n",number_of_messages_2(free_envelopes),number_of_messages(current_process),number_of_messages_2(local_msg_queue));
 		// check for message on local queue first
 		tmp_msg =(Msg_Env*) msg_dequeue(local_msg_queue);
 
 		if (tmp_msg == NULL){
 			tmp_msg = receive_message();
 		}
-		
-		if ((tmp_msg->message[1]) % 20 == 0){
-			strcpy(tmp_msg->message,"Process C\n");
-			tmp_msg->message_type = M_TYPE_DEFAULT;
-			send_console_chars(tmp_msg);
-			tmp_msg = receive_message();
-			while( tmp_msg->message_type != M_TYPE_MSG_ACK){
-				msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
+
+		if (tmp_msg->message_type == M_TYPE_COUNT_REPORT){
+			if ((tmp_msg->message[1]) % 20 == 0){
+				strcpy(tmp_msg->message,"Process C\n");
+				tmp_msg->message_type = M_TYPE_DEFAULT;
+				send_console_chars(tmp_msg);
 				tmp_msg = receive_message();
-			}
-			request_delay(100, M_TYPE_MSG_DELAY_BACK, tmp_msg); // 1000 = 10 seconds
-			tmp_msg = receive_message();
-			while(tmp_msg->message_type != M_TYPE_MSG_DELAY_BACK){
-				msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
+				while( tmp_msg->message_type != M_TYPE_MSG_ACK){
+					printf("putting it on the local message queue \n");
+					msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
+					tmp_msg = receive_message();
+				}
+				request_delay(100, M_TYPE_MSG_DELAY_BACK, tmp_msg); // 1000 = 10 seconds
 				tmp_msg = receive_message();
+				while(tmp_msg->message_type != M_TYPE_MSG_DELAY_BACK){
+					msg_enqueue(local_msg_queue,tmp_msg);  // save message on the local queue
+					tmp_msg = receive_message();
+				}
 			}
 		}
-		release_msg_env(tmp_msg);
+		else{
+			release_msg_env(tmp_msg);
+		}
 		release_processor();
 	}while(1);
 
