@@ -162,8 +162,8 @@ void process_cci(){
 
 						int pChange = change_priority(new_priority,process_id);	// change priority of process.
 
-						if (pChange){
-							sprintf(out_env->message,"Priority Changed to %i\n",new_priority);
+						if (pChange == 1){
+							sprintf(out_env->message,"Priority of %d Changed to %d\n",process_id,new_priority);
 							out_env->message_type = M_TYPE_COMMANDS;
 							send_console_chars(out_env);
 							out_env = receive_message();
