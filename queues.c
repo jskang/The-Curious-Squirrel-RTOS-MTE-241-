@@ -359,6 +359,7 @@ int rpq_enqueue (pcb *ready_pcb){
 		return INVALID_PCB_STATE_ERROR;
 	
 	i = ready_pcb->priority;
+
 	ready_pcb->next= NULL;
 	if(priority_ready_queue[i]->head == NULL && priority_ready_queue[i]->tail ==NULL ){		//if queue is currently empty head and tail point to same element
 		priority_ready_queue[i]->head = ready_pcb;

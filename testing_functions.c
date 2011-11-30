@@ -99,6 +99,8 @@ void print_rpq(){
 	for(i=0; i<4;i++){
 		printf("------------------------------------\n");
 		printf("PCBs with priority =%i\n",i);
+		printf("The head is pointing to %d \n", priority_ready_queue[i]->head);
+		printf("The tail is pointing to %d \n", priority_ready_queue[i]->tail);
 		print_pcb_queue(priority_ready_queue[i]);
 	}
 		

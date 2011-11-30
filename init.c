@@ -86,11 +86,67 @@ void die (int signal){
 	exit(0);
 }
 
-int initialize_table(){
+void initialize_data_structures (){
+
+	int i;
+	for (i = 0; i < 4; i++){
+		priority_ready_queue[i] = (pcb_queue*)malloc(sizeof(pcb_queue));
+		priority_ready_queue[i]->head = NULL;
+		priority_ready_queue[i]->tail = NULL;
+	}
+
+	i_process_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));	
+	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
+	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
+	
+	timer_queue = (msg_queue*)(malloc(sizeof(msg_queue)));
+	all_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
+
+	for (i = 0; i < N_TOTAL_PCB; i++){
+		pcbList[i] = (pcb*)malloc(sizeof(pcb));
+		pcbList[i]->inbox = (msg_queue*) malloc(sizeof(msg_queue));
+		pcbList[i]->inbox->head = NULL;
+		pcbList[i]->inbox->tail = NULL;
+		pcbList[i]->next = NULL;
+	}
+
+	message_buffer_send= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
+	message_buffer_receive= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
+
+	blocked_message_envelope->head = NULL;
+	blocked_message_envelope->tail = NULL;
+
+	blocked_message_receive->head = NULL;
+	blocked_message_receive->tail = NULL;
+
+	timer_queue->head = NULL;
+	timer_queue->tail = NULL;
+
+	all_envelopes->head = NULL;
+	all_envelopes->tail = NULL;
+
+	free_envelopes->head = NULL;
+	free_envelopes->tail = NULL;
+	
+	for (i = 0; i < 16; i ++){
+		message_buffer_send->messages[i]=(msg_trace*) malloc(sizeof(msg_trace));
+                message_buffer_send->messages[i]->sender_PID = -1;
+                message_buffer_send->messages[i]->receiver_PID = -1;
+                message_buffer_send->messages[i]->time_stamp = -1;
+                message_buffer_send->messages[i]->m_type = -1;
+	}
+	for (i = 0; i < 16; i ++){
+		message_buffer_receive->messages[i]=(msg_trace*) malloc(sizeof(msg_trace));
+                message_buffer_receive->messages[i]->sender_PID = -1;
+                message_buffer_receive->messages[i]->receiver_PID = -1;
+                message_buffer_receive->messages[i]->time_stamp = -1;
+                message_buffer_receive->messages[i]->m_type = -1;
+	}
 
         // Process P only required for partial implementation.
 
-        i_table[0].pid = PID_I_PROCESS_CRT;
+	i_table[0].pid = PID_I_PROCESS_CRT;
         i_table[0].state = I_PROCESS;
         i_table[0].priority = 0;
 	i_table[0].stack_address=(void *) kbd_i_process;
@@ -134,7 +190,6 @@ int initialize_table(){
 	i_table[8].state = READY;
 	i_table[8].priority = 3;
 	i_table[8].stack_address =(void *) process_null;
-	return 1;
 }
 
 void init_context_save (pcb *tmp_pcb){
@@ -159,12 +214,6 @@ int init_pcb(){
        
         for(i = 0; i < N_TOTAL_PCB; i++){
                 
-		pcbList[i] = (pcb*)(malloc(sizeof(pcb))); //creates pcbs
-		initialize_pcb(pcbList[i]);
-		if(pcbList[i] == NULL){
-                        return INVALID_QUEUE_ERROR;
-                }
-
                 pcbList[i]->pid = i_table[i].pid;
                 pcbList[i]->state = i_table[i].state;
                 pcbList[i]->priority = i_table[i].priority;
@@ -177,7 +226,6 @@ int init_pcb(){
 		else{
 			enqueue(i_process_queue,pcbList[i]);
 		}
-		
 		init_context_save(pcbList[i]);
 	}
 	
@@ -199,41 +247,9 @@ int init_msg_env (){
 	return 1;
 }
 
-
-
-void initialize_data_structures (){
-
-	initialize_rpq_queue();
-
-	i_process_queue = (pcb_queue*)(malloc(sizeof(pcb_queue)));	
-	blocked_message_envelope = (pcb_queue*) (malloc(sizeof(pcb_queue)));
-	blocked_message_receive = (pcb_queue*)(malloc(sizeof(pcb_queue)));
-	
-	timer_queue = (msg_queue*)(malloc(sizeof(msg_queue)));
-	all_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
-	free_envelopes = (msg_queue*)(malloc(sizeof(msg_queue)));
-
-
-	message_buffer_send= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
-	message_buffer_receive= (msg_trace_buffer*)malloc(sizeof(msg_trace_buffer));
-
-	initialize_queue(i_process_queue);
-	initialize_queue(blocked_message_envelope);
-	initialize_queue(blocked_message_receive);
-
-	initialize_msg_queue(timer_queue);
-	initialize_msg_queue(all_envelopes);
-	initialize_msg_queue(free_envelopes);
-
-	//initializing the trace buffer
-	initialize_msg_trace(message_buffer_send);
-	initialize_msg_trace(message_buffer_receive);
-}
-
 void init (){
 	//initializes all the data structures
 	initialize_data_structures();
-	initialize_table();
 	init_pcb();
 	init_msg_env();
 

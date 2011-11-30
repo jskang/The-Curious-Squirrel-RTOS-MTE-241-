@@ -80,7 +80,6 @@ void crt_i_process(){
 
 void timer_i_process(){
 	if (current_process != NULL){
-		//printf("hello\n");
 		// Save state of original process and switch to current process.
 		current_process->state = INTERRUPTED;
 		pcb *temp_pcb = current_process;

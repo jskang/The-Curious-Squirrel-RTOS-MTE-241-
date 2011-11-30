@@ -37,7 +37,7 @@ int k_hour = 0;
 msg_trace_buffer *message_buffer_send;
 msg_trace_buffer *message_buffer_receive;
 
-pcb* pcbList[TEMP_NUM_PROCESS];
+pcb* pcbList[N_TOTAL_PCB];
 
 iobuf *in_mem_p_kbd, *out_mem_p_crt;
 

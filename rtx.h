@@ -138,9 +138,9 @@ typedef struct msg_queue{
 }msg_queue;
 
 typedef struct initialization_table{
-     char pid;
-     char state;
-     char priority;
+     int pid;
+     int state;
+     int priority;
      void *stack_address;
 }initialization_table;
 
@@ -163,7 +163,7 @@ extern msg_queue *all_envelopes;
 extern msg_queue *free_envelopes;
 
 
-extern pcb *pcbList[TEMP_NUM_PROCESS];
+extern pcb *pcbList[N_TOTAL_PCB];
 extern long number_messages_sent;
 extern long time_since_init;
 
