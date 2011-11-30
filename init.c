@@ -156,7 +156,6 @@ void init_context_save (pcb *tmp_pcb){
 
 int init_pcb(){
 	int i;
-	int j;
        
         for(i = 0; i < N_TOTAL_PCB; i++){
                 
@@ -173,13 +172,12 @@ int init_pcb(){
 		pcbList[i]->process_code = i_table[i].stack_address;
 		
 		if ( i > 2 ){
-			j = rpq_enqueue(pcbList[i]);
+			rpq_enqueue(pcbList[i]);
 		}
 		else{
-			j = enqueue(i_process_queue,pcbList[i]);
+			enqueue(i_process_queue,pcbList[i]);
 		}
 		
-		printf("%d \n ",j);
 		init_context_save(pcbList[i]);
 	}
 	
@@ -235,7 +233,6 @@ void initialize_data_structures (){
 void init (){
 	//initializes all the data structures
 	initialize_data_structures();
-	printf("initialized data structures");	
 	initialize_table();
 	init_pcb();
 	init_msg_env();
@@ -338,5 +335,4 @@ void init (){
 		}
 	}
 	sleep(1);	
-	printf("\nType something followed by end of line and it will be echoed \n\n");
 }

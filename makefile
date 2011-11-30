@@ -9,7 +9,7 @@ all: init keyboard crt
 
 #make executables
 init: $(OBJS) 
-	$(LINK) -o rtx $(OBJS)
+	$(LINK) -o RTX-G17 $(OBJS)
 
 keyboard: keyboard.o
 	$(LINK)  -o $@ keyboard.o -lrt
@@ -57,5 +57,5 @@ testing_functions.o:testing_functions.c
 
 #clean
 clean:
-	rm *.o rtx keyboard crt *_mmap
+	rm *.o RTX-G17 keyboard crt *_mmap
 
