@@ -148,7 +148,7 @@ int delete_pcb_queue (pcb_queue *Q){
 
 //this will return the pointer of a pcb specified by the id passed in (looks through the all_pcb_queue)
 pcb* pcb_pointer (int desired_pcb){
-	if (pcbList[desired_pcb]){
+	if (pcbList[desired_pcb] != NULL){
 		return pcbList[desired_pcb];
 	}
 	return NULL;
@@ -292,7 +292,7 @@ Msg_Env *msg_dequeue(msg_queue *Q){
 		
 		front->next = NULL;
 		return front;
-		}	
+	}	
 
 }
 
@@ -340,7 +340,6 @@ Msg_Env *msg_dequeue(msg_queue *Q){
 
 int initialize_rpq_queue(){
 
-	
 	int i;
 	for(i=0;i<4;i++){
 		priority_ready_queue[i] = (pcb_queue*)malloc(sizeof(struct pcb_queue));
@@ -351,7 +350,7 @@ int initialize_rpq_queue(){
 }
 
 int rpq_enqueue (pcb *ready_pcb){
-
+	int i;
 	if (ready_pcb == NULL)
 		return INVALID_PCB_POINTER;	
 	if(ready_pcb->pid >9 || ready_pcb->pid<0)
@@ -359,15 +358,16 @@ int rpq_enqueue (pcb *ready_pcb){
 	if (ready_pcb ->state != READY)
 		return INVALID_PCB_STATE_ERROR;
 	
+	i = ready_pcb->priority;
 	ready_pcb->next= NULL;
-	if(empty_pcb_queue(priority_ready_queue[ready_pcb->priority])){		//if queue is currently empty head and tail point to same element
-		priority_ready_queue[ready_pcb->priority]->head = ready_pcb;
-		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;
+	if(priority_ready_queue[i]->head == NULL && priority_ready_queue[i]->tail ==NULL ){		//if queue is currently empty head and tail point to same element
+		priority_ready_queue[i]->head = ready_pcb;
+		priority_ready_queue[i]->tail = ready_pcb;
 	}
 	else{
-		priority_ready_queue[ready_pcb->priority]->tail->next = ready_pcb;    //pcb who is currently is at end now points to the new pcb
-		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;   //tail points to new pcb
-		priority_ready_queue[ready_pcb->priority]->tail->next = NULL;
+		priority_ready_queue[i]->tail->next = ready_pcb;    //pcb who is currently is at end now points to the new pcb
+		priority_ready_queue[i]->tail = ready_pcb;   //tail points to new pcb
+		priority_ready_queue[i]->tail->next = NULL;
 	}
 
 	return 1;	
@@ -377,9 +377,9 @@ int rpq_enqueue (pcb *ready_pcb){
 
 pcb* rpq_dequeue (){
 	int i=0;
-	while(empty_pcb_queue(priority_ready_queue[i])==1)						//loops until a queue level is found whch contains elements
+	while(priority_ready_queue[i]->head == NULL && priority_ready_queue[i]->tail == NULL){						//loops until a queue level is found whch contains elements
 		i++;
-	
+	}
 		
 	return dequeue(priority_ready_queue[i]);
 }
