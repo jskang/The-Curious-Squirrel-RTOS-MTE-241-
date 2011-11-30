@@ -32,6 +32,7 @@ int kbd_fid, crt_fid, kbd_status , crt_status;
 jmp_buf kernel_buf;
 initialization_table i_table[N_TOTAL_PCB];
 
+char* temp_sp = NULL;
 char *sfilename_kbd = "kbd_mmap";
 char *sfilename_crt = "crt_mmap";
 
@@ -105,7 +106,7 @@ int initialize_table(){
 	i_table[2].stack_address =(void *) timer_i_process;
 
 	i_table[3].pid = PID_PROCESS_A;
-	i_table[3].state = BLOCKED_ON_RECEIVE;
+	i_table[3].state = READY;
 	i_table[3].priority = 2;
 	i_table[3].stack_address =(void *) process_a;
 	
@@ -137,7 +138,6 @@ int initialize_table(){
 }
 
 void init_context_save (pcb *tmp_pcb){
-	char* temp_sp = NULL;
 	pcb* temp = tmp_pcb;
 	if (setjmp(kernel_buf)==0){
 		temp_sp = (void *) temp->stack;
@@ -156,8 +156,9 @@ void init_context_save (pcb *tmp_pcb){
 
 int init_pcb(){
 	int i;
+	int j;
        
-        for(i = 0;i<N_TOTAL_PCB;i++){
+        for(i = 0; i < N_TOTAL_PCB; i++){
                 
 		pcbList[i] = (pcb*)(malloc(sizeof(pcb))); //creates pcbs
 		initialize_pcb(pcbList[i]);
@@ -165,24 +166,23 @@ int init_pcb(){
                         return INVALID_QUEUE_ERROR;
                 }
 
-		
                 pcbList[i]->pid = i_table[i].pid;
                 pcbList[i]->state = i_table[i].state;
                 pcbList[i]->priority = i_table[i].priority;
 		pcbList[i]->stack =(char*)(malloc(STACKSIZE)) + STACKSIZE - STACK_OFFSET;
 		pcbList[i]->process_code = i_table[i].stack_address;
 		
-		if ( i > 3 ){
-			rpq_enqueue(pcbList[i]);
-		}
-		else if(i == 3){
-			enqueue(blocked_message_receive,pcbList[i]);
+		if ( i > 2 ){
+			j = rpq_enqueue(pcbList[i]);
 		}
 		else{
-			enqueue(i_process_queue,pcbList[i]);
+			j = enqueue(i_process_queue,pcbList[i]);
 		}
+		
+		printf("%d \n ",j);
 		init_context_save(pcbList[i]);
 	}
+	
 	return 1;
 }
 
@@ -230,7 +230,6 @@ void initialize_data_structures (){
 	//initializing the trace buffer
 	initialize_msg_trace(message_buffer_send);
 	initialize_msg_trace(message_buffer_receive);
-
 }
 
 void init (){

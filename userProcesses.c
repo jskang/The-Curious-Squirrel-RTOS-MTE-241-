@@ -144,11 +144,6 @@ void process_cci(){
 				send_console_chars(out_env);
 				out_env = receive_message();
 			}
-			else if(strncmp(usr_cmd,"hi",2) == 0){
-				
-				print_number_messages();
-
-			}
 			else if(strncmp(usr_cmd,"t",2) == 0){
 
 				//release all resources acquired from linux
@@ -224,11 +219,11 @@ void process_clock(){
 
 		if(msg_delay != NULL){
 
-			k_second = (++k_second)%60;
+			k_second = (k_second + 1)%60;
 			if(k_second == 0) {			// check to increment k_minute 
-				k_minute = (++k_minute)%60;
+				k_minute = (k_minute + 1)%60;
 				if (k_minute == 0) {		// check to increment k_hour
-					k_hour = (++k_hour)%24;
+					k_hour = (k_hour + 1)%24;
 				}	
 			} 
 

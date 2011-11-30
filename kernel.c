@@ -44,6 +44,7 @@ iobuf *in_mem_p_kbd, *out_mem_p_crt;
 int main (void){
 
 	init();
+	print_rpq();
 	printf("initialization complete \n");
 	pcb* first_process;
 	first_process =(pcb*) rpq_dequeue();

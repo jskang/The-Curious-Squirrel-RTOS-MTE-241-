@@ -368,11 +368,9 @@ int rpq_enqueue (pcb *ready_pcb){
 		priority_ready_queue[ready_pcb->priority]->tail->next = ready_pcb;    //pcb who is currently is at end now points to the new pcb
 		priority_ready_queue[ready_pcb->priority]->tail = ready_pcb;   //tail points to new pcb
 		priority_ready_queue[ready_pcb->priority]->tail->next = NULL;
-		//printf("another pcb added\n");
 	}
 
 	return 1;	
-
 }
 
 

@@ -259,9 +259,7 @@ void process_switch(){
 	pcb* next_process; 
 	next_process = rpq_dequeue();	//highest priority process in the ready process queue 
 	next_process->state = RUNNING;
-	atomic(ON);
 	context_switch(next_process);
-	atomic (OFF); 
 }
 
 void context_switch(pcb* next_process){

@@ -86,8 +86,8 @@ Comments: Global variables and struct definitions for Initialization
 #define TRUE 1
 
 //Stacks
-#define STACKSIZE 16384
-#define STACK_OFFSET 4
+#define STACKSIZE 4096 
+#define STACK_OFFSET 16
 
 /* Struct Definitions */
 typedef struct msg_trace{
@@ -166,9 +166,11 @@ extern msg_queue *free_envelopes;
 extern pcb *pcbList[TEMP_NUM_PROCESS];
 extern long number_messages_sent;
 extern long time_since_init;
+
 extern int k_second;
 extern int k_minute;
 extern int k_hour;
+
 extern msg_trace_buffer *message_buffer_send;
 extern msg_trace_buffer *message_buffer_receive;
 
