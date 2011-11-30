@@ -4,19 +4,20 @@ This project was created by:
 	JinSung Kang - 20314830
 	Markus Trapp - 20351628
 	Milan Stanivuk - 20341751
+	Group - 17
 
 The content of the source files are as follows:
 
 init.c - This file initializes the RTX which include the initalization of PCBs, message envelopes, forks keyboard and crt processes.
-kernel.c - Calls initialization and calls ProcessP and also contains the global variables. The program starts from this file.
+kernel.c - Calls initialization and contains the global variables. The program starts from this file.
 atomic.c - This file contains the logic for the atomic function.
 queues.c - This file contains the functionalities to mainpulate queues.
 keyboard.c - This file contains the code to run the keyboard u-process.
 crt.c - This file contains the code to run the crt u-process.
-userProcesses.c - This file handles the functionality for ProcessP.
-primitives.c - This file handles the funtionality for the kernel primitives. For the partial implementation the funtions are: receive_message, send_message, get_console_chars, send_console_chars.
+userProcesses.c - This file handles the functionality user processes A, B, C, and the CCI and Wall Clock processes.
+primitives.c - This file handles the funtionality for the kernel primitives. The functions are: k_send_message, k_receive_message, k_get_console_chars, k_send_console_chars, k_request_msg_env, k_release_msg_env, k_request_process_status, k_terminate, k_change_priority, k_request_delay, k_get_trace_buffers, k_release_processor, process_switch, context_switch.
 userAPI.c - This fie contains the user version of the primitives.
-iproc.c - This file contains the functionality of the i-processes that are required in the RTX.
+iproc.c - This file contains the functionality of the i-processes that are required in the RTX. The processes are: crt i-process, keyboard i-process, and timer i-process.
 
 
 The content of the header files are as follows: 
@@ -32,3 +33,10 @@ userAPI.h - This is the header for the userAPI.c
 iproc.h - This is the header for iproc.c .
 
 There is also an additional file named "makefile" which compiles and links all the source and object files together.
+
+The project can be compiled using the 'make clean' and 'make all' commands. To test the program do the following:
+make clean
+make all
+./RTX-G17
+
+PLEASE NOTE: As of right now the RTOS works on Ubuntu but does not work on ECE linux. The group has spoken to the Professor about this and the professor has agreed that we may submit the current working version we have (which works on Ubuntu) and may resubmit another version that also works on ECE linux before the demo without being penalized for a late submission. Thank you.
