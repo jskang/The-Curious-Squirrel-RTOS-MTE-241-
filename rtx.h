@@ -25,16 +25,15 @@ Comments: Global variables and struct definitions for Initialization
 // Message Types
 #define M_TYPE_EMPTY 0
 #define M_TYPE_DEFAULT 1
-#define M_TYPE_DISPLAY_BACK 2
-#define M_TYPE_CONSOLE_INPUT 3
-#define M_TYPE_MESSAGE_TRACE 4
-#define M_TYPE_REQ_PROCESS_STATUS 5
-#define M_TYPE_MSG_DELAY 6
-#define M_TYPE_MSG_DELAY_BACK 7
-#define M_TYPE_WALL_CLOCK 8
-#define M_TYPE_COUNT_REPORT 9
-#define M_TYPE_MSG_ACK 10
-#define M_TYPE_COMMANDS 11
+#define M_TYPE_CONSOLE_INPUT 2
+#define M_TYPE_MESSAGE_TRACE 3
+#define M_TYPE_REQ_PROCESS_STATUS 4
+#define M_TYPE_MSG_DELAY 5
+#define M_TYPE_MSG_DELAY_BACK 6
+#define M_TYPE_WALL_CLOCK 7
+#define M_TYPE_COUNT_REPORT 8
+#define M_TYPE_MSG_ACK 9
+#define M_TYPE_COMMANDS 10
 
 // Global variables
 #define N_TOTAL_PCB 9
@@ -60,9 +59,7 @@ Comments: Global variables and struct definitions for Initialization
 #define BLOCKED_ON_RESOURCE 2
 #define BLOCKED_ON_RECEIVE 3
 #define INTERRUPTED 4
-#define SLEEP 5
-#define NO_BLK_RCV 6 //state needed for partial implimentation, not used for actual project
-#define I_PROCESS 7
+#define I_PROCESS 5
 
 // Error Codes
 #define DESTINATION_PID_ERROR -100
