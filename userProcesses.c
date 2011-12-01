@@ -112,7 +112,7 @@ void process_cci(){
 					char c1, c2;
 					if((sscanf(msg_env->message, "%*s %d %c %d %c %d", &hh, &c1, &mm, &c2, &ss)) == 5){
 						// check for valid time	
-						if ((hh <= 23) && (ss <= 59) && (mm <= 59) && (c1 == ':') && (c2 == ':')){
+						if ((hh <= 23) && (ss <= 59) && (mm <= 59) && (c1 == ':') && (c2 == ':') ){
 							k_second = ss;
 							k_minute = mm;
 							k_hour = hh;
@@ -124,6 +124,12 @@ void process_cci(){
 							out_env = receive_message();
 						}			
 					}
+				}
+				else {
+					strcpy(out_env->message,"Invalid Time \n");
+					out_env->message_type = M_TYPE_COMMANDS;
+					send_console_chars(out_env);
+					out_env = receive_message();
 				}
 
 			}
