@@ -1,0 +1,1 @@
+void atomic (char on);

@@ -1,0 +1,42 @@
+   
+  *-------------------------------------------------------------------
+  * MTE 241 - Real Time Operating Systems
+  * University of Waterloo
+  * Group 17
+  * Implemented by:
+  * Bhavik Vyas
+  * JinSung Kang
+  * Markus Trapp
+  * Milan Stanivuk
+  *
+  * DISCLAIMER
+  * For all University of Waterloo students taking MTE 241 in Fall 2011:
+  * We are not responsible for the plagarism for this code. We advise
+  * everyone not to copy and if you do and get copied, it is entirely
+  * your responsibility. The source code is open to the public for 
+  * referencing only. Thank you.
+  *-------------------------------------------------------------------
+
+
+Updates:
+- Partial Implementation is completed. Nov 5/11
+- Final Implementation started. Nov 17/11
+
+Task Breakdown for Partial Implementation: 
+- RTX Header (rtx.h) - Bhavik --------------------------------------------> Done
+- KBD/CRT Header (kbcrt.h) - Bhavik --------------------------------------> Done
+- RTX C (init.c) - Jin ---------------------------------------------------> Done
+- Queue Implementation (queues.c)- Markus --------------------------------> Done
+- Primitives (primitives.c) - Markus -------------------------------------> Done
+- Process P (processP.c) - Bhavik ----------------------------------------> Done
+- KBD uprocess (keyboard.c) - Milan --------------------------------------> Done
+- CRT uprocess (crt.c) - Milan -------------------------------------------> Done
+- KBD iprocess (iproc.c) - Jin -------------------------------------------> Done
+- CRT iprocess (iproc.c) - Bhavik ----------------------------------------> Done
+- MakeFile - Jin ---------------------------------------------------------> Done
+
+Task Breakdown for Final Implemetation:
+-Primitives - Markus ----------------------------------------------------->
+-Context Switching - Jin-------------------------------------------------->
+-CCI,Message Trace - Milan-------------------------------------------------------------->
+-Timer i_process & Wall clock - Bhavik------------------------------------->
