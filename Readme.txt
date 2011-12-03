@@ -9,11 +9,11 @@
   * Milan Stanivuk
   *
   * DISCLAIMER
-  * For all University of Waterloo students taking MTE 241 in Fall 2011:
+  * For all University of Waterloo students taking MTE 241:
   * We are not responsible for the plagarism for this code. We advise
-  * everyone not to copy and if you do and get copied, it is entirely
-  * your responsibility. The source code is open to the public for
-  * referencing only. Thank you.
+  * everyone not to copy and if you do and get caught, it is entirely
+  * your responsibility. **The source code is open to the public for
+  * referencing only.** Thank you.
   *-------------------------------------------------------------------
 
 The content of the source files are as follows:
