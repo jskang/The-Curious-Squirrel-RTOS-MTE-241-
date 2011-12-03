@@ -1,10 +1,20 @@
-The partial implementation for this Real Time Operating System is intended for the purpose of MTE 241.
-This project was created by:
-	Bhavik Vyas - 20305110
-	JinSung Kang - 20314830
-	Markus Trapp - 20351628
-	Milan Stanivuk - 20341751
-	Group - 17
+  *-------------------------------------------------------------------
+  * MTE 241 - Real Time Operating Systems
+  * University of Waterloo
+  * Group 17
+  * Implemented by:
+  * Bhavik Vyas
+  * JinSung Kang
+  * Markus Trapp
+  * Milan Stanivuk
+  *
+  * DISCLAIMER
+  * For all University of Waterloo students taking MTE 241 in Fall 2011:
+  * We are not responsible for the plagarism for this code. We advise
+  * everyone not to copy and if you do and get copied, it is entirely
+  * your responsibility. The source code is open to the public for
+  * referencing only. Thank you.
+  *-------------------------------------------------------------------
 
 The content of the source files are as follows:
 
@@ -38,5 +48,3 @@ The project can be compiled using the 'make clean' and 'make all' commands. To t
 make clean
 make all
 ./RTX-G17
-
-PLEASE NOTE: As of right now the RTOS works on Ubuntu but does not work on ECE linux. The group has spoken to the Professor about this and the professor has agreed that we may submit the current working version we have (which works on Ubuntu) and may resubmit another version that also works on ECE linux before the demo without being penalized for a late submission. Thank you.
